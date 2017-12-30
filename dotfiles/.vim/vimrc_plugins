@@ -1,0 +1,137 @@
+nmap <Leader>fmt :Autoformat<CR>
+"auto format
+let g:autoformat_verbosemode=1
+let g:formatters_scala = ['scalafmt']
+let g:formatdef_scalafmt = "'$HOME/Scala/scalafmt/scalafmt --config ~/.vim/scalafmt.conf --stdin 2>/dev/null'"
+let g:formatters_java = ['googlefmt']
+let g:formatdef_googlefmt = "'java -jar $HOME/Java/google-java-format-1.14.0-all-deps.jar --skip-sorting-imports - '"
+let g:formatters_go = ['gofmt']
+let g:formatdef_gofmt = "'gofmt'"
+autocmd BufWritePost *.go silent :Autoformat
+autocmd filetype json nmap <Leader>fmt :%!jq<CR>
+
+" nerdtree
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let NERDTreeQuitOnOpen = 1
+let NERDTreeHijackNetrw = 1
+let NERDTreeWinSize=60
+nmap <silent> <C-f> :NERDTreeToggle<CR>
+nmap <silent> <Leader>ff :NERDTreeFind<CR>
+nmap <silent> <Leader>mv :NERDTreeFind<CR> <bar>m <bar>m
+nmap <silent> <Leader>rm :NERDTreeFind<CR> <bar>m <bar>d
+nmap <silent> <Leader>cp :NERDTreeFind<CR> <bar>m <bar>c
+nmap <silent> <Leader>nf :NERDTreeFind<CR> <bar>m <bar>a
+let g:NERDTreeIgnore = ['^__pycache__$', '^.tmp.gitdiff$', '^.viminfo$', '^.git$', '^.metals$', '^.bloop$']
+let g:NERDTreeShowHidden=1
+
+" matchit
+nmap mm %
+vmap mm %
+nmap vim [mv%oF)%F)%F)%F)%F)%
+nmap vam [mV%oF)%F)%F)%F)%F)%
+
+" easy motion
+let g:EasyMotion_do_mapping = 1 " Disable default mappings
+let g:EasyMotion_startofline = 1 " keep cursor column when JK motion
+let g:EasyMotion_smartcase = 1
+" let g:EasyMotion_re_line_anywhere = l
+" nmap mw <Plug>(easymotion-bd-w)
+" nmap mw <Plug>(easymotion-f)
+" imap mj<CR> <C-o>mj
+" imap ml<CR> <C-o>ml
+" imap mh<CR> <C-o>mh
+" nmap mo <Plug>(easymotion-overwin-w)
+" nmap ml <Plug>(easymotion-lineforward)
+" nmap mh <Plug>(easymotion-linebackward)
+" imap mo<CR> <C-o>mo
+" nmap / <Plug>(easymotion-sn)
+" nmap n <Plug>(easymotion-next)
+" nmap N <Plug>(easymotion-prev)
+" nmap <silent> mj <Plug>(easymotion-bd-jk)
+
+fu! MoveToWord()
+  call EasyMotion#WB(0,2)
+  " call EasyMotion#JK(0,2)
+  " call EasyMotion#LineAnywhere(0,0)
+endf
+fu! IMoveToWord()
+  call EasyMotion#WB(0,2)
+  " call EasyMotion#JK(0,2)
+  " call EasyMotion#LineAnywhere(0,0)
+endf
+nmap <silent> mw :call MoveToWord()<CR>
+" imap <silent> mw<CR> <C-o>:call IMoveToWord()<CR>
+
+fu! MoveToTag()
+  call EasyMotion#WB(0,2)
+  call feedkeys("\<C-]>")
+endf
+fu! IMoveToTag()
+  call EasyMotion#WB(0,2)
+  call feedkeys("\<C-o>")
+  call feedkeys("\<C-]>")
+endf
+nmap <silent> md :call MoveToTag()<CR>
+" imap <silent> md<CR> <C-o>:call IMoveToTag()<CR>
+
+fu! MoveToHelp()
+  call EasyMotion#WB(0,2)
+  call feedkeys("K")
+endf
+fu! IMoveToHelp()
+  call EasyMotion#WB(0,2)
+  call feedkeys("F9")
+endf
+nmap <silent> mk :call MoveToHelp()<CR>
+" imap <silent> mk<CR> <C-o>:call IMoveToHelp()<CR>
+
+" incsearch easy motion
+" map /  <Plug>(incsearch-forward)
+" map ?  <Plug>(incsearch-backward)
+" map g/ <Plug>(incsearch-stay)
+" nmap z/ <Plug>(incsearch-easymotion-/)
+" nmap z? <Plug>(incsearch-easymotion-?)
+" nmap zg/ <Plug>(incsearch-easymotion-stay)
+
+" comment options
+" disable default mappings, only keep <C-_>, actually vim register <C-_> as <C-/>,
+let g:tcomment_maps = 0
+"let g:tcomment_mapleader1 = '<c-c>'
+"let g:tcomment_mapleader2 = '<c-c>'
+" nmap <C-c><C-c> :TComment<CR>
+" vmap <C-c><C-c> :TCommentMaybeInline<CR>
+nmap <C-_> :TComment<CR>
+vmap <C-_> :TCommentMaybeInline<CR>
+imap <C-_> <C-o>:TComment<CR>
+
+" super tab
+let g:SuperTabLongestEnhanced = 1
+let g:SuperTabLeadingSpaceCompletion = 0
+let g:SuperTabClosePreviewOnPopupClose = 1
+let g:SuperTabContextDefaultCompletionType ="<C-X><C-O>"
+"let g:SuperTabDefaultCompletionType = "context"
+
+" UltiSnipsExpandTrigger configuration
+" let g:UltiSnipsExpandTrigger="<c-x><CR>"
+" let g:UltiSnipsListSnippets="<c-x>l"
+" let g:UltiSnipsJumpForwardTrigger="<c-x>j"
+" let g:UltiSnipsJumpBackwardTrigger="<c-x>k"
+" If you want :UltiSnipsEdit to split your window.
+" let g:UltiSnipsEditSplit="vertical"
+
+" surround vim
+let g:surround_no_insert_mappings=1
+
+" auto pairs
+let g:AutoPairsMapCh = 0
+let g:AutoPairsMapSpace = 0
+let g:AutoPairsFlyMode = 0
+let g:AutoPairsShortcutBackInsert = '<M-i>'
+let g:AutoPairsShortcutToggle = '<M-p>'
+let g:AutoPairsShortcutFastWrap = '<M-e>'
+let g:AutoPairsShortcutJump = '<M-n>'
+
+" vim-systemcopy
+" uvamp cp
+vmap x <Plug>SystemCopy

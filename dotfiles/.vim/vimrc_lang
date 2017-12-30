@@ -1,0 +1,105 @@
+" tabbar
+let g:tagbar_type_scala = {
+      \ 'ctagstype' : 'scala',
+      \ 'sro'        : '.',
+      \ 'kinds'     : [
+      \ 'p:packages',
+      \ 'T:types:1',
+      \ 't:traits',
+      \ 'o:objects',
+      \ 'O:case objects',
+      \ 'c:classes',
+      \ 'C:case classes',
+      \ 'm:methods',
+      \ 'V:values:1',
+      \ 'v:variables:1'
+      \ ]
+      \ }
+
+let g:tagbar_type_go = {
+      \ 'ctagstype' : 'go',
+      \ 'kinds'     : [
+      \ 'p:package',
+      \ 'i:imports:1',
+      \ 'c:constants',
+      \ 'v:variables',
+      \ 't:types',
+      \ 'n:interfaces',
+      \ 'w:fields',
+      \ 'e:embedded',
+      \ 'm:methods',
+      \ 'r:constructor',
+      \ 'f:functions'
+      \ ],
+      \ 'sro' : '.',
+      \ 'kind2scope' : {
+      \ 't' : 'ctype',
+      \ 'n' : 'ntype'
+      \ },
+      \ 'scope2kind' : {
+      \ 'ctype' : 't',
+      \ 'ntype' : 'n'
+      \ },
+      \ 'ctagsbin'  : 'gotags',
+      \ 'ctagsargs' : '-sort -silent'
+      \ }
+nmap <Leader>tb :TagbarToggle<CR>
+" let g:tagbar_autopreview = 1
+" let g:tagbar_show_data_type = 1
+ 
+" Ruby build functions
+fu! CurrentRubyPackagePath()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "Rakefile"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! RubyTestFile()
+  let file = expand('%:p')
+  if (stridx(file, "_spec.rb") == -1)
+    let new_file = substitute(file, "/lib/", "/spec/", "")
+    let new_file = substitute(new_file, ".rb", "_spec.rb", "")
+  else
+    let new_file = substitute(file, "/spec/", "/lib/", "")
+    let new_file = substitute(new_file, "_spec.rb", ".rb", "")
+  endif
+  let exist = findfile(new_file)
+  if (exist == new_file)
+    exe "edit " new_file
+  else
+    echo 'can not find file '. new_file
+  endif
+endf
+autocmd filetype ruby nmap <Leader>ut :call RubyTestFile()<CR>
+autocmd filetype ruby compiler ruby
+
+fu! RunShell()
+  let file = expand('%:p')
+  let file_dir = expand('%:p:h')
+  let cmd = " cd ". file_dir . "; sh " . file
+  call RunCommand(cmd, 1)
+endf
+autocmd filetype shell nmap <Leader>run :call RunShell()<CR>
+
+" syntax checking
+"Adding mail as a spell checked type, only if in 7.0 >
+if (v:version >= 700)
+  autocmd filetype mail set spell
+endif
+
+source ~/dotfiles/dotfiles/.vim/vimrc_clang
+source ~/dotfiles/dotfiles/.vim/vimrc_go
+source ~/dotfiles/dotfiles/.vim/vimrc_java
+source ~/dotfiles/dotfiles/.vim/vimrc_scala
+source ~/dotfiles/dotfiles/.vim/vimrc_python
+source ~/dotfiles/dotfiles/.vim/vimrc_rust

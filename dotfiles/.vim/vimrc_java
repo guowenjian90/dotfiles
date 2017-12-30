@@ -1,0 +1,190 @@
+fu! BuildJavaPackage()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  let buildsystem = ""
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "build.xml"
+    if filereadable(configfile)
+      let buildsystem = "cd " . dir . "; ant"
+      break
+    endif
+    let configfile = dir . '/' . "build.gradle"
+    if filereadable(configfile)
+      let buildsystem = "cd " . dir . "; gradle"
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  let tmux = 1
+  call RunCommand(buildsystem, tmux)
+endf
+
+fu! JvmPackageRoot()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "build.xml"
+    if filereadable(configfile)
+      break
+    endif
+    let configfile = dir . '/' . "build.gradle"
+    if filereadable(configfile)
+      break
+    endif
+    let configfile = dir . '/' . "build.sbt"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! BuildClasspath()
+  let project_root = JvmPackageRoot()
+  let classpath = ""
+  if filereadable(project_root."/build.sbt")
+    let classpath = BloopBuildClasspath()
+  endif
+  if filereadable(project_root."/.classpath")
+    let classpath = JdtBuildClasspath()
+  endif
+
+  let fname = project_root."/extra.classpath"
+  if filereadable(fname)
+    for line in readfile(fname, '', 1000)
+      let classpath = classpath . ":". line
+    endfor
+  endif
+  return classpath
+endf
+
+fu! JdtBuildClasspath()
+  let project_root = JvmPackageRoot()
+  return project_root.'/bin/*'
+endf
+
+fu! FindClassToRun()
+  let project_root = JvmPackageRoot()
+  call OpenSbtPane(project_root)
+  let package_line = search('^package ', 'Wnbc')
+  if package_line ==# 0
+    return
+  endif
+
+  let package = getline(package_line)
+  let package_name = split(package, ' ')[1]
+
+  // assume file name is same as class name
+  let path = expand('%:r')
+  let class_name = split(path, '/')[-1]
+  let class = package_name . '.' . class_name
+
+  return class
+endf
+
+fu! JavaRun(args)
+  let file = expand('%:p')
+  let project_root = JvmPackageRoot()
+  let project = split(project_root, '/')[-1]
+  let class = FindClassToRun()
+  let build_classpath = BuildClasspath()
+  let cmd = 'cd ' . project_root . '; java -cp ' . project . '-classpath.jar:' . build_classpath . ' '  . class . ' ' . a:args
+  call RunCommand(cmd, 1)
+endf
+
+fu! JUnitTest()
+  let file = expand('%:p')
+  let project_root = JvmPackageRoot()
+  let project = split(project_root, '/')[-1]
+  let class = FindClassToRun()
+  let build_classpath = BuildClasspath()
+  let cmd = 'cd ' . project_root . '; java -cp ' . project . '-classpath.jar:' . build_classpath . ' org.junit.runner.JUnitCore '  . class
+  call RunCommand(cmd, 1)
+endf
+
+fu! NewTestFile(test, suffix)
+  let test = a:test
+  let suffix = a:suffix
+  let new_file = GetTestFile(test, suffix)
+  let filename = split(new_file, '/')[-1]
+  let path = substitute(new_file, filename, "", "")
+  silent! call system('mkdir -p '. path)
+  exe "edit " new_file
+endf
+
+fu! OpenTestFile(test, suffix)
+  let test = a:test
+  let suffix = a:suffix
+  let new_file = GetTestFile(test, suffix)
+  let exist = findfile(new_file)
+  if (exist == new_file)
+    exe "edit " new_file
+  else
+    echo 'can not find file '. new_file
+  endif
+endf
+
+fu! GetTestFile(test, suffix)
+  let test = a:test
+  let ext = a:suffix
+  let project_root = JvmPackageRoot()
+  let file = expand('%:p')
+  if (stridx(file, test."." . ext) == -1)
+    let tst_dir = project_root."/tst/"
+    let exist_tst_dir = finddir(tst_dir)
+    if(exist_tst_dir == tst_dir)
+      let new_file = substitute(file, project_root."/src/", project_root."/tst/", "")
+    else
+      let new_file = file
+    endif
+    let new_file = substitute(new_file, "/main/", "/test/", "")
+    let new_file = substitute(new_file, "\." . ext . "$", test."\." . ext, "")
+  else
+    let new_file = substitute(file, project_root."/tst/", project_root."/src/", "")
+    let new_file = substitute(new_file, "/test/", "/main/", "")
+    let new_file = substitute(new_file, test."\." . ext, "\." . ext, "")
+  endif
+  return new_file
+endf
+
+" jvm language build script
+autocmd filetype java set shiftwidth=2          " Set indention level to be the same as softtabstop
+autocmd filetype java set softtabstop=2         " Why are tabs so big?  This fixes it
+autocmd filetype java set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
+autocmd filetype java nmap <buffer> <Leader>tt :call JUnitTest()<CR>
+autocmd filetype java nmap <buffer> <Leader>ta :call JUnitTest()<CR>
+autocmd filetype java nmap <buffer> <Leader>ut :call OpenTestFile('Test', 'java')<CR>
+autocmd filetype java nmap <buffer> <Leader>ct :call NewTestFile('Test', 'java')<CR>
+autocmd filetype java nmap <buffer> <Leader>run :call JavaRun('')<CR>
+autocmd filetype java nmap <Leader>bb :call BuildJavaPackage()<CR>
+autocmd BufRead,BufNewFile build.xml nmap <buffer> <Leader>bb :call BuildJavaPackage()<CR>
+autocmd BufRead,BufNewFile build.gradle nmap <buffer> <Leader>bb :call BuildJavaPackage()<CR>
+
+fu! KotlinTest()
+  let file = expand('%:p')
+  let project_root = JvmPackageRoot()
+  let project = split(project_root, '/')[-1]
+  let class = FindClassToRun()
+  let currentLine = getline(".")
+  let spec = matchlist(currentLine, '\v.*\s*[should|must]\s*\"(.*)\"\s*in.*')
+  if (len(spec) >= 2)
+    let spec = spec[1]
+  endif
+  if(empty(spec))
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar org.junit.runner.JUnitCore " . class
+  endif
+  call RunCommand(cmd, 1)
+endf
+
+autocmd filetype kotlin nmap <buffer> <Leader>tt :call KotlinTest()<CR>
+autocmd filetype kotlin nmap <buffer> <Leader>ut :call OpenTestFile('Test', 'kt')<CR>
+autocmd filetype kotlin nmap <buffer> <Leader>ct :call NewTestFile('Test', 'kt')<CR>
+autocmd filetype kotlin nmap <buffer> <Leader>run :call JavaRun('Kt')<CR>
+autocmd filetype kotlin nmap <Leader>bb :call BuildJavaPackage()<CR>
+

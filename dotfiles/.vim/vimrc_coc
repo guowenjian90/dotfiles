@@ -1,0 +1,317 @@
+" unmap gd
+" let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+" let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
+"
+" if you want to disable auto detect, comment out those two lines
+"let g:airline#extensions#disable_rtp_load = 1
+"let g:airline_extensions = ['branch', 'hunks', 'coc']
+
+" turn off ale for coc supported language
+let g:ale_pattern_options = {
+      \   '.*\.java$': {'ale_enabled': 0},
+      \   '.*\.scala$': {'ale_enabled': 0},
+      \}
+
+let g:coc_fzf_preview_available = 1
+let g:coc_fzf_preview = ''
+let g:coc_fzf_opts = []
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+
+let g:coc_default_semantic_highlight_groups = 1
+
+" coc
+set statusline+=%{coc#status()}
+" if hidden is not set, TextEdit might fail.
+set hidden
+
+" Some server have issues with backup files, see #649
+set nobackup
+set nowritebackup
+
+" Smaller updatetime for CursorHold & CursorHoldI
+set updatetime=300
+
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+
+" always show signcolumns
+set signcolumn=yes
+
+autocmd filetype java let b:coc_root_patterns = ['.classpath']
+autocmd filetype scala let b:coc_root_patterns = ['build.sbt']
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+function! Check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ Check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+let g:coc_git_hide_blame_virtual_text = 1
+function! ToggleGitBlame()
+  let g:coc_git_hide_blame_virtual_text = !get(g:, 'coc_git_hide_blame_virtual_text', 0)
+endfunction
+nmap <silent> <leader>blame :call ToggleGitBlame()<CR>
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+inoremap <silent><expr> <C-l> coc#pum#visible() ? "\<Esc>a" : "\<Right>"
+inoremap <silent><expr> <C-h> coc#pum#visible() ? "\<Esc>a" : "\<Left>"
+
+nmap ` K
+vmap ` <ESC><C-]>
+" Use K for show documentation in preview window
+nmap <silent> K :call <SID>show_documentation()<CR>
+
+" Use K for show documentation in preview window
+nnoremap <silent><nowait> <space>vd :call CocAction('jumpDefinition', v:false)<CR>
+
+function! s:show_documentation()
+  if &filetype == 'vim'
+    call feedkeys('K', 'in')
+  else
+    call CocActionAsync('doHover')
+  endif
+endfunction
+
+function! s:show_signature()
+  call CocActionAsync('showSignatureHelp')
+endfunction
+imap <F9> <C-o>:call <SID>show_signature()<CR>
+
+" Introduce function text object
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)o0
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
+xmap io <Plug>(coc-classobj-i)
+omap io <Plug>(coc-classobj-i)
+xmap ao <Plug>(coc-classobj-a)
+omap ao <Plug>(coc-classobj-a)
+
+" jump to next function
+nmap ]] ^vafo<Esc>2j^
+nmap [[ ^vaf<Esc>2kvaf<Esc>^
+
+" Use <TAB> for selections ranges.
+" NOTE: Requires 'textDocument/selectionRange' support from the language server.
+" coc-tsserver, coc-python are the examples of servers that support it.
+nmap <silent> <leader>cs <Plug>(coc-range-select)
+xmap <silent> <leader>cs <Plug>(coc-range-select)
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap for rename current word
+nmap <silent><leader>cn <Plug>(coc-rename)
+
+" Remap for format selected region
+vmap <silent><leader>cf  <Plug>(coc-format-selected)
+nmap <silent><leader>cf  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd filetype typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)
+nmap <silent><leader>cv  <Plug>(coc-codeaction-selected)
+
+" Remap for do codeAction of current line
+nmap <silent><leader>ca  <Plug>(coc-codeaction)
+
+" Fix autofix problem of current line
+nmap <silent><leader>cx  <Plug>(coc-fix-current)
+
+" Remap keys for applying code actions at the cursor position
+nmap <leader>cc  <Plug>(coc-codeaction-cursor)
+" Remap keys for apply code actions affect whole buffer
+" nmap <leader>cb  <Plug>(coc-codeaction-source)
+
+" Remap keys for applying refactor code actions
+nmap <silent> <leader>cr <Plug>(coc-codeaction-refactor)
+vmap <silent> <leader>cr <Plug>(coc-codeaction-refactor-selected)
+
+" Run the Code Lens action on the current line
+nmap <leader>cl  <Plug>(coc-codelens-action)J
+
+" Use `:Format` for format current buffer
+command! -nargs=0 CocFormat :call CocAction('format')
+
+" Use `:Fold` for fold current buffer
+command! -nargs=? CocFold :call CocAction('fold', <f-args>)
+
+
+" Add diagnostic info for https://github.com/itchyny/lightline.vim
+" let g:lightline = {
+"       \ 'colorscheme': 'wombat',
+"       \ 'active': {
+"       \   'left': [ [ 'mode', 'paste' ],
+"       \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+"       \ },
+"       \ 'component_function': {
+"       \   'cocstatus': 'coc#status'
+"       \ },
+"       \ }
+
+
+
+" Using CocFzfList
+nmap <silent> <Leader>coc :<C-u>CocFzfList<cr>
+nmap <silent> <Leader>ox  :<C-u>CocFzfList commands<cr>
+nmap <silent> <Leader>oo  :<C-u>CocFzfList outline<cr>
+nmap <silent> <Leader>olo :<C-u>CocFzfList location<cr>
+nmap <silent> <Leader>od  :<C-u>CocFzfList diagnostics<cr>
+nmap <silent> <Leader>clb :<C-u>CocFzfList branches<cr>
+nmap <silent> <Leader>cle :<C-u>CocFzfList extensions<cr>
+
+" Remap keys for go to
+fu! ShowReference()
+  call EasyMotion#WB(0,2)
+  call feedkeys("gr")
+endf
+
+fu! ShowImplementation()
+  call EasyMotion#WB(0,2)
+  call feedkeys("gi")
+endf
+
+fu! CocNextError()
+  if HasQuickFix() == 1
+    exe "cnext"
+  elseif HasLocList() == 1
+    exe "lnext"
+  else
+    call feedkeys("]e")
+    " exe "CocNext"
+  endif
+endf
+
+fu! CocPrevError()
+  if HasQuickFix() == 1
+    exe "cprev"
+  elseif HasLocList() == 1
+    exe "lprev"
+  else
+    call feedkeys("[e")
+    " exe "CocPrev"
+  endif
+endf
+
+for ft in ['java', 'scala', 'go', 'rust', 'python']
+  exe 'autocmd filetype ' . ft . ' nmap <C-d> <Plug>(coc-diagnostic-next)'
+  exe 'autocmd filetype ' . ft . ' nmap <C-n> :call CocNextError()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <C-p> :call CocPrevError()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-]> <Plug>(coc-definition)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> gd <Plug>(coc-definition)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> gi <Plug>(coc-implementation)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> gy <Plug>(coc-type-definition)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mr :call ShowReference()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call ShowImplementation()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <leader>oi :CocCommand editor.action.organizeImport <CR>'
+endfor
+
+nmap <silent> [e <Plug>(coc-diagnostic-prev-error)
+nmap <silent> ]e <Plug>(coc-diagnostic-next-error)
+nmap <silent> [d <Plug>(coc-diagnostic-prev)
+nmap <silent> ]d <Plug>(coc-diagnostic-next)
+autocmd filetype java nmap <leader>pb :CocCommand java.workspace.compile <CR>
+autocmd filetype java nmap <leader>pr :CocCommand java.clean.workspace <CR>
+autocmd filetype java nmap <leader>sm :CocCommand java.super-method-hierarchy <CR>
+autocmd filetype java nmap <leader>mh :CocCommand java.super-method-hierarchy <CR>
+" autocmd filetype java nmap <leader>oi :CocCommand java.action.organizeImports <CR>
+
+autocmd filetype sbt nmap <buffer> <leader>pi :CocCommand metals.build-import <CR>
+autocmd filetype sbt nmap <buffer> <leader>pr :CocCommand metals.build-restart <CR>
+autocmd filetype sbt nmap <buffer> <leader>pc :CocCommand metals.build-connect <CR>
+
+autocmd filetype scala nmap <buffer> <leader>pi :CocCommand metals.build-import <CR>
+autocmd filetype scala nmap <buffer> <leader>pr :CocCommand metals.build-restart <CR>
+autocmd filetype scala nmap <buffer> <leader>pb :CocCommand metals.compile-cascade <CR>
+autocmd filetype scala nmap <buffer> <leader>pc :CocCommand metals.build-connect <CR>
+autocmd filetype scala nmap <buffer> <leader>nc :CocCommand metals.new-scala-file <CR>
+autocmd filetype scala nmap <buffer> <leader>sm :CocCommand metals.go-to-super-method <CR>
+autocmd filetype scala nmap <buffer> <leader>mh :CocCommand metals.super-method-hierarchy <CR>
+autocmd filetype scala nmap <Leader>mws <Plug>(coc-metals-expand-decoration)
+
+" Toggle panel with Tree Views
+" autocmd filetype scala nmap <silent> <Leader>mt :<C-u>CocCommand metals.tvp<CR>
+" autocmd filetype scala nmap <silent> <Leader>mtb :<C-u>CocCommand metals.tvp metalsBuild<CR>
+" autocmd filetype scala nmap <silent> <Leader>mtc :<C-u>CocCommand metals.tvp metalsCompile<CR>
+" autocmd filetype scala nmap <silent> <Leader>mtf :<C-u>CocCommand metals.revealInTreeView metalsBuild<CR>
+
+autocmd filetype go nmap <leader>ut :CocCommand go.test.toggle <CR>
+autocmd filetype go nmap <leader>tg :CocCommand go.tags.add.prompt<CR>
+
+
+" Use <C-s> for trigger snippet expand.
+imap <C-s> <Plug>(coc-snippets-expand)
+
+" Use <C-j> for select text for visual placeholder of snippet.
+" vmap <C-j> <Plug>(coc-snippets-select)
+
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+" let g:coc_snippet_next = '<c-j>'
+
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+" let g:coc_snippet_prev = '<c-k>'
+
+" Use <C-j> for both expand and jump (make expand higher priority.)
+" imap <C-j> <Plug>(coc-snippets-expand-jump)
+"
+
+" coc-git
+nmap [c <Plug>(coc-git-prevchunk)
+nmap ]c <Plug>(coc-git-nextchunk)
+nmap <C-c> <Plug>(coc-git-nextchunk)
+" nmap [c <Plug>(coc-git-prevConflict)
+" nmap ]f <Plug>(coc-git-nextConflict)
+" show chunk diff at current position
+nmap = :CocCommand git.chunkInfo<CR>
+nmap gu :CocCommand git.chunkUndo<CR>
+nmap <leader>git :CocCommand git.browserOpen<CR>
+" show commit contains current position
+nmap <leader>gsc <Plug>(coc-git-commit)
+" create text object for git chunks
+omap <leader>gi <Plug>(coc-git-chunk-inner)
+xmap <leader>gi <Plug>(coc-git-chunk-inner)
+omap <leader>ga <Plug>(coc-git-chunk-outer)
+xmap <leader>ga <Plug>(coc-git-chunk-outer)
+
+highlight link EchoDocPopup markdown
+highlight link CocPumFloatingDetail markdown
+highlight CocPumFloatingDetail ctermbg=darkblue guibg=darkblue
+
+highlight CocHoverRange ctermbg=black guibg=black
+highlight CocFloating ctermbg=black guibg=black
+highlight CocInlayHint cterm=underline gui=underline guifg=blue guibg=black
+highlight CocUnusedHighlight cterm=underline gui=underline guifg=blue guibg=black
+highlight CocMenuSel ctermbg=blue guibg=blue
+highlight CocListLine cterm=underline gui=underline
+highlight CocSelectedLine cterm=underline gui=underline
+
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  let g:cj_orig_n = maparg('<c-j>', 'n')
+  let g:ck_orig_n = maparg('<c-k>', 'n')
+  " let g:cj_orig_v = maparg('<c-j>', 'v')
+  " let g:ck_orig_v = maparg('<c-k>', 'v')
+  nnoremap <silent><nowait><expr> <c-j> coc#float#has_scroll() ? coc#float#scroll(1) : g:cj_orig_n."\<CR>"
+  nnoremap <silent><nowait><expr> <c-k> coc#float#has_scroll() ? coc#float#scroll(0) : g:ck_orig_n."\<CR>"
+  inoremap <silent><nowait><expr> <Right> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <Left> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  " vnoremap <silent><nowait><expr> <c-j> coc#float#has_scroll() ? coc#float#scroll(1) : g:cj_orig_v."\<CR>"
+  " vnoremap <silent><nowait><expr> <c-k> coc#float#has_scroll() ? coc#float#scroll(0) : g:ck_orig_v."\<CR>"
+endif

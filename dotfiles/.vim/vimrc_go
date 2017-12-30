@@ -1,0 +1,75 @@
+" go lang setting
+" let g:go_highlight_functions = 1
+" let g:go_highlight_methods = 1
+" let g:go_highlight_structs = 1
+" let g:go_highlight_operators = 1
+" let g:go_highlight_build_constraints = 1
+
+fu! FindGoTestFunc()
+" func TestFunc(t *testing.T) {
+  let spec_line = search('\vfunc\s+(.*)\(.+\*testing\.T.*', 'Wnbc')
+  if spec_line ==# 0
+    return ''
+  endif
+
+  let func = getline(spec_line)
+  let spec_parts = matchlist(func, '\vfunc\s+(.*)\(.+\*testing\.T.*')
+  if (len(spec_parts) >= 2)
+    let func = spec_parts[1]
+  else
+    let func = ''
+  endif
+  return func
+endf
+
+fu! RunGoTest(func_name)
+  let file_dir = expand('%:p:h')
+  if a:func_name == ''
+    let file = expand('%:p:t')
+    if stridx(file, "_test.go") >= 0
+      let test_file = substitute(file, "_test.go$", ".go", "")
+    else
+      let test_file = substitute(file, ".go$", "_test.go", "")
+    endif
+    let cmd = " cd ". file_dir . "; grc go test -v " . file . ' ' . test_file
+  else
+    let cmd = " cd ". file_dir . "; grc go test -v -run " . a:func_name
+  endif
+  call RunCommand(cmd, 1)
+endf
+
+fu! GoTestFocus()
+  let func = FindGoTestFunc()
+  call RunGoTest(func)
+endfunction
+
+fu! BuildGoPackage()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  let buildsystem = ""
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "Makefile"
+    if filereadable(configfile)
+      let buildsystem = "cd " . dir . "; make"
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  let tmux = 1
+  call RunCommand(buildsystem, tmux)
+endf
+
+fu! GoRun()
+  let file = expand('%:p:t')
+  let file_dir = expand('%:p:h')
+  let cmd = " cd ". file_dir . "; go run " . file
+  call RunCommand(cmd, 1)
+endf
+
+autocmd filetype go nmap <Leader>tt :call GoTestFocus()<CR>
+autocmd filetype go nmap <Leader>ta :call RunGoTest('')<CR>
+autocmd filetype go nmap <Leader>run :call GoRun()<CR>
+autocmd filetype go nmap <Leader>bb :call BuildGoPackage()<CR>
+" autocmd BufRead,BufNewFile Makefile nmap <buffer> <Leader>bb :call BuildGoPackage()<CR>

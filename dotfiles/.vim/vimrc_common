@@ -1,0 +1,424 @@
+"Set colorscheme.  This is a black background colorscheme
+set background=dark
+set termguicolors
+colorscheme bat
+
+" cursor shape
+" Ps = 0  -> blinking block.
+" Ps = 1  -> blinking block (default).
+" Ps = 2  -> steady block.
+" Ps = 3  -> blinking underline.
+" Ps = 4  -> steady underline.
+" Ps = 5  -> blinking bar (xterm).
+" Ps = 6  -> steady bar (xterm).
+" :autocmd InsertEnter,InsertLeave * set cul!
+set cul
+let &t_SI = "\e[5 q"
+let &t_EI = "\e[2 q"
+let &t_mb = "1"
+
+"Turn on filetype plugins to automagically
+"Grab commands for particular filetypes.
+"Grabbed from $VIM/ftplugin
+filetype on           " Enable filetype detection
+filetype plugin on
+filetype indent on
+
+"Turn on syntax highlighting
+syntax enable         " enable syntax highlighting
+syntax on             " Enable syntax highlighting
+
+"  vim options
+set mouse=a               " enable mouse mode
+set nocompatible          " be iMproved, required
+set cmdheight=1           " Better display for messages if larger
+" set paste                 " paste mode, good for terminal
+set autoindent            " always set autoindenting on
+set backspace=2           " allow backspacing over everything in insert
+set cindent               " c code indenting
+set diffopt=filler,iwhite " keep files synced and ignore whitespace
+set expandtab             " get rid of tabs altogether and replace with spaces
+set foldcolumn=2          " set a column incase we need it
+set foldlevel=0           " show contents of all folds
+set foldmethod=indent     " use indent unless overridden
+set guioptions-=m         " remove menu from the gui
+set guioptions-=t         " remove toolbar
+set hidden                " hide buffers instead of closing
+set history=50            " keep 50 lines of command line history
+set ignorecase            " do case insensitive matching
+set incsearch             " incremental search
+set laststatus=2          " always have status bar
+set matchtime=10          " time to flash the brack with showmatch
+set nobackup              " don't keep a backup file
+set nocompatible          " use vim defaults (much better!)
+set nofen                 " disable folds
+set notimeout             " i like to be pokey
+set ttimeout              " timeout on key-codes
+set ttimeoutlen=100       " timeout on key-codes after 100ms
+set ruler                 " the ruler on the bottom is useful
+set scrolloff=1           " dont let the curser get too close to the edge
+set showcmd               " show (partial) command in status line.
+set showmatch             " show matching brackets.
+set wrap                  " wrap lines
+" set nowrap              " don't wrap lines
+"set list                 " Make tabs and trails explicit
+set nolist                " list disables linebreak
+set linebreak             " this displays long lines as wrapped at word boundries
+set textwidth=0           " don't wrap words by default
+set wrapmargin=0          " When pasteing, use this, because textwidth becomes 0
+" set textwidth=80        " this wraps a line with a break when you reach 80 chars
+"set wrapmargin=80        " When pasteing, use this, because textwidth becomes 0
+set virtualedit=block     " let blocks be in virutal edit mode
+set wildmenu              " this is used with wildmode(full) to cycle options
+set listchars=tab:>-,trail:-                 " prefix tabs with a > and trails with -
+set tags+=./.tags;/,./tags;/                 " set ctags
+set whichwrap+=<,>,[,],h,l,~                 " arrow keys can wrap in normal and insert modes
+set wildmode=list:longest,full               " list all options, match to the longest
+set helpfile=$VIMRUNTIME/doc/help.txt
+set guifont=Courier\ 10\ Pitch\ 10
+set path+=.,**
+" set path+=.,..,../..,../../..,../../../..,/usr/include,**
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files I am not likely to want to edit or read.
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc,.class
+"Disabled options
+"set noswapfile              " this guy is really annoyoing sometimes
+set directory=$HOME/.swp
+" viminfo options
+" read/write a .viminfo file, don't store more than
+" 50 lines of registers
+set viminfo='20,\"50
+set guifont=-adobe-courier-medium-r-normal--14-100-100-100-m-90-iso8859-1
+set bs=indent,eol,start
+set grepprg=ag
+set encoding=utf-8
+set showcmd                     " display incomplete commands
+set foldcolumn=0
+set shiftwidth=2          " Set indention level to be the same as softtabstop
+set softtabstop=2         " Why are tabs so big?  This fixes it
+set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
+set expandtab                   " use spaces, not tabs (optional)
+set backspace=indent,eol,start  " backspace through everything in insert mode
+set smartcase                   " ... unless they contain at least one capital letter
+
+" set clipboard=unnamed
+
+" File type auto cmd
+set completeopt=menuone,noinsert
+" set completeopt=longest,menuone,preview,noinsert
+set omnifunc=syntaxcomplete#Complete
+autocmd filetype * setlocal omnifunc=syntaxcomplete#Complete
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
+autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
+autocmd BufReadPost location nnoremap <buffer> <CR> <CR>
+
+fu! HasQuickFix()
+  let yes = 0
+  let windows = getwininfo()
+  for w in windows
+    let yes = get(w, 'quickfix')
+    if yes == 1
+      return yes
+    endif
+  endfor
+  return yes
+endf
+
+fu! HasLocList()
+  let yes = 0
+  let windows = getwininfo()
+  for w in windows
+    let yes = get(w, 'loclist')
+    if yes == 1
+      return yes
+    endif
+  endfor
+  return yes
+endf
+
+fu! TaggleQuickFix()
+  let qfix = HasQuickFix()
+  let loc = HasLocList()
+  if qfix | loc
+    exe "lclose | cclose"
+  elseif(type(get(getqflist(), 0)) == v:t_dict)
+    exe "copen"
+  elseif(type(get(getloclist(0), 0)))
+    exe "lopen"
+  else
+  endif
+endf
+nmap ql :call TaggleQuickFix()<CR>
+nmap qc :cexpr []<CR>
+
+fu! NextError()
+  if HasQuickFix() == 1
+    exe "cnext"
+  elseif HasLocList() == 1
+    exe "lnext"
+  else
+  endif
+endf
+nmap <C-n> :call NextError()<CR>
+
+fu! PreviousError()
+  if HasQuickFix() == 1
+    exe "cprev"
+  elseif HasLocList() == 1
+    exe "lprev"
+  else
+  endif
+endf
+nmap <C-p> :call PreviousError()<CR>
+
+"Set variables for plugins to use
+"vimspell variables
+"don't automatically spell check!
+let spell_auto_type=""
+
+" LargeFile.vim settings
+" don't run syntax and other expensive things on files
+let g:LargeFile = 100
+
+" vim maps
+"
+let mapleader=" "
+
+" Maps
+nmap vv V
+nmap ss g*
+nmap vic vi{
+nmap vac va{
+nmap viq vi"
+nmap vaq va"
+nmap vid vi<
+nmap vad va<
+nmap vtc vt}
+nmap vtb vt)
+nmap dic di{
+nmap dac da{
+nmap diq di"
+nmap daq da"
+nmap did di<
+nmap dad da<
+nmap cic ci{
+nmap cac ca{
+nmap ciq ci"
+nmap caq ca"
+nmap cid ci<
+nmap cad ca<
+nmap yic yi{
+nmap yac ya{
+nmap yiq yi"
+nmap yaq ya"
+nmap yid yi<
+nmap yad ya<
+nmap vu v^
+nmap v<CR> v$
+nmap cu c^
+nmap c<CR> c$
+nmap du d^
+nmap d<CR> d$
+nmap yu y^
+nmap y<CR> y$
+nmap <c-a> ^
+nmap <c-e> $
+nmap <CR> G
+nmap <C-k> :keepjumps normal {
+nmap <C-j> :keepjumps normal }
+nmap <C-h> B
+nmap <C-l> W
+nmap <C-t> :tabnext<CR>
+nmap <C-b> :bnext<CR>
+nmap <C-n> :cn<CR>
+nmap <C-p> :cp<CR>
+nmap <Leader>z <C-z>
+nmap <Leader>x :qall<CR>
+nmap <Leader>w :w<CR>
+nmap <Leader>W :w !sudo tee %<CR>
+nmap <Leader>q :bd<CR>
+" nmap <Leader>sp :sp<CR>
+" nmap <Leader>vs :vs<CR>
+" nmap <Leader>bd :bd<CR>
+nmap <Leader>bc :%bd<CR>
+nmap <Leader>uu viwU
+nmap <Leader>ll viwu
+nmap <Leader>cw <Right>bvU
+nmap <Leader>nh :nohlsearch<CR>
+nmap <Leader>sc :windo set scrollbind<CR>
+
+cmap <C-a> <Home>
+cmap <C-e> <End>
+cmap <C-p> <Up>
+cmap <C-n> <Down>
+cmap <C-j> <C-w>
+cmap <C-k> <S-Right><C-w>
+cmap <C-h> <S-Left>
+cmap <C-l> <S-Right>
+
+function Imapdw()
+  let pos = col('.')
+  let len = strlen(getline('.'))
+  if len == pos
+    call feedkeys("\<Right>")
+    call feedkeys("\<C-o>dw")
+  else
+    call feedkeys("\<C-o>dw")
+  endif
+endf
+imap <C-v> <C-o>v
+imap <C-j> <Down>
+imap <C-k> <Up>
+imap <C-l> <Right>
+imap <C-h> <Left>
+imap <C-a> <C-o>^
+imap <C-e> <C-o>$
+" imap <C-d> <C-o>d$
+" imap <silent><expr> <C-l> pumvisible() ? "\<Esc>a" : "\<Right>"
+" imap <silent><expr> <C-h> pumvisible() ? "\<Esc>a" : "\<Left>"
+imap <C-^> <Esc><C-^>
+imap <C-v> <Esc><C-v>
+imap <C-z> <C-o>u
+imap <M-l> <C-o>W
+imap <M-h> <C-o>B
+imap <C-d> <C-o>:call Imapdw()<CR>
+
+vmap <CR> G
+vmap <C-a> ^
+vmap <C-e> $
+vmap <C-k> :<C-u>keepjumps normal! gv{<CR>
+vmap <C-j> :<C-u>keepjumps normal! gv}<CR>
+vmap <C-h> B
+vmap <C-l> W
+vmap > >gv
+vmap < <gv
+vnoremap <Leader>ss :s/\<\@!\([A-Z]\)/\_\l\1/g<cr>
+vnoremap <Leader>cs :s/_\([a-z]\)/\u\1/g<cr>
+
+" set number relativenumber
+set number
+let g:linenumber=1
+fu! ToggleLineNumber()
+  if exists("g:linenumber")
+    set nonumber
+    set norelativenumber
+    unlet g:linenumber
+  else
+    " set number relativenumber
+    set number
+    let g:linenumber = 1
+  endif
+endf
+nmap <Leader>num :call ToggleLineNumber()<CR>
+
+" vim windows
+nmap <Leader>< :exe "vertical resize " . (winwidth(0) * 4/5)<CR>
+nmap <Leader>> :exe "vertical resize " . (winwidth(0) * 5/4)<CR>
+nmap <Leader>- :exe "resize " . (winheight(0) * 4/5)<CR>
+nmap <Leader>+ :exe "resize " . (winheight(0) * 5/4)<CR>
+nmap <C-w>z :call ToggleMaxWindow()<CR>
+nmap <C-w>\ :vs<CR>
+nmap <C-w>- :sp<CR>
+function ToggleMaxWindow()
+  let width_ratio = winwidth(0) / str2float(&columns)
+  let height_ratio = winheight(0) / str2float(&lines)
+  if width_ratio > 0.88 && height_ratio > 0.88
+    " make it equal
+    call feedkeys("\<C-w>=")
+  else
+    " maximize
+    exe "resize | vertical resize"
+  endif
+endfunction
+
+"Map \e to edit a file from the directory of the current buffer
+if has("unix")
+  nmap <leader>e :e <C-R>=expand("%:p:h") . "/"<CR>
+else
+  nmap <Leader>e :e <C-R>=expand("%:p:h") . "\\"<CR>
+endif
+
+fu! RunCommand(cmd, tmux)
+  " let cmd = escape(a:cmd, '\')
+  let cmd = escape(a:cmd, '"')
+  if exists('$TMUX') && a:tmux == 1
+    call RunCommandInTmuxWindow(cmd)
+  else
+    exe '!' . cmd
+  end
+endf
+
+fu! RunCommandVis(tmux) range
+  let cmd = GetVisualText()
+  if exists('$TMUX') && a:tmux == 1
+    call RunCommandInTmuxWindow(cmd)
+  else
+    exe '!' . cmd
+  end
+endf
+vmap <silent> <Leader>rp :call RunCommandVis(1)<CR>
+" nmap <silent> <Leader>rl V :call RunCommandVis(1)<CR>
+nmap <silent> <Leader>rp vip :call RunCommandVis(1)<CR>
+
+function GetLine(bufnr, lnum)
+  let lines = getbufline(a:bufnr, a:lnum)
+  if len(lines)>0
+    return trim(lines[0])
+  else
+    return ''
+  endif
+endfunction
+
+fu! GetInput(prompt)
+  echo a:prompt
+  let res = input('')
+  echo "\r"
+  return res
+endf
+
+" replace
+fu! ReplaceInteractive(old, new, exact)
+  if(a:exact == 'y')
+    execute "%s/\\<" . a:old . "\\>/" . a:new . "/gc"
+  else
+    execute "%s/" . a:old . "/" . a:new . "/gc"
+  end
+endf
+nmap <Leader>rn :call ReplaceInteractive(expand('<cword>'), input(''), 'y') <CR>
+vmap <Leader>rn :call ReplaceInteractive(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], input(''), 'y') <CR>
+
+" bufdo
+fu! Bufdo()
+  let regex = GetInput("Input buffer name regex: *=all")
+  let cmd = GetInput("Input cmd to execute")
+  let bufno = -1
+  exe 'bufdo call DoInBuffer("' . regex . '","' . cmd . '",' , bufno . ')'
+endf
+fu! BufdoCmd(cmd, exclude_bufno)
+  let regex = GetInput("Input buffer name regex: *=all")
+  exe 'bufdo call DoInBuffer("' . regex . '","' . a:cmd . '",' . a:exclude_bufno . ')'
+endf
+fu! DoInBuffer(regex, cmd, exclude_bufno)
+  let name = bufname()
+  let bufno=bufnr()
+  echo bufno
+  if bufno != a:exclude_bufno
+    if a:regex == '*'
+      exe a:cmd
+    elseif name == a:regex
+      exe a:cmd
+    else
+      let match = matchstr(name, a:regex)
+      if empty(match)
+        " skip
+      else
+        exe a:cmd
+      endif
+    endif
+  endif
+endf
+nmap <Leader>bfd :call Bufdo()<CR>
+nmap <Leader>bd :call BufdoCmd('bd', bufnr('%'))<CR>
+
+set statusline+=%#warningmsg#

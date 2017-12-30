@@ -1,0 +1,91 @@
+{
+  "codeLens.enable": true,
+  "callHierarchy.enableTooltip": true,
+  "coc.preferences.formatOnSave": true,
+  "coc.source.tag.filetypes": [
+    "ruby"
+  ],
+  "coc.source.tag.disableSyntaxes": [
+    "string",
+    "comment"
+  ],
+  "metals.superMethodLensesEnabled": true,
+  "metals.statusBarEnabled": true,
+  "metals.scalafmtConfigPath": "./.scalafmt.conf",
+  "metals.fallbackScalaVersion": "2.13.4",
+  "metals.showInferredType": true,
+  "metals.serverVersion": "0.11.12",
+  "java.completion.guessMethodArguments": true,
+  "java.import.gradle.enabled": false,
+  "java.import.maven.enabled": false,
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "path": "~/Java/jdk-17.0.2",
+      "default": true
+    }
+  ],
+  "java.inlayHints.parameterNames.enabled": "none",
+  "git.enableGutters": true,
+  "git.floatConfig": {
+    "border": true
+  },
+  "git.removedSign.text": "-",
+  "git.addedSign.text": "+",
+  "git.changedSign.text": "~",
+  "git.addGBlameToVirtualText": true,
+  "hover.floatConfig": {
+    "border": true
+  },
+  "signature.floatConfig": {
+    "border": true
+  },
+  "signature.target": "float",
+  "signature.preferShownAbove": false,
+  "suggest.floatConfig": {
+    "border": true
+  },
+  "suggest.enablePreselect": true,
+  "diagnostic.showUnused": false,
+  "diagnostic.level": "error",
+  "diagnostic.locationlistUpdate": true,
+  "diagnostic.floatConfig": {
+    "border": true
+  },
+  "diagnostic.virtualText": true,
+  "diagnostic.errorSign": "x",
+  "diagnostic.warningSign": "!",
+  "diagnostic.autoRefresh": true,
+  "diagnostic.checkCurrentLine": true,
+  "go.goplsOptions": {
+    "completeUnimported": true,
+    "codelenses": {
+      "gc_details": true
+    },
+    "usePlaceholders": true
+  },
+  "go.tags": {
+    "transform": "camelcase"
+  },
+  "yaml.schemas": {
+    "kubernetes": "/*.yaml"
+  },
+  "rust-analyzer.lens.enable": false,
+  "rust-analyzer.inlayHits.enabled": true,
+  "rust-analyzer.inlayHints.typeHints.enable": false,
+  "rust-analyzer.inlayHints.chainingHints.enable": false,
+  "rust-analyzer.inlayHints.lifetimeElisionHints.enable": "never",
+  "rust-analyzer.inlayHints.parameterHints.enable": false,
+  "rust-analyzer.inlayHints.bindingModeHints.enable": false,
+  "rust-analyzer.inlayHints.closingBraceHints.enable": false,
+  "rust-analyzer.inlayHints.closureReturnTypeHints.enable": "never",
+  "pyright.inlayHints.variableTypes": false,
+  "python.pythonPath": "python3",
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "~/.local/bin/black",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportGeneralTypeIssues": "warning"
+  },
+  "clangd.path": "/home/wenjian/.config/coc/extensions/coc-clangd-data/install/15.0.6/clangd_15.0.6/bin/clangd"
+}

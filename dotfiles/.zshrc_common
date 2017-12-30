@@ -1,0 +1,176 @@
+export auto_title_screens="no"
+export prompt="
+%{$FG[WHITE]%}(%D %*) <%?> [%~] $PROGRAM %{$FG[DEFAULT]%}
+%{$fg[cyan]%}%m %#%{$fg[default]%} "
+
+set-title() {
+  echo -e "\e]0;$*\007"
+}
+
+ssh() {
+  set-title $*;
+  /usr/bin/ssh -2 $*;
+  set-title $HOST;
+}
+
+gittooldiff() {
+  if [ $# -eq 0 ]; then 
+    abranch=""
+    bbranch=origin/`git_current_branch`
+  fi
+  if [ $# -eq 1 ]; then 
+      abranch=""
+      bbranch=$1
+  fi
+
+  if [ $# -eq 2 ]; then 
+    abranch=$1
+    bbranch=$2
+  fi 
+
+  if [ $# -ge 3 ]; then 
+      echo "provide only a source and a destination branch"
+      return
+  fi
+
+  git diff --name-status $abranch $bbranch >.tmp.gitdiff
+  vi -M -c 'cd `pwd`' -c "call SetGitToolDiffMenu2Branch(\"$abranch\", \"$bbranch\")" -c "let g:coc_start_at_startup=v:false" -R .tmp.gitdiff
+}
+compdef _git gittooldiff=git-diff
+
+gitdeltadiff (){
+  export DELTA_FEATURES="+side-by-side"
+  git diff -w $*
+  unset DELTA_FEATURES
+}
+compdef _git gitdeltadiff=git-diff
+alias gts='git status'
+alias gtd='gittooldiff'
+alias gtr='git stash; git pull --rebase; git stash pop;'
+alias grbd='git push origin --delete '
+alias gdd='gitdeltadiff'
+alias jq='jq -S -M'
+
+export JAVA_HOME=$HOME/Java/latest
+export PATH=$JAVA_HOME/bin:~/Scala/sbt/bin:~/.local/share/coursier/bin:$PATH
+
+export GOPATH=$HOME/Go
+export GOROOT=$HOME/Go/latest
+export GOBIN=$HOME/Go/bin
+export PATH=$GOROOT/bin:$GOPATH/bin:$HOME/.local/bin:$PATH
+export GCM_CREDENTIAL_STORE=gpg
+export GPG_TTY=$(tty)
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_COMMAND='ag -l --path-to-ignore ~/.ignore --nocolor -g ""'
+# export FZF_DEFAULT_COMMAND='rg --files --ignore-file=~/.ignore --hidden --follow --glob "!.git/*"'
+export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview='batcat --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}' --preview-window up:3:hidden:wrap
+  --bind 'ctrl-/:toggle-preview'"
+  # --color header:italic"
+  #--bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  #--header 'Press CTRL-Y to copy command into clipboard'"
+export FZF_CTRL_T_OPTS="--bind 'ctrl-/:toggle-preview'"
+  
+# alias fzf='/usr/bin/fzf --preview="batcat --color=always {}" --bind shift-up:preview-up,shift-down:preview-down,ctrl-q:select-all,page-up:preview-page-up,page-down:preview-page-down'
+# export PATH=$PATH:~/.fzf/bin
+
+alias tmux-sync-panes='tmux set-window-option synchronize-panes'
+alias s='source ~/.zshrc'
+alias x=exit
+alias python=python3
+alias vi=vim
+[[ -f `which nvim` ]] && alias vi='nvim'
+alias lvi='vi -i ./.viminfo'
+alias pvi='vi --cmd "let g:coc_start_at_startup=v:false"'
+alias v="vi -M"
+alias pv='vi -M --cmd "let g:coc_start_at_startup=v:false"'
+alias vimdiff='vi -d --cmd "let g:coc_start_at_startup=v:false"'
+[[ -f `which batcat` ]] && alias bat='batcat'
+alias more='bat -p'
+
+export MAKE_OUTPUT_LEVEL=QUIET
+export LANG=en_US.UTF-8
+
+AGENT_SOCKET=$HOME/.ssh/.ssh-agent-socket
+AGENT_INFO=$HOME/.ssh/.ssh-agent-info
+if [[ -z `pgrep -a -u $USER ssh-agent | grep -v gnome` ]]
+then
+  echo "Re-starting Agent for $USER"
+  pkill -15 -u $USER ssh-agent
+  eval `ssh-agent -s`
+  echo "export SSH_AGENT_PID=$SSH_AGENT_PID" > $AGENT_INFO
+  echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $AGENT_INFO
+  source $AGENT_INFO
+  for file in `ls -1 ~/.ssh/*.pem`
+  do
+    ssh-add $file
+  done
+else
+  [ -f $AGENT_INFO ] && source $AGENT_INFO
+  echo "SSH Agent Already Running"
+fi
+
+export EDITOR=vim
+bindkey -v
+bindkey "^A" beginning-of-line
+bindkey "^E" end-of-line
+# bindkey "^O" history-incremental-search-backward
+bindkey "^O" fzf-history-widget
+bindkey "^R" history-incremental-search-backward
+bindkey "^X" clear-screen
+bindkey "^L" forward-word
+bindkey "^H" backward-word
+bindkey "^J" backward-delete-word
+bindkey "^K" delete-word
+# bindkey "^B" vi-delete-char
+bindkey "^W" vi-backward-kill-word
+bindkey "^D" kill-line
+bindkey "^U" vi-kill-line
+bindkey "^I" expand-or-complete
+bindkey '^P' up-line-or-search
+bindkey '^N' down-line-or-search
+bindkey "^_" undo
+bindkey "^V" vi-cmd-mode
+# bindkey "^]c" capitalize-word
+# bindkey "^]l" down-case-word
+# bindkey "^]u" up-case-word
+
+HISTSIZE=10000000
+SAVEHIST=10000000
+
+setopt BANG_HIST                 # Treat the '!' character specially during expansion.
+setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
+setopt SHARE_HISTORY             # Share history between all sessions.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+# setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+# setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
+setopt HIST_BEEP                 # Beep when accessing nonexistent history.
+
+# tell me git branch
+git_prompt() {
+  if git rev-parse --git-dir > /dev/null 2>&1; then
+    ref=$(git symbolic-ref HEAD | cut -d'/' -f3,4,5)
+    echo "[$ref]"
+  else
+    echo ''
+    # this is not a git repository
+  fi
+}
+
+setopt prompt_subst
+autoload -U colors && colors
+autoload -U promptinit
+promptinit
+
+PS1='%{$fg[green]%}$(git_prompt)%{$reset_color%}%{$fg[yellow]%}%~/%{$reset_color%}# '
+# RPROMPT='%{$fg[green]%}$(git_prompt)%{$reset_color%}'
+# PS1='%{$fg[green]%}$(git_prompt)%{$reset_color%}# '
+# RPROMPT='%{$fg[yellow]%}%~%{$reset_color%}'

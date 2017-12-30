@@ -1,0 +1,220 @@
+fu! SbtPackageRoot()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "build.sbt"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! ScalaTest()
+  let project_root = SbtPackageRoot()
+  let project = split(project_root, '\/')[-1]
+  let build_classpath = BuildClasspath()
+  let class = FindClassToRun()
+  let spec = FindScalaTestSpec()
+  if spec == ''
+    let spec = FindScalaTestBehavior()
+  endif
+
+  if(empty(spec))
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar:" . build_classpath . " org.scalatest.tools.Runner -o -s " . class
+  else
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar:" . build_classpath . " org.scalatest.tools.Runner -o -s " . class . " -z '" . spec . "'"
+  endif
+  call RunCommand(cmd, 1)
+endf
+
+fu! FindBloopDir()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/.bloop'
+    if isdirectory(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! BloopBuildClasspath()
+  let project_root = SbtPackageRoot()
+  let project = split(project_root, '\/')[-1]
+  let bloop_dir = FindBloopDir()
+  let bloop_classpath_dir = bloop_dir.'/.bloop/'.project.'/bloop-bsp-clients-classes'
+
+  let impl_build_classes_directories=glob(bloop_classpath_dir.'/classes-Metals-*', 1, 1)
+  let impl_build_classes_dir = ""
+  let modify_time = 0
+  for class_dir in impl_build_classes_directories
+    if(modify_time < getftime(class_dir))
+      let modify_time = getftime(class_dir)
+      let impl_build_classes_dir = class_dir
+    endif
+  endfor
+
+  let test_build_classes_directories=glob(bloop_classpath_dir.'/test-classes-Metals-*', 1, 1)
+  let test_build_classes_dir = ""
+  let modify_time = 0
+  for class_dir in test_build_classes_directories
+    if(modify_time < getftime(class_dir))
+      let modify_time = getftime(class_dir)
+      let test_build_classes_dir = class_dir
+    endif
+  endfor
+
+  let it_build_classes_directories=glob(bloop_classpath_dir.'/it-classes-Metals-*', 1, 1)
+  let it_build_classes_dir = ""
+  let modify_time = 0
+  for class_dir in it_build_classes_directories
+    if(modify_time < getftime(class_dir))
+      let modify_time = getftime(class_dir)
+      let it_build_classes_dir = class_dir
+    endif
+  endfor
+
+  return impl_build_classes_dir.':'.test_build_classes_dir.':'.it_build_classes_dir
+endf
+
+fu! OpenSbtPane(project_root)
+  let sbt_pane = -1
+  let panes = VimuxTmux("list-panes -F '#{pane_title}:#{pane_id}'")
+  let panes = split(panes, "\n")
+  for pane in panes
+    let atts = split(pane, ":")
+    let pane_title = atts[0]
+    let pane_id = atts[1]
+    let spec = match(pane_title, '.*;\s*sbt')
+    if spec == 0
+      let sbt_pane = pane_id
+    endif
+  endfor
+  if sbt_pane == -1
+    let cmd = "cd " . a:project_root . "; sbt"
+    call RunCommand(cmd, 1)
+  endif
+endfunction
+
+fu! BuildSbtPackage()
+  let package_root = SbtPackageRoot()
+  call OpenSbtPane(package_root)
+  let buildsystem = "set coverageEnabled := true; coverage; test; coverageAggregate"
+  let tmux = 1
+  call RunCommand(buildsystem, tmux)
+endf
+
+fu! SbtTestFocus()
+  let project_root = SbtPackageRoot()
+  call OpenSbtPane(project_root)
+  let package_line = search('^package ', 'Wnbc')
+  if package_line ==# 0
+    return
+  endif
+
+  let package = getline(package_line)
+  let package_name = split(package, ' ')[1]
+
+  let path = expand('%:r')
+  let class_name = split(path, '/')[-1]
+  let class = package_name . '.' . class_name
+
+  let spec = FindScalaTestSpec()
+  if spec == ''
+    let spec = FindScalaTestBehavior()
+  endif
+
+  call RunSbtTestOnly(class, spec)
+endf
+
+fu! SbtTestCurrentFile()
+  let project_root = SbtPackageRoot()
+  call OpenSbtPane(project_root)
+  let package_line = search('^package ', 'Wnbc')
+  if package_line ==# 0
+    return
+  endif
+
+  let package = getline(package_line)
+  let package_name = split(package, ' ')[1]
+
+  let path = expand('%:r')
+  let class_name = split(path, '/')[-1]
+  let class = package_name . '.' . class_name
+
+  call RunSbtTestOnly(class, '')
+endf
+
+fu! FindScalaTestSpec()
+  let spec_line = search( '\v.*\"(.+)\"\s+in\s+\{\s*', 'Wnbc')
+  let behavior_line = search( '\v\s*behavior of\s+"(.+)\"\s*', 'Wnbc')
+  if spec_line ==# 0 && behavior_line ==# 0
+    return ''
+  endif
+
+  if spec_line < behavior_line
+    let spec_line = behavior_line
+  endif
+
+  let spec = getline(spec_line)
+  let spec_parts = matchlist(spec, '\v.*\"(.+)\".*')
+  if (len(spec_parts) >= 2)
+    let spec = spec_parts[1]
+  else
+    let spec = ''
+  endif
+  return spec
+endf
+
+fu! FindScalaTestBehavior()
+  let spec_line = search( '\v\s*behavior of\s+"(.+)\"\s*', 'Wnbc')
+  if spec_line ==# 0
+    return ''
+  endif
+
+  let spec = getline(spec_line)
+  let spec_parts = matchlist(spec, '\v\s*behavior of\s+"(.+)\"\s*')
+  if (len(spec_parts) >= 2)
+    let spec = spec_parts[1]
+  else
+    let spec = ''
+  endif
+  return spec
+endf
+ 
+fu! RunSbtTestOnly(class, spec)
+  let path = expand('%')
+  let it = match(path, '.*src/it/.*')
+  if it == -1
+    let cmd = 'testOnly '
+  else
+    let cmd = 'IntegrationTest / testOnly '
+  endif
+  if a:spec == ''
+    let cmd = cmd . a:class
+  else
+    let cmd = cmd . a:class . ' -- -z "' . a:spec . '"'
+  endif
+  call RunCommand(cmd, 1)
+endf
+
+autocmd filetype scala set shiftwidth=2          " Set indention level to be the same as softtabstop
+autocmd filetype scala set softtabstop=2         " Why are tabs so big?  This fixes it
+autocmd filetype scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
+autocmd filetype scala nmap <buffer> <Leader>tt :call SbtTestFocus()<CR>
+autocmd filetype scala nmap <buffer> <Leader>ta :call SbtTestCurrentFile()<CR>
+autocmd filetype scala nmap <buffer> <Leader>ut :call OpenTestFile('Spec', 'scala')<CR>
+autocmd filetype scala nmap <buffer> <Leader>ct :call NewTestFile('Spec', 'scala')<CR>
+autocmd filetype scala nmap <buffer> <Leader>run :call JavaRun('')<CR>
+autocmd filetype scala nmap <Leader>bb :call BuildSbtPackage()<CR>
+autocmd BufRead,BufNewFile build.sbt nmap <buffer> <Leader>bb :call BuildSbtPackage()<CR>

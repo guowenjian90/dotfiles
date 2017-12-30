@@ -1,0 +1,35 @@
+" autocmd filetype java let g:VimuxRunnerType = "window"
+" autocmd filetype scala let g:VimuxRunnerType = "window"
+" autocmd filetype java let g:VimuxRunnerType = "pane"
+" autocmd filetype scala let g:VimuxRunnerType = "pane"
+" autocmd filetype java let g:UseVimuxConsole = "vimux-console"
+" autocmd filetype scala let g:UseVimuxConsole = "vimux-console"
+
+" vimux
+fu! GetVisualText()
+  try
+    let a_save = @a
+    normal! gv"ay
+    return @a
+  finally
+    let @a = a_save
+  endtry
+endf
+
+fu! RunCommandInTmuxWindow(cmd)
+  " let cmd = escape(a:cmd, '\')
+  let cmd = substitute(a:cmd, '\n', ' ', 'g')
+  call VimuxRunCommand(cmd)
+endf
+
+nmap <silent> <Leader>rr :VimuxRunLastCommand<CR>
+let g:VimuxOrientation = 'v'
+" let g:VimuxOrientation = 'h'
+let g:VimuxUseNearest = 1
+let g:VimuxRunnerType = "pane"
+
+fu! ToggleVimuxRunnerType(type)
+  let g:VimuxRunnerType = a:type
+endf
+nmap <silent> <Leader>vw :call ToggleVimuxRunnerType("window")<CR>
+nmap <silent> <Leader>vp :call ToggleVimuxRunnerType("pane")<CR>

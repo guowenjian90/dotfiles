@@ -1,0 +1,102 @@
+fu! BuildPythonPackage()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  let buildsystem = ""
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "setup.py"
+    if filereadable(configfile)
+      let buildsystem = "cd " . dir . "; python setup.py build"
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  let tmux = 1
+  call RunCommand(buildsystem, tmux)
+endf
+
+fu! CurrentPythonPackagePath()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "setup.py"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! FindPythonTestMethod()
+    " def test_get_method_success(self):
+  let method_line = search('\vdef\s+(test_.*)\(self\)', 'Wnbc')
+  if method_line ==# 0
+    return ''
+  endif
+
+  let method = getline(method_line)
+  let method_parts = matchlist(method, '\vdef\s+(test_.*)\(self\)')
+  if (len(method_parts) >= 2)
+    let method = method_parts[1]
+  else
+    return ''
+  endif
+  return method
+endf
+
+
+fu! FindPythonTestClass()
+" class TestInferenceServerClient(unittest.TestCase):
+  let class_line = search('\vclass\s+(.*)\(.*unittest\.TestCase.*\).*', 'Wnbc')
+  if class_line ==# 0
+    return ''
+  endif
+
+  let class = getline(class_line)
+  let class_parts = matchlist(class, '\vclass\s+(.*)\(.*unittest\.TestCase.*\).*')
+  if (len(class_parts) >= 2)
+    let class = class_parts[1]
+  else
+    let class = ''
+  endif
+  return class
+endf
+
+fu! RunPythonTest(class, method)
+  let file = expand('%:p:t')
+  let file_dir = expand('%:p:h')
+  if a:method == '' && a:class == ''
+    let cmd = " cd ". file_dir . "; python -m pytest -v " . file
+  elseif a:method == ''
+    let cmd = " cd ". file_dir . "; python -m pytest -v " . file . '::' . a:class
+  else
+    let cmd = " cd ". file_dir . "; python -m pytest -v " . file . '::' . a:class . '::' . a:method
+  endif
+  call RunCommand(cmd, 1)
+endf
+
+fu! PythonTestFocus()
+  let class = FindPythonTestClass()
+  if class == ''
+    call RunPythonTest('', '')
+  else
+    let method = FindPythonTestMethod()
+    call RunPythonTest(class, method)
+  endif
+endf
+
+fu! PythonRun()
+  let file = expand('%:p:t')
+  let file_dir = expand('%:p:h')
+  let cmd = " cd ". file_dir . "; python " . file
+  call RunCommand(cmd, 1)
+endf
+autocmd filetype python nmap <Leader>tt :call PythonTestFocus()<CR>
+autocmd filetype python nmap <Leader>ta :call RunPythonTest('', '')<CR>
+autocmd filetype python nmap <Leader>run :call PythonRun()<CR>
+autocmd filetype python nmap <Leader>bb :call BuildPythonPackage()<CR>
