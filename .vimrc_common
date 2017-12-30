@@ -1,0 +1,588 @@
+" Plugin loading
+" set the runtime path to include Vundle and initialize
+set nocompatible              " be iMproved, required
+filetype off                  " required
+set rtp+=~/.vim/bundle/Vundle.vim
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'rails.vim'
+Plugin 'fatih/vim-go'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'gmarik/Vundle.vim'
+Plugin 'mileszs/ack.vim'
+Plugin 'auto_mkdir'
+Plugin 'SuperTab'
+Plugin 'nerdtree'
+Plugin 'vim-snipmate'
+Plugin 'vim-snippets'
+Plugin 'tlib_vim'
+Plugin 'tagbar'
+Plugin 'vim-addon-mw-utils'
+Plugin 'Chiel92/vim-autoformat'
+Plugin 'tomtom/tcomment_vim'
+Plugin 'scrooloose/syntastic'
+Plugin 'vim-fugitive'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'vim-surround'
+Plugin 'vim-repeat'
+Plugin 'matchit'
+Plugin 'ag.vim'
+Plugin 'vimux'
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+
+"Set colorscheme.  This is a black background colorscheme
+colorscheme desert
+"colorscheme darkblue
+"colorscheme freya
+"colorscheme evening
+
+" cursor shape
+" let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+" let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+" let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+
+"Turn on filetype plugins to automagically
+"Grab commands for particular filetypes.
+"Grabbed from $VIM/ftplugin
+filetype on           " Enable filetype detection
+filetype plugin on
+filetype indent on
+
+"Turn on syntax highlighting
+syntax enable         " enable syntax highlighting
+syntax on             " Enable syntax highlighting
+
+"  vim options
+" set number
+" set paste
+set autoindent            " always set autoindenting on
+set backspace=2           " allow backspacing over everything in insert
+set cindent               " c code indenting
+set diffopt=filler,iwhite " keep files synced and ignore whitespace
+set expandtab             " get rid of tabs altogether and replace with spaces
+set foldcolumn=2          " set a column incase we need it
+set foldlevel=0           " show contents of all folds
+set foldmethod=indent     " use indent unless overridden
+set guioptions-=m         " remove menu from the gui
+set guioptions-=t         " remove toolbar
+set hidden                " hide buffers instead of closing
+set history=50            " keep 50 lines of command line history
+set ignorecase            " do case insensitive matching
+set incsearch             " incremental search
+set laststatus=2          " always have status bar
+set linebreak             " this displays long lines as wrapped at word boundries
+set matchtime=10          " time to flash the brack with showmatch
+set nobackup              " don't keep a backup file
+set nocompatible          " use vim defaults (much better!)
+set nofen                 " disable folds
+set notimeout             " i like to be pokey
+set ttimeout              " timeout on key-codes
+set ttimeoutlen=100       " timeout on key-codes after 100ms
+set ruler                 " the ruler on the bottom is useful
+set scrolloff=1           " dont let the curser get too close to the edge
+set showcmd               " show (partial) command in status line.
+set showmatch             " show matching brackets.
+set textwidth=0           " don't wrap words by default
+" set textwidth=80          " this wraps a line with a break when you reach 80 chars
+set virtualedit=block     " let blocks be in virutal edit mode
+set wildmenu              " this is used with wildmode(full) to cycle options
+set listchars=tab:>-,trail:-                 " prefix tabs with a > and trails with -
+set tags+=./.tags;/,./tags;/                 " set ctags
+set whichwrap+=<,>,[,],h,l,~                 " arrow keys can wrap in normal and insert modes
+set wildmode=list:longest,full               " list all options, match to the longest
+set helpfile=$VIMRUNTIME/doc/help.txt
+set guifont=Courier\ 10\ Pitch\ 10
+set path+=.,..,../..,../../..,../../../..,/usr/include
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files I am not likely to want to edit or read.
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc,.class
+"Disabled options
+"set list                    " Make tabs and trails explicit
+"set noswapfile              " this guy is really annoyoing sometimes
+"set wrapmargin=80           " When pasteing, use this, because textwidth becomes 0
+set directory=$HOME/.swp
+" viminfo options
+" read/write a .viminfo file, don't store more than
+" 50 lines of registers
+set viminfo='20,\"50
+set guifont=-adobe-courier-medium-r-normal--14-100-100-100-m-90-iso8859-1
+set bs=indent,eol,start
+set grepprg=ack
+set encoding=utf-8
+set showcmd                     " display incomplete commands
+set foldcolumn=0
+" set nowrap                      " don't wrap lines
+set shiftwidth=2          " Set indention level to be the same as softtabstop
+set softtabstop=2         " Why are tabs so big?  This fixes it
+set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
+set expandtab                   " use spaces, not tabs (optional)
+set backspace=indent,eol,start  " backspace through everything in insert mode
+" Searching
+set hlsearch                    " highlight matches
+set smartcase                   " ... unless they contain at least one capital letter
+
+"Set variables for plugins to use
+"vimspell variables
+"don't automatically spell check!
+let spell_auto_type=""
+
+" LargeFile.vim settings
+" don't run syntax and other expensive things on files
+let g:LargeFile = 100
+
+" gdb option
+" set previewheight=12               " set gdb window initial height
+" run macros/gdb_mappings.vim        " source key mappings listed in this
+" set asm=0                          " don't show any assembly stuff
+" set gdbprg=gdb_invocation          " set GDB invocation string (default 'gdb')
+
+" comment options
+let g:tcommentMapLeader1 = '<C-c>'
+let g:tcommentMapLeader2 = ''
+let g:EnhCommentifyBindInInsert = "No"
+
+let mapleader=" "
+" search
+" let g:ag_prg='ag -S --nocolor --nogroup --column '
+fu! SearchWithAg(text, extension)
+  if(a:extension == '')
+    execute "Ag " . a:text
+  else
+    execute "Ag " . a:text . " **/*" . a:extension
+  end
+endf
+nmap <Leader>sa :call SearchWithAg(expand('<cword>'), input('')) <CR>
+vmap <Leader>sa :call SearchWithAg(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], input('')) <CR>
+
+set omnifunc=syntaxcomplete#Complete
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
+autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
+autocmd BufReadPost location nnoremap <buffer> <CR> <CR>
+
+" File type auto cmd
+autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
+autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
+autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
+autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
+autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+autocmd FileType * setlocal omnifunc=syntaxcomplete#Complete
+autocmd Filetype ruby compiler ruby
+autocmd Filetype ruby set makeprg=ruby\ -c\ %
+autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+autocmd FileType go setlocal omnifunc=go#complete#Complete
+autocmd FileType go imap <C-I> <C-X><C-O>
+autocmd FileType go nmap <Leader>tt :GoTest<CR>
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+" syntax checking
+"Adding mail as a spell checked type, only if in 7.0 >
+if (v:version >= 700)
+  autocmd FileType mail set spell
+endif
+
+" Ruby build functions
+fu! CurrentRubyPackagePath() 
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "Rakefile"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! RubyTestFile()
+  let file = expand('%:p')
+  if (stridx(file, "_spec.rb") == -1)
+    let new_file = substitute(file, "/lib/", "/spec/", "")
+    let new_file = substitute(new_file, ".rb", "_spec.rb", "")
+  else
+    let new_file = substitute(file, "/spec/", "/lib/", "")
+    let new_file = substitute(new_file, "_spec.rb", ".rb", "")
+  endif
+  let exist = findfile(new_file)
+  if (exist == new_file)
+    exe "edit " new_file
+  else
+    echo 'can not find file '. new_file
+  endif
+endf
+autocmd FileType ruby nmap <Leader>ut :call RubyTestFile()<CR>
+
+" java build functions
+fu! CurrentJavaPackagePath() 
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "build.xml"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! RunShell()
+  let file = expand('%:p')
+  let file_dir = expand('%:p:h')
+  let cmd = " cd ". file_dir . "; sh " . file
+  call RunCommand(cmd)
+endf
+autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
+
+fu! RunCommand(cmd)
+  if exists('$TMUX')
+    exe "VimuxRunCommand \"" . a:cmd . "\""
+  else
+    exe "!" . a:cmd
+  end
+endf
+
+" Syntastic options
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+let g:syntastic_go_checkers = ['errcheck', 'golint']
+let g:syntastic_mode_map = { "mode": "active",
+                           \ "active_filetypes": [],
+                           \ "passive_filetypes": ["scala"] }
+" let g:syntastic_quiet_messages = { "type": "style" }
+" let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+
+" super tab
+let g:SuperTabLongestEnhanced = 1
+let g:SuperTabLeadingSpaceCompletion = 0
+let g:SuperTabClosePreviewOnPopupClose = 1
+let g:SuperTabContextDefaultCompletionType ="<C-X><C-O>"
+"let g:SuperTabDefaultCompletionType = "context"
+
+" Ctrlp
+set wildignore+=*/tmp/*,*/build/*,*tags,*.a,*.tar,*.gz,*.so,.*.class,*.swp,*.zip     " MacOSX/Linux
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+let g:ctrlp_working_path_mode = ''
+let g:ctrlp_by_filename = 1
+let g:ctrlp_regexp = 0
+let g:ctrlp_max_files=0
+let g:ctrlp_max_height = 20
+let g:ctrlp_custom_ignore = {
+      \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+      \ 'file': '\v\.(class|swp|exe|so|dll)$',
+      \ }
+" let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+let g:ctrlp_map = ''
+
+" vim maps
+"
+" cscope
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"   's'   symbol: find all references to the token under cursor
+"   'g'   global: find global definition(s) of the token under cursor
+"   'c'   calls:  find all calls to the function name under cursor
+"   't'   text:   find all instances of the text under cursor
+"   'e'   egrep:  egrep search for the word under cursor
+"   'f'   file:   open the filename under cursor
+"   'i'   includes: find files that include the filename under cursor
+"   'd'   called: find functions that function under cursor calls
+" cscope setting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("cscope")
+  set cscopequickfix=s-,c-,d-,i-,t-,e-,g-,f-   " useful for cscope in quickfix
+  set csprg=cscope
+  set csto=1
+  set cst
+  set nocsverb
+  " add any database in current directory
+  if filereadable("cscope.out")
+    cs add cscope.out
+  endif
+  set csverb
+  set cscopetag
+  "set cscopequickfix=s-,g-,c-,d-,t-,e-,f-,i-
+  set cscopequickfix=
+  nmap <C-[>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+  nmap <C-[>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+  nmap <C-[>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+  " nmap <C-[>r :cs reset<CR><CR>
+  nmap <C-[>r :!sh ./cscope.sh<CR>
+endif
+"Functions
+fu! CscopeAdd() " Add Cscope database named .cscope.out
+  let dir = getcwd()
+  let savedir = getcwd()
+  wh (dir != '/')
+    let scopefile = dir . '/' . ".cscope.out"
+    if filereadable(scopefile)
+      exe "cs add " scopefile
+      exe "cd " savedir
+      return dir
+    en
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+endf
+
+fu! MakeTags() "rebuild tags
+  let dir = getcwd()
+  let savedir = getcwd()
+  while (dir != '/')
+    let scopefile = dir . '/' . "make_tags.sh"
+    if filereadable(scopefile)
+      exe "!sh ./make_tags.sh "
+      break
+    else
+      cd ..
+      let dir = getcwd()
+    endif
+  endw
+  exe "cd " savedir
+endf
+nmap <Leader>mtg :call MakeTags()<CR>
+
+nmap <Leader>< :exe "vertical resize " . (winwidth(0) * 4/5)<CR>
+nmap <Leader>> :exe "vertical resize " . (winwidth(0) * 5/4)<CR>
+nmap <Leader>- :exe "resize " . (winheight(0) * 4/5)<CR>
+nmap <Leader>+ :exe "resize " . (winheight(0) * 5/4)<CR>
+nmap <C-w><C-m> :exe "resize "<CR> <bar> :exe "vertical resize"<CR>
+
+"Map \e to edit a file from the directory of the current buffer
+if has("unix")
+  nmap <leader>e :e <C-R>=expand("%:p:h") . "/"<CR>
+else
+  nmap <Leader>e :e <C-R>=expand("%:p:h") . "\\"<CR>
+endif
+
+" Maps
+nmap cv <C-V>
+nmap vag vap
+nmap vac va{
+nmap vaq va"
+nmap vad va<
+nmap vig vip
+nmap vic vi{
+nmap viq vi"
+nmap vid vi<
+nmap vtc vt{
+nmap vfc vt{
+nmap dac da{
+nmap daq da"
+nmap dad da<
+nmap dic di{
+nmap diq di"
+nmap did di<
+nmap cac ca{
+nmap caq ca"
+nmap cad ca<
+nmap cic ci{
+nmap ciq ci"
+nmap cid ci<
+nmap yag yap
+nmap yac ya{
+nmap yaq ya"
+nmap yad ya<
+nmap yig yip
+nmap yic yi{
+nmap yiq yi"
+nmap yid yi<
+nmap vu v^
+nmap v<CR> v$
+nmap cu c^
+nmap c<CR> c$
+nmap du d^
+nmap d<CR> d$
+nmap yu y^
+nmap y<CR> y$
+nmap r<CR> R
+nmap gl $
+nmap gh ^
+nmap <c-k> {
+nmap <c-j> }
+nmap <c-h> B
+nmap <c-l> W
+nmap <c-b> :bnext<CR>
+nmap <c-n> :cn<CR>
+nmap <c-p> :cp<CR>
+nmap <c-;> :g;<CR>
+nmap <c-,> :g,<CR>
+nmap <Leader>num :set number<CR>
+nmap <Leader>b :b
+nmap <Leader>z <C-z>
+nmap <Leader>cq :cclose<CR>
+nmap <Leader>oq :copen<CR>
+nmap <Leader>x :x<CR>
+nmap <Leader>w :w<CR>
+nmap <Leader>q :q<CR>
+nmap <Leader>fq :q!<CR>
+nmap <Leader>of :let g:ctrlp_default_input = ''  <bar> :CtrlP<CR>
+nmap <Leader>gf :let g:ctrlp_default_input = expand('<cword>') <bar> :CtrlP<CR>
+nmap <Leader>ob :let g:ctrlp_default_input = ''  <bar> :CtrlPBuffer<CR>
+nmap <Leader>og :let g:ctrlp_default_input = ''  <bar> :CtrlPTag<CR>
+nmap <Leader>tb :Tagbar<CR> <C-W>l
+nmap <Leader>ntt :NERDTreeToggle<CR>
+nmap <Leader>ff :NERDTreeFind<CR>
+nmap <Leader>mv :NERDTreeFind<CR> <bar>m <bar>m
+nmap <Leader>rm :NERDTreeFind<CR> <bar>m <bar>d
+nmap <Leader>cp :NERDTreeFind<CR> <bar>m <bar>c
+nmap <Leader>sp :sp<CR>
+nmap <Leader>vs :vs<CR>
+nmap <Leader>db :bd<CR>
+nmap <Leader>kk <C-w>k
+nmap <Leader>jj <C-w>j
+nmap <Leader>hh <C-w>h
+nmap <Leader>ll <C-w>l
+nmap <Leader>fmt :Autoformat<CR>
+nmap <Leader>cw <Right>bvU
+nmap <CR> G
+nmap <Leader>ss viw <bar> :s/\<\@!\([A-Z]\)/\_\l\1/g<cr>gul
+nmap <Leader>cs viw <bar> :s/_\([a-z]\)/\u\1/g<cr>gul
+nmap vmc V%
+nmap ymc V%y
+
+cmap <C-a> <Home>
+cmap <C-e> <End>
+cmap <C-p> <Up>
+cmap <C-n> <Down>
+cmap <C-j> <C-w>
+cmap <C-k> <S-Right><C-w>
+cmap <C-h> <S-Left>
+cmap <C-l> <S-Right>
+
+imap <S-Up> <C-o>v<Up>
+imap <S-Down> <C-o>v<Down>
+imap <S-Left> <Left><C-o>v
+imap <S-Right> <C-o>v<Right>
+imap ii <Esc>
+imap gl<CR> <C-o>$
+imap gh<CR> <C-o>^
+imap mj<CR> <C-o>mj
+imap ml<CR> <C-o>ml
+imap mh<CR> <C-o>mh
+imap mw<CR> <C-o>mw
+imap mg<CR> <C-o>mg
+imap mm<CR> <C-o>mt
+imap <C-^> <C-o><C-^>
+imap vv <C-o>v
+imap <C-j> <Down>
+imap <C-k> <Up>
+imap <C-h> <Left>
+imap <C-l> <Right>
+" imap <C-b> <C-o>B<C-w>
+imap <C-d><CR> <C-o>d$<Right>
+imap <C-y><CR> <C-o>y$
+imap <C-y>y <C-o>yy
+imap <C-y>0 <C-o>y0
+imap <C-y>t <C-o>yt
+imap <C-y>f <C-o>yf
+imap <C-y>i <C-o>yi
+imap <C-y>a <C-o>ya
+imap <C-y>p <C-o>P
+imap <C-_> <C-o>u
+inoremap <expr> j pumvisible() ? "\<C-n>" : "j"
+inoremap <expr> k pumvisible() ? "\<C-p>" : "k"
+
+vmap <CR> G
+vmap gl $
+vmap gh ^
+vmap <C-k> {
+vmap <C-j> }
+vmap <C-h> gE
+vmap <C-l> E
+vmap > >gv
+vmap < <gv
+vmap <Leader>ss :s/\<\@!\([A-Z]\)/\_\l\1/g<cr>gul
+vmap <Leader>cs :s/_\([a-z]\)/\u\1/g<cr>gul
+nmap mc %
+vmap mc %
+
+" snipMate
+imap <C-e>s <Plug>snipMateShow
+smap <C-e>s <Plug>snipMateShow
+imap <C-e><CR> <Plug>snipMateNextOrTrigger
+smap <C-e><CR> <Plug>snipMateNextOrTrigger
+
+" easy motion
+let g:EasyMotion_do_mapping = 1 " Disable default mappings
+let g:EasyMotion_startofline = 1 " keep cursor column when JK motion
+let g:EasyMotion_smartcase = 1
+" let g:EasyMotion_re_line_anywhere = l
+nmap mf <Plug>(easymotion-sn)
+nmap mw <Plug>(easymotion-bd-w)
+nmap mo <Plug>(easymotion-overwin-w)
+nmap mW <Plug>(easymotion-bd-W)
+nmap mO <Plug>(easymotion-overwin-W)
+nmap mj <Plug>(easymotion-bd-jk)
+nmap ml <Plug>(easymotion-lineforward)
+nmap mh <Plug>(easymotion-linebackward)
+fu! MoveToTag()
+  call EasyMotion#WB(0,2)
+  call feedkeys("\<C-]>")
+endf
+fu! IMoveToTag()
+  call EasyMotion#WB(0,2)
+  call feedkeys("\<C-o>")
+  call feedkeys("\<C-]>")
+endf
+nmap mg :call MoveToTag()<CR>
+imap mg<CR> <C-o>:call IMoveToTag()<CR>
+fu! MoveToWord()
+  call EasyMotion#JK(0,2)
+  call feedkeys("\ml")
+endf
+fu! IMoveToWord()
+  call EasyMotion#JK(0,2)
+  call feedkeys("\ml")
+  call feedkeys("\<CR>")
+endf
+nmap mm :call MoveToWord()<CR>
+imap mm<CR> <C-o>:call IMoveToWord()<CR>
+
+" git
+nmap <Leader>gls :Glog<CR> <bar> :q<CR> <bar> :vert copen<CR>
+
+" vimux
+nmap <Leader>rr :VimuxRunLastCommand<CR>
+let g:VimuxOrientation = 'v'
+
+fu! TaggleQuickList()
+  let qf = bufexists("[Location List]")
+    echo qf
+  if (qf == 1)
+    exe "close"
+  else
+    exe "copen"
+  endif
+endf

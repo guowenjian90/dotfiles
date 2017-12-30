@@ -1,0 +1,99 @@
+export auto_title_screens="no"
+export prompt="
+%{$FG[WHITE]%}(%D %*) <%?> [%~] $PROGRAM %{$FG[DEFAULT]%}
+%{$fg[cyan]%}%m %#%{$fg[default]%} "
+
+set-title() {
+echo -e "\e]0;$*\007"
+}
+
+ssh() {
+  set-title $*;
+  /usr/bin/ssh -2 $*;
+  set-title $HOST;
+}
+
+alias tmux-sync-panes='tmux set-window-option synchronize-panes'
+alias vi=vim
+alias gvi='vi -g'
+alias vim=/usr/bin/vim
+alias eclimd='/local/home/wenjian/eclipse/4.6-neno/eclimd -Dosgi.instance.area.default=/home/wenjian/workspace'
+
+export JAVA_HOME=/home/wenjian/JDK/jdk1.8
+export PATH=$PATH:$JAVA_HOME/bin
+export PATH=$PATH:/home/wenjian/scala/scala-2.12.3/bin
+export PATH=$PATH:/home/wenjian/eclipse/4.6-neno
+export PATH=./:/home/wenjian:$PATH
+
+export MAKE_OUTPUT_LEVEL=QUIET
+export LANG=en_US.UTF-8
+
+export TOMCAT_HOME=/home/wenjian/apache-tomcat-7.0.29
+export HADOOP_HOME=/home/wenjian/hadoop/hadoop-2.2.0
+export HADOOP_COMMON_HOME=/home/wenjian/hadoop/hadoop-2.2.0
+export HADOOP_HDFS_HOME=/home/wenjian/hadoop/hadoop-2.2.0
+export HADOOP_YARN_HOME=/home/wenjian/hadoop/hadoop-2.2.0
+export HADOOP_MAPRED_HOME=/home/wenjian/hadoop/hadoop-2.2.0
+export SHARK_HOME=/home/wenjian/spark/shark-0.9.1-bin-hadoop2
+export HIVE_HOME=/home/wenjian/spark/shark-0.9.1-bin-hadoop2
+
+AGENT_SOCKET=$HOME/.ssh/.ssh-agent-socket
+AGENT_INFO=$HOME/.ssh/.ssh-agent-info
+
+if [[ -z `pgrep -u $USER ssh-agent` ]]
+then
+  echo "Re-starting Agent for $USER"
+  pkill -15 -u $USER ssh-agent
+  eval `ssh-agent -s`
+  echo "export SSH_AGENT_PID=$SSH_AGENT_PID" > $AGENT_INFO
+  echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $AGENT_INFO
+  source $AGENT_INFO
+  for file in `ls -1 ~/.ssh/*.pem`
+  do
+    ssh-add $file
+  done
+else
+  source $AGENT_INFO
+  echo "SSH Agent Already Running"
+fi
+
+export EDITOR=vim
+# bindkey -v
+bindkey "^A" beginning-of-line
+bindkey "^Z" end-of-line
+bindkey "^B" vi-delete-char
+bindkey "^O" history-incremental-search-backward
+bindkey "^R" history-incremental-search-forward
+bindkey "^X" clear-screen
+bindkey "^L" forward-word
+bindkey "^H" backward-word
+bindkey "^J" backward-delete-word
+bindkey "^D" delete-word
+bindkey "^W" vi-backward-kill-word
+bindkey "^K" kill-line
+bindkey "^U" vi-kill-line
+bindkey "^I" expand-or-complete
+bindkey '^P' up-line-or-search
+bindkey '^N' down-line-or-search
+bindkey "^_" undo
+bindkey "^]" vi-cmd-mode
+bindkey "^[c" capitalize-word
+bindkey "^[l" down-case-word
+bindkey "^[u" up-case-word
+
+HISTSIZE=10000000
+SAVEHIST=10000000
+
+setopt BANG_HIST                 # Treat the '!' character specially during expansion.
+setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt SHARE_HISTORY             # Share history between all sessions.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
+setopt HIST_BEEP                 # Beep when accessing nonexistent history.

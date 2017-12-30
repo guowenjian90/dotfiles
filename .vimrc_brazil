@@ -1,0 +1,61 @@
+fu! CurrentBrazilPackagePath() 
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "Config"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! BrazilRubyRunTest()
+  let file = expand('%:p')
+  if (stridx(file, "_spec.rb") != -1)
+    let file_dir = CurrentRubyPackagePath()
+  else
+    echo 'is not a valid spec file'
+    return
+  endif
+  let line_no = line(".")
+  let env_dir = substitute(file_dir, "/src/", "/env/", "")
+  let cmd = " cd ". file_dir . "; brazil-test-exec " . env_dir . "*/test-runtime/ruby2.3.x/gem_bin/rspec --format documentation " . file . ":" . line_no
+  call RunCommand(cmd)
+endf
+autocmd FileType ruby nmap <Leader>tt :call BrazilRubyRunTest()<CR>
+
+fu! BrazilRubyRun()
+  let file = expand('%:p')
+  let file_dir = CurrentBrazilPackagePath()
+  let env_dir = substitute(file_dir, "/src/", "/env/", "")
+  let cmd = " cd ". file_dir . "; brazil-test-exec " . env_dir . "*/test-runtime/ruby2.3.x/bin/ruby " . file
+  call RunCommand(cmd)
+endf
+autocmd FileType ruby nmap <Leader>br :call BrazilRubyRun()<CR>
+
+fu! BBJavaUnit() 
+  let file = expand('%:p')
+  let savedir = getcwd()
+  let file_dir = CurrentJavaPackagePath()
+  let class = substitute(file, file_dir . "/tst/", "", "")
+  let class = substitute(class, "\.java", "", "g")
+  let class = substitute(class, "/", ".", "g")
+  let line_no = line(".")
+  let cmd = "cd ". file_dir . "; bb single-unit-test -DtestClass=" . class
+  call RunCommand(cmd)
+endf
+autocmd FileType java nmap <Leader>btt :call BBJavaUnit()<CR>
+
+fu! BrazilBuild()
+  let file_dir = CurrentBrazilPackagePath()
+  let cmd = " cd ". file_dir . "; brazil-build clean; brazil-build release"
+  call RunCommand(cmd)
+endf
+nmap <Leader>bb :call BrazilBuild()<CR>
+nmap <Leader>lvd :call BrazilBuild()<CR> <bar> :call RunCommand("sh ./local-overrides.sh")<CR>
+
