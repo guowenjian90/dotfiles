@@ -169,12 +169,6 @@ autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 autocmd BufReadPost location nnoremap <buffer> <CR> <CR>
 
 " File type auto cmd
-autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
-autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
 autocmd FileType * setlocal omnifunc=syntaxcomplete#Complete
 autocmd Filetype ruby compiler ruby
 autocmd Filetype ruby set makeprg=ruby\ -c\ %
@@ -227,39 +221,6 @@ fu! RubyTestFile()
   endif
 endf
 autocmd FileType ruby nmap <Leader>ut :call RubyTestFile()<CR>
-
-" java build functions
-fu! CurrentJavaPackagePath() 
-  let savedir = getcwd()
-  let dir = expand('%:p:h')
-  exe "cd " . dir
-  while (dir != '/')
-    let configfile = dir . '/' . "build.xml"
-    if filereadable(configfile)
-      break
-    endif
-    cd ..
-    let dir = getcwd()
-  endw
-  exe "cd " savedir
-  return dir
-endf
-
-fu! RunShell()
-  let file = expand('%:p')
-  let file_dir = expand('%:p:h')
-  let cmd = " cd ". file_dir . "; sh " . file
-  call RunCommand(cmd)
-endf
-autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
-
-fu! RunCommand(cmd)
-  if exists('$TMUX')
-    exe "VimuxRunCommand \"" . a:cmd . "\""
-  else
-    exe "!" . a:cmd
-  end
-endf
 
 " Syntastic options
 let g:syntastic_always_populate_loc_list = 1
@@ -574,8 +535,23 @@ imap mm<CR> <C-o>:call IMoveToWord()<CR>
 nmap <Leader>gls :Glog<CR> <bar> :q<CR> <bar> :vert copen<CR>
 
 " vimux
+fu! RunCommand(cmd)
+  if exists('$TMUX')
+    exe "VimuxRunCommand \"" . a:cmd . "\""
+  else
+    exe "!" . a:cmd
+  end
+endf
 nmap <Leader>rr :VimuxRunLastCommand<CR>
 let g:VimuxOrientation = 'v'
+
+fu! RunShell()
+  let file = expand('%:p')
+  let file_dir = expand('%:p:h')
+  let cmd = " cd ". file_dir . "; sh " . file
+  call RunCommand(cmd)
+endf
+autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
 
 fu! TaggleQuickList()
   let qf = bufexists("[Location List]")
