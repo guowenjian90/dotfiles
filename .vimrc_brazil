@@ -46,7 +46,7 @@ fu! BBJavaUnit()
   let class = substitute(class, "\.java", "", "g")
   let class = substitute(class, "/", ".", "g")
   let line_no = line(".")
-  let cmd = "cd ". file_dir . "; bb single-unit-test -DtestClass=" . class
+  let cmd = "cd ". file_dir . "; brazil-build single-unit-test -DtestClass=" . class
   call RunCommand(cmd)
 endf
 autocmd FileType java nmap <Leader>btt :call BBJavaUnit()<CR>

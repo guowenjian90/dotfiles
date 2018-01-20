@@ -1,3 +1,3 @@
-source /home/wenjian/.vimrc_common
-source /home/wenjian/.vimrc_eclim
-source /home/wenjian/.vimrc_brazil
+source $HOME/.vimrc_common
+source $HOME/.vimrc_eclim
+source $HOME/.vimrc_brazil
