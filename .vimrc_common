@@ -1,17 +1,18 @@
 " Plugin loading
 " set the runtime path to include Vundle and initialize
 set nocompatible              " be iMproved, required
+set clipboard=unnamed
 filetype off                  " required
 set rtp+=~/.vim/bundle/Vundle.vim
 " alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/some/path/here')
 call vundle#begin()
 " let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
 Plugin 'rails.vim'
 Plugin 'fatih/vim-go'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'gmarik/Vundle.vim'
 Plugin 'mileszs/ack.vim'
 Plugin 'auto_mkdir'
 Plugin 'SuperTab'
@@ -153,11 +154,11 @@ let mapleader=" "
 " search
 " let g:ag_prg='ag -S --nocolor --nogroup --column '
 fu! SearchWithAg(text, extension)
-  if(a:extension == '')
-    execute "Ag " . a:text
-  else
-    execute "Ag " . a:text . " **/*" . a:extension
-  end
+	if(a:extension == '')
+		execute "Ag " . a:text
+	else
+		execute "Ag " . a:text . " **/*" . a:extension
+	end
 endf
 nmap <Leader>sa :call SearchWithAg(expand('<cword>'), input('')) <CR>
 vmap <Leader>sa :call SearchWithAg(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], input('')) <CR>
@@ -184,41 +185,41 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 " syntax checking
 "Adding mail as a spell checked type, only if in 7.0 >
 if (v:version >= 700)
-  autocmd FileType mail set spell
+	autocmd FileType mail set spell
 endif
 
 " Ruby build functions
-fu! CurrentRubyPackagePath() 
-  let savedir = getcwd()
-  let dir = expand('%:p:h')
-  exe "cd " . dir
-  while (dir != '/')
-    let configfile = dir . '/' . "Rakefile"
-    if filereadable(configfile)
-      break
-    endif
-    cd ..
-    let dir = getcwd()
-  endw
-  exe "cd " savedir
-  return dir
+fu! CurrentRubyPackagePath()
+	let savedir = getcwd()
+	let dir = expand('%:p:h')
+	exe "cd " . dir
+	while (dir != '/')
+		let configfile = dir . '/' . "Rakefile"
+		if filereadable(configfile)
+			break
+		endif
+		cd ..
+		let dir = getcwd()
+	endw
+	exe "cd " savedir
+	return dir
 endf
 
 fu! RubyTestFile()
-  let file = expand('%:p')
-  if (stridx(file, "_spec.rb") == -1)
-    let new_file = substitute(file, "/lib/", "/spec/", "")
-    let new_file = substitute(new_file, ".rb", "_spec.rb", "")
-  else
-    let new_file = substitute(file, "/spec/", "/lib/", "")
-    let new_file = substitute(new_file, "_spec.rb", ".rb", "")
-  endif
-  let exist = findfile(new_file)
-  if (exist == new_file)
-    exe "edit " new_file
-  else
-    echo 'can not find file '. new_file
-  endif
+	let file = expand('%:p')
+	if (stridx(file, "_spec.rb") == -1)
+		let new_file = substitute(file, "/lib/", "/spec/", "")
+		let new_file = substitute(new_file, ".rb", "_spec.rb", "")
+	else
+		let new_file = substitute(file, "/spec/", "/lib/", "")
+		let new_file = substitute(new_file, "_spec.rb", ".rb", "")
+	endif
+	let exist = findfile(new_file)
+	if (exist == new_file)
+		exe "edit " new_file
+	else
+		echo 'can not find file '. new_file
+	endif
 endf
 autocmd FileType ruby nmap <Leader>ut :call RubyTestFile()<CR>
 
@@ -229,8 +230,8 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
 let g:syntastic_go_checkers = ['errcheck', 'golint']
 let g:syntastic_mode_map = { "mode": "active",
-                           \ "active_filetypes": [],
-                           \ "passive_filetypes": ["scala"] }
+			\ "active_filetypes": [],
+			\ "passive_filetypes": ["scala"] }
 " let g:syntastic_quiet_messages = { "type": "style" }
 " let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
 let g:go_highlight_functions = 1
@@ -255,9 +256,9 @@ let g:ctrlp_regexp = 0
 let g:ctrlp_max_files=0
 let g:ctrlp_max_height = 20
 let g:ctrlp_custom_ignore = {
-      \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-      \ 'file': '\v\.(class|swp|exe|so|dll)$',
-      \ }
+			\ 'dir':  '\v[\/]\.(git|hg|svn)$',
+			\ 'file': '\v\.(class|swp|exe|so|dll)$',
+			\ }
 " let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 let g:ctrlp_map = ''
 
@@ -276,61 +277,61 @@ let g:ctrlp_map = ''
 " cscope setting
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("cscope")
-  set cscopequickfix=s-,c-,d-,i-,t-,e-,g-,f-   " useful for cscope in quickfix
-  set csprg=cscope
-  set csto=1
-  set cst
-  set nocsverb
-  " add any database in current directory
-  if filereadable("cscope.out")
-    cs add cscope.out
-  endif
-  set csverb
-  set cscopetag
-  "set cscopequickfix=s-,g-,c-,d-,t-,e-,f-,i-
-  set cscopequickfix=
-  nmap <C-[>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-  nmap <C-[>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-  nmap <C-[>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-  nmap <C-[>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-  nmap <C-[>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-  nmap <C-[>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-  nmap <C-[>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-  nmap <C-[>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-  " nmap <C-[>r :cs reset<CR><CR>
-  nmap <C-[>r :!sh ./cscope.sh<CR>
+	set cscopequickfix=s-,c-,d-,i-,t-,e-,g-,f-   " useful for cscope in quickfix
+	set csprg=cscope
+	set csto=1
+	set cst
+	set nocsverb
+	" add any database in current directory
+	if filereadable("cscope.out")
+		cs add cscope.out
+	endif
+	set csverb
+	set cscopetag
+	"set cscopequickfix=s-,g-,c-,d-,t-,e-,f-,i-
+	set cscopequickfix=
+	nmap <C-[>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-[>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-[>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-[>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-[>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-[>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+	nmap <C-[>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+	nmap <C-[>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+	" nmap <C-[>r :cs reset<CR><CR>
+	nmap <C-[>r :!sh ./cscope.sh<CR>
 endif
 "Functions
 fu! CscopeAdd() " Add Cscope database named .cscope.out
-  let dir = getcwd()
-  let savedir = getcwd()
-  wh (dir != '/')
-    let scopefile = dir . '/' . ".cscope.out"
-    if filereadable(scopefile)
-      exe "cs add " scopefile
-      exe "cd " savedir
-      return dir
-    en
-    cd ..
-    let dir = getcwd()
-  endw
-  exe "cd " savedir
+	let dir = getcwd()
+	let savedir = getcwd()
+	wh (dir != '/')
+		let scopefile = dir . '/' . ".cscope.out"
+		if filereadable(scopefile)
+			exe "cs add " scopefile
+			exe "cd " savedir
+			return dir
+		en
+		cd ..
+		let dir = getcwd()
+	endw
+	exe "cd " savedir
 endf
 
 fu! MakeTags() "rebuild tags
-  let dir = getcwd()
-  let savedir = getcwd()
-  while (dir != '/')
-    let scopefile = dir . '/' . "make_tags.sh"
-    if filereadable(scopefile)
-      exe "!sh ./make_tags.sh "
-      break
-    else
-      cd ..
-      let dir = getcwd()
-    endif
-  endw
-  exe "cd " savedir
+	let dir = getcwd()
+	let savedir = getcwd()
+	while (dir != '/')
+		let scopefile = dir . '/' . "make_tags.sh"
+		if filereadable(scopefile)
+			exe "!sh ./make_tags.sh "
+			break
+		else
+			cd ..
+			let dir = getcwd()
+		endif
+	endw
+	exe "cd " savedir
 endf
 nmap <Leader>mtg :call MakeTags()<CR>
 
@@ -342,9 +343,9 @@ nmap <C-w><C-m> :exe "resize "<CR> <bar> :exe "vertical resize"<CR>
 
 "Map \e to edit a file from the directory of the current buffer
 if has("unix")
-  nmap <leader>e :e <C-R>=expand("%:p:h") . "/"<CR>
+	nmap <leader>e :e <C-R>=expand("%:p:h") . "/"<CR>
 else
-  nmap <Leader>e :e <C-R>=expand("%:p:h") . "\\"<CR>
+	nmap <Leader>e :e <C-R>=expand("%:p:h") . "\\"<CR>
 endif
 
 " Maps
@@ -509,24 +510,24 @@ nmap mj <Plug>(easymotion-bd-jk)
 nmap ml <Plug>(easymotion-lineforward)
 nmap mh <Plug>(easymotion-linebackward)
 fu! MoveToTag()
-  call EasyMotion#WB(0,2)
-  call feedkeys("\<C-]>")
+	call EasyMotion#WB(0,2)
+	call feedkeys("\<C-]>")
 endf
 fu! IMoveToTag()
-  call EasyMotion#WB(0,2)
-  call feedkeys("\<C-o>")
-  call feedkeys("\<C-]>")
+	call EasyMotion#WB(0,2)
+	call feedkeys("\<C-o>")
+	call feedkeys("\<C-]>")
 endf
 nmap mg :call MoveToTag()<CR>
 imap mg<CR> <C-o>:call IMoveToTag()<CR>
 fu! MoveToWord()
-  call EasyMotion#JK(0,2)
-  call feedkeys("\ml")
+	call EasyMotion#JK(0,2)
+	call feedkeys("\ml")
 endf
 fu! IMoveToWord()
-  call EasyMotion#JK(0,2)
-  call feedkeys("\ml")
-  call feedkeys("\<CR>")
+	call EasyMotion#JK(0,2)
+	call feedkeys("\ml")
+	call feedkeys("\<CR>")
 endf
 nmap mm :call MoveToWord()<CR>
 imap mm<CR> <C-o>:call IMoveToWord()<CR>
@@ -535,30 +536,49 @@ imap mm<CR> <C-o>:call IMoveToWord()<CR>
 nmap <Leader>gls :Glog<CR> <bar> :q<CR> <bar> :vert copen<CR>
 
 " vimux
+fu! RunCommandVis() range
+	" Why is this not a built-in Vim script function?!
+	let [line_start, column_start] = getpos("'<")[1:2]
+	let [line_end, column_end] = getpos("'>")[1:2]
+	let lines = getline(line_start, line_end)
+	let cmd = join(lines, "\n")
+	if len(lines) == 0
+		return
+	endif
+	let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+	let lines[0] = lines[0][column_start - 1:]
+	let cmd = join(lines, "\n")
+  
+	if exists('$TMUX')
+    exe "VimuxRunCommand \"" . cmd . "\""
+	end
+endf
+vmap <Leader>ex :call RunCommandVis()<CR>
+
 fu! RunCommand(cmd)
-  if exists('$TMUX')
-    exe "VimuxRunCommand \"" . a:cmd . "\""
-  else
-    exe "!" . a:cmd
-  end
+	if exists('$TMUX')
+		exe "VimuxRunCommand \"" . a:cmd . "\""
+	else
+		exe "!" . a:cmd
+	end
 endf
 nmap <Leader>rr :VimuxRunLastCommand<CR>
 let g:VimuxOrientation = 'v'
 
 fu! RunShell()
-  let file = expand('%:p')
-  let file_dir = expand('%:p:h')
-  let cmd = " cd ". file_dir . "; sh " . file
-  call RunCommand(cmd)
+	let file = expand('%:p')
+	let file_dir = expand('%:p:h')
+	let cmd = " cd ". file_dir . "; sh " . file
+	call RunCommand(cmd)
 endf
 autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
 
 fu! TaggleQuickList()
-  let qf = bufexists("[Location List]")
-    echo qf
-  if (qf == 1)
-    exe "close"
-  else
-    exe "copen"
-  endif
+	let qf = bufexists("[Location List]")
+	echo qf
+	if (qf == 1)
+		exe "close"
+	else
+		exe "copen"
+	endif
 endf
