@@ -643,10 +643,8 @@ fu! GetVisualText()
   endtry
 endf
 
-fu! RunCommandVis()
-  " let cmd = GetVisualText()
-  let cmd = @*
-  echo cmd
+fu! RunCommandVis() range
+  let cmd = GetVisualText()
   if exists('$TMUX')
     exe "VimuxRunCommand \"" . cmd . "\""
   end
