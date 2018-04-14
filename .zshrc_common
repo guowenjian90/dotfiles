@@ -15,27 +15,11 @@ ssh() {
 
 alias tmux-sync-panes='tmux set-window-option synchronize-panes'
 alias vi=vim
-alias gvi='vi -g'
-alias vim=/usr/bin/vim
-alias eclimd='/local$HOME/eclipse/4.6-neno/eclimd -Dosgi.instance.area.default=$HOME/workspace'
-
-export JAVA_HOME=$HOME/JDK/jdk1.8
-export PATH=$PATH:$JAVA_HOME/bin
-export PATH=$PATH:$HOME/scala/scala-2.12.3/bin
-export PATH=$PATH:$HOME/eclipse/4.6-neno
-export PATH=./:$HOME:$PATH
+alias x=exit
+alias gvi='vim -g'
 
 export MAKE_OUTPUT_LEVEL=QUIET
 export LANG=en_US.UTF-8
-
-export TOMCAT_HOME=$HOME/apache-tomcat-7.0.29
-export HADOOP_HOME=$HOME/hadoop/hadoop-2.2.0
-export HADOOP_COMMON_HOME=$HOME/hadoop/hadoop-2.2.0
-export HADOOP_HDFS_HOME=$HOME/hadoop/hadoop-2.2.0
-export HADOOP_YARN_HOME=$HOME/hadoop/hadoop-2.2.0
-export HADOOP_MAPRED_HOME=$HOME/hadoop/hadoop-2.2.0
-export SHARK_HOME=$HOME/spark/shark-0.9.1-bin-hadoop2
-export HIVE_HOME=$HOME/spark/shark-0.9.1-bin-hadoop2
 
 AGENT_SOCKET=$HOME/.ssh/.ssh-agent-socket
 AGENT_INFO=$HOME/.ssh/.ssh-agent-info
@@ -60,7 +44,7 @@ fi
 export EDITOR=vim
 bindkey -v
 bindkey "^A" beginning-of-line
-bindkey "^Z" end-of-line
+bindkey "^E" end-of-line
 bindkey "^B" vi-delete-char
 bindkey "^O" history-incremental-search-backward
 bindkey "^R" history-incremental-search-forward
