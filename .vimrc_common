@@ -452,6 +452,10 @@ fu! CurrentJavaPackagePath()
     if filereadable(configfile)
       break
     endif
+    let configfile = dir . '/' . "build.gradle"
+    if filereadable(configfile)
+      break
+    endif
     cd ..
     let dir = getcwd()
   endw
@@ -479,8 +483,8 @@ let g:syntastic_mode_map = { "mode": "active",
 " let g:syntastic_quiet_messages = { "type": "style" }
 " let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
 nmap <Leader>sc :Errors
-nmap <C-n> :lnext
-nmap <C-p> :lprev
+" nmap <C-n> :lnext<CR>
+" nmap <C-p> :lprev<CR>
 
 " go lang setting
 let g:go_highlight_functions = 1
@@ -491,11 +495,10 @@ let g:go_highlight_build_constraints = 1
 autocmd FileType go imap <C-I> <C-X><C-O>
 autocmd FileType go nmap <Leader>tt :GoTest<CR>
 autocmd FileType go nmap <Leader>fmt :GoFmt<CR>
-autocmd FileType go nmap <Leader>rn :GoRename<CR>
-autocmd FileType go nmap <Leader>ipl :GoImpl<CR>
-autocmd FileType go nmap <Leader>ips :GoImports<CR>
+autocmd FileType go nmap <Leader>gr :GoRename<CR>
+autocmd FileType go nmap <Leader>gp :GoImpl<CR>
+autocmd FileType go nmap <Leader>gi :GoImports<CR>
 autocmd FileType go nmap <Leader>gc :GoErrCheck<CR>
-autocmd FileType go nmap <Leader>gsc :GoCallers<CR>
 autocmd FileType go nmap <Leader>gsc :GoCallers<CR>
 
 " super tab
@@ -516,7 +519,7 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeQuitOnOpen = 1
-nmap <Leader>nt :NERDTreeToggle<CR>
+nmap <Leader>gg :NERDTreeToggle<CR>
 nmap <Leader>ff :NERDTreeFind<CR>
 nmap <Leader>mv :NERDTreeFind<CR> <bar>m <bar>m
 nmap <Leader>rm :NERDTreeFind<CR> <bar>m <bar>d
@@ -602,7 +605,7 @@ imap ml<CR> <C-o>ml
 imap mh<CR> <C-o>mh
 imap mw<CR> <C-o>mw
 imap mg<CR> <C-o>mg
-imap mm<CR> <C-o>mt
+
 fu! MoveToTag()
   call EasyMotion#WB(0,2)
   call feedkeys("\<C-]>")
@@ -614,6 +617,7 @@ fu! IMoveToTag()
 endf
 nmap mg :call MoveToTag()<CR>
 imap mg<CR> <C-o>:call IMoveToTag()<CR>
+
 fu! MoveToWord()
   call EasyMotion#JK(0,2)
   call feedkeys("\ml")
@@ -649,7 +653,7 @@ fu! RunCommandVis() range
     exe "VimuxRunCommand \"" . cmd . "\""
   end
 endf
-vmap <Leader>r :call RunCommandVis()<CR>
+vmap <Leader>rn :call RunCommandVis()<CR>
 
 fu! RunCommand(cmd)
   if exists('$TMUX')

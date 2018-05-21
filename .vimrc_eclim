@@ -1,26 +1,16 @@
-" java build functions
-fu! CurrentJavaPackagePath() 
-  let savedir = getcwd()
-  let dir = expand('%:p:h')
-  exe "cd " . dir
-  while (dir != '/')
-    let configfile = dir . '/' . "build.xml"
-    if filereadable(configfile)
-      break
-    endif
-    cd ..
-    let dir = getcwd()
-  endw
-  exe "cd " savedir
-  return dir
-endf
+autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
+autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
+autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
+autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
+autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
 
-autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
-autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+autocmd FileType scala set shiftwidth=4          " Set indention level to be the same as softtabstop
+autocmd FileType scala set softtabstop=4         " Why are tabs so big?  This fixes it
+autocmd FileType scala set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+autocmd FileType scala set shiftwidth=4          " Set indention level to be the same as softtabstop
+autocmd FileType scala set softtabstop=4         " Why are tabs so big?  This fixes it
+autocmd FileType scala set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
 
 " for eclim
 let g:EclimCompletionMethod = 'omnifunc'
@@ -39,29 +29,31 @@ autocmd FileType scala imap <C-i> <C-X><C-O>
 " autocmd FileType scala imap <C-p> <C-X><C-P>
 autocmd FileType scala nmap <C-]> :ScalaSearch<CR>
 autocmd FileType scala nmap <Leader>jo :ScalaImport<CR>
-autocmd FileType scala nmap <Leader>tt :call EclimJunit()<CR>
-autocmd FileType scala nmap <Leader>ut :call EclimJunitFind()<CR>
-autocmd FileType scala nmap <Leader>rn :call EclimRun()<CR>
-autocmd FileType scala nmap <Leader>jnc :call EclimNew('class', input(''))<CR>
-autocmd FileType scala nmap <Leader>jni :call EclimNew('interface', input(''))<CR>
-autocmd FileType scala nmap <Leader>jna :call EclimNew('@interface', input(''))<CR>
-autocmd FileType scala nmap <Leader>jn@ :call EclimNew('abstract', input(''))<CR>
-autocmd FileType scala nmap <Leader>jne :call EclimNew('enum', input(''))<CR>
-autocmd FileType scala nmap <Leader>jnt :call EclimNew('class', expand('<cword>') . "Test")<CR>
+autocmd FileType scala nmap <Leader>tt :call ScalaTest()<CR>
+autocmd FileType scala nmap <Leader>ut :call ScalaTestFile()<CR>
+autocmd FileType scala nmap <Leader>rn :call EclimRun('')<CR>
+autocmd FileType scala nmap <Leader>nc :call EclimNew('class', input(''))<CR>
+autocmd FileType scala nmap <Leader>ni :call EclimNew('interface', input(''))<CR>
+autocmd FileType scala nmap <Leader>na :call EclimNew('@interface', input(''))<CR>
+autocmd FileType scala nmap <Leader>n@ :call EclimNew('abstract', input(''))<CR>
+autocmd FileType scala nmap <Leader>ne :call EclimNew('enum', input(''))<CR>
+autocmd FileType scala nmap <Leader>nt :call EclimNew('class', expand('<cword>') . "Test")<CR>
 autocmd FileType java imap <C-i> <C-X><C-O>
 autocmd FileType java imap <C-n> <C-X><C-N>
 autocmd FileType java imap <C-p> <C-X><C-P>
 autocmd FileType java nmap <C-]> :JavaSearchContext<CR>
-autocmd FileType java nmap <Leader>jnc :JavaNew class 
-autocmd FileType java nmap <Leader>jni :JavaNew interface 
-autocmd FileType java nmap <Leader>jna :JavaNew abstract 
-autocmd FileType java nmap <Leader>jn@ :JavaNew @interface 
-autocmd FileType java nmap <Leader>jne :JavaNew enum 
-autocmd FileType java nmap <Leader>jnt :execute "JavaNew class " . expand('<cword>') . "Test"<CR>
+autocmd FileType java nmap <Leader>nc :JavaNew class 
+autocmd FileType java nmap <Leader>ni :JavaNew interface 
+autocmd FileType java nmap <Leader>na :JavaNew abstract 
+autocmd FileType java nmap <Leader>n@ :JavaNew @interface 
+autocmd FileType java nmap <Leader>ne :JavaNew enum 
+autocmd FileType java nmap <Leader>nt :execute "JavaNew class " . expand('<cword>') . "Test"<CR>
 autocmd FileType java nmap <Leader>jc :JavaCorrect <CR>
-autocmd FileType java nmap <Leader>jsc :JavaSearchContext<CR>
-autocmd FileType java nmap <Leader>jsi :JavaSearch -x implementors<CR>
-autocmd FileType java nmap <Leader>jsr :JavaSearch -x references<CR>
+autocmd FileType java nmap <Leader>sa :call SearchWithAg(expand('<cword>'), input('')) <CR>
+autocmd FileType java vmap <Leader>sa :call SearchWithAg(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], input('')) <CR>
+autocmd FileType java nmap <Leader>sc :JavaSearchContext<CR>
+autocmd FileType java nmap <Leader>si :JavaSearch -x implementors<CR>
+autocmd FileType java nmap <Leader>sr :JavaSearch -x references<CR>
 autocmd FileType java nmap <Leader>jh<CR> :JavaCallHierarchy<CR>
 autocmd FileType java nmap <Leader>jh! :JavaCallHierarchy!<CR>
 autocmd FileType java nmap <Leader>jr :JavaRename<Space>
@@ -69,13 +61,12 @@ autocmd FileType java nmap <Leader>jm :JavaMove<Space>
 autocmd FileType java nmap <Leader>jf :JavaFormat<CR>
 autocmd FileType java nmap <Leader>jo :JavaImportOrganize<CR>
 autocmd FileType java nmap <Leader>ji :JavaImpl<CR>
-autocmd FileType java nmap <Leader>jg<CR> :JavaGet<CR>
-autocmd FileType java nmap <Leader>jgs :JavaGetSet<CR>
-autocmd FileType java nmap <Leader>jdg :JavaDelegate<CR>
+autocmd FileType java nmap <Leader>gt :JavaGet<CR>
+autocmd FileType java nmap <Leader>gst :JavaGetSet<CR>
+autocmd FileType java nmap <Leader>dlg :JavaDelegate<CR>
 autocmd FileType java nmap <Leader>tt :JUnit<CR>
 autocmd FileType java nmap <Leader>ut :JUnitFind<CR>
-autocmd FileType java nmap <Leader>jtt :call EclimJunit()<CR>
-autocmd FileType java nmap <Leader>jui :JUnitImpl<CR>
+autocmd FileType java nmap <Leader>ui :JUnitImpl<CR>
 autocmd FileType java nmap <Leader>ud :RefactorUndo<CR>
 autocmd FileType java nmap <Leader>rd :RefactorRedo<CR>
 autocmd FileType java nmap <Leader>ds<CR> :JavaDebugStatus<CR>
@@ -89,13 +80,59 @@ autocmd FileType java nmap <Leader>dbr :JavaDebugBreakpointRemove<CR>
 autocmd FileType java nmap <Leader>dbl :JavaDebugBreakpointsList<CR>
 autocmd FileType java nmap <Leader>dtr :JavaDebugThreadResume<CR>
 autocmd FileType java nmap <Leader>dta :JavaDebugThreadResumeAll<CR>
-autocmd FileType java nmap <F3> <Leader>jsc
+autocmd FileType java nmap <F3> <Leader>sc
 autocmd FileType java nmap <F4> <Leader>dst <bar> <Leader>jds
 autocmd FileType java nmap <F5> <Leader>dsi <bar> <Leader>jds
 autocmd FileType java nmap <F6> <Leader>dso <bar> <Leader>jds
 autocmd FileType java nmap <F7> <Leader>dsr <bar> <Leader>jds
 autocmd FileType java nmap <F8> <Leader>dbt <bar> <Leader>jds
 set statusline=%<%f\ %M\ %h%r%=%-10.(%l,%c%V\ %{eclim#project#util#ProjectStatusLine()}%)\ %P
+
+fu! ScalaTestFile()
+  let file = expand('%:p')
+  if (stridx(file, "Test.scala") == -1)
+    let new_file = substitute(file, "/main/", "/test/", "")
+    let new_file = substitute(new_file, "\.scala$", "Test\.scala", "")
+  else
+    let new_file = substitute(file, "/test/", "/main/", "")
+    let new_file = substitute(new_file, "Test\.scala", "\.scala", "")
+  endif
+  let exist = findfile(new_file)
+  if (exist == new_file)
+    exe "edit " new_file
+  else
+    echo 'can not find file '. new_file
+  endif
+endf
+autocmd FileType scala nmap <Leader>ut :call ScalaTestFile()<CR>
+
+fu! ScalaTest() 
+  let project = eclim#project#util#GetCurrentProjectName()
+  let file = eclim#project#util#GetProjectRelativeFilePath()
+  let project_root = eclim#project#util#GetProject(project).path
+  let class = substitute(file, "^src/test/scala/", "", "")
+  let class = substitute(class, "^tst/", "", "")
+  let class = split(class, '\.')[0]
+  let class = substitute(class, "/", ".", "g")
+  let currentLine   = getline(".")
+  " let cmd = "eclim -command java -p " . project . " -c org.scalatest.tools.Runner " . " " . class
+  let spec = matchlist(currentLine, '\v.*\s*[should|must]\s*\"(.*)\"\s*in.*')
+  if (len(spec) >= 2)
+    let spec = spec[1]
+  endif
+  if(empty(spec))
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar" . ":bin/:bin/test:bin/main org.scalatest.tools.Runner -o -s " . class
+  else
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar" . ":bin/:bin/test:bin/main org.scalatest.tools.Runner -o -s " . class . " -z '" . spec . "'"
+  endif
+  call RunCommand(cmd)
+endf
+fu! RunScalaSpec()
+  call EasyMotion#JK(0,2)
+  call feedkeys("\<Space>tt")
+endf
+autocmd FileType scala nmap <Leader>ts :call RunScalaSpec()<CR>
+
 
 fu! EclimJunit() 
   let project = eclim#project#util#GetCurrentProjectName()
@@ -111,13 +148,15 @@ fu! EclimJunitFind()
   call RunCommand(cmd)
 endf
 
-fu! EclimRun() 
+fu! EclimRun(args) 
   let project = eclim#project#util#GetCurrentProjectName()
   let file = eclim#project#util#GetProjectRelativeFilePath()
-  let class = substitute(file, "src/", "", "")
+  let class = substitute(file, "^src/main/java/", "", "")
+  let class = substitute(class, "^src/main/scala/", "", "")
+  let class = substitute(class, "^src/", "", "")
   let class = split(class, '\.')[0]
   let class = substitute(class, "/", ".", "g")
-  let cmd = "eclim -command java -p " . project . " -c " . class 
+  let cmd = "eclim -command java -p " . project . " -c " . class . " " . a:args
   call RunCommand(cmd)
 endf
 
