@@ -7,12 +7,9 @@ set rtp+=~/.vim/bundle/Vundle.vim
 "call vundle#begin('~/some/path/here')
 call vundle#begin()
 " let Vundle manage Vundle, required
-Plugin 'rails.vim'
-Plugin 'fatih/vim-go'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'vim-ruby/vim-ruby'
 Plugin 'gmarik/Vundle.vim'
-Plugin 'mileszs/ack.vim'
+Plugin 'easymotion/vim-easymotion'
+" Plugin 'mileszs/ack.vim'
 Plugin 'auto_mkdir'
 Plugin 'SuperTab'
 Plugin 'nerdtree'
@@ -33,6 +30,11 @@ Plugin 'matchit'
 Plugin 'ag.vim'
 Plugin 'vimux'
 Plugin 'tslime.vim'
+Plugin 'fatih/vim-go'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'kotlin-vim'
+Plugin 'rails.vim'
+" Plugin 'ale'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 
@@ -148,12 +150,6 @@ autocmd QuickFixCmdPost    l* nested lwindow
 autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 autocmd BufReadPost location nnoremap <buffer> <CR> <CR>
 autocmd FileType * setlocal omnifunc=syntaxcomplete#Complete
-autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
-autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
 autocmd Filetype ruby compiler ruby
 " autocmd Filetype ruby set makeprg=ruby\ -c\ %
 "
@@ -471,17 +467,26 @@ fu! RunShell()
 endf
 autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
 
+" ALE options
+let g:ale_fixers = {
+      \   'javascript': ['eslint'],
+      \}
+
+" if you want to fix files automatically on save, off by default.
+" let g:ale_fix_on_save = 1
+
 " Syntastic options
 let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
-let g:syntastic_go_checkers = ['errcheck', 'golint']
 let g:syntastic_mode_map = { "mode": "active",
       \ "active_filetypes": [],
       \ "passive_filetypes": ["scala"] }
-" let g:syntastic_quiet_messages = { "type": "style" }
-" let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
+let g:syntastic_quiet_messages = { "type": "style" }
+let g:syntastic_go_checkers = ['errcheck', 'golint']
+let g:syntastic_kotlin_kotlinc_config_file_enabled = 1
+let g:syntastic_kotlin_checkers = ['kotlinc']
 nmap <Leader>sc :Errors
 " nmap <C-n> :lnext<CR>
 " nmap <C-p> :lprev<CR>

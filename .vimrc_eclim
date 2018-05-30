@@ -1,16 +1,6 @@
 autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
 autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
 autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
-autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
-
-autocmd FileType scala set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType scala set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType scala set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
-autocmd FileType scala set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType scala set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType scala set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
 
 " for eclim
 let g:EclimCompletionMethod = 'omnifunc'
@@ -22,15 +12,17 @@ nmap <Leader>pp :ProjectProblems<CR>
 nmap <Leader>po :ProjectOpen<CR>
 nmap <Leader>pc :ProjectClose<CR>
 nmap <Leader>pr :ProjectRefreshAll<CR>
-autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
-autocmd FileType scala setlocal omnifunc=eclim#scala#complete#CodeComplete
+
 autocmd FileType scala imap <C-i> <C-X><C-O>
-" autocmd FileType scala imap <C-n> <C-X><C-N>
-" autocmd FileType scala imap <C-p> <C-X><C-P>
+autocmd FileType scala imap <C-n> <C-X><C-N>
+autocmd FileType scala imap <C-p> <C-X><C-P>
+autocmd FileType scala setlocal omnifunc=eclim#scala#complete#CodeComplete
 autocmd FileType scala nmap <C-]> :ScalaSearch<CR>
+autocmd FileType scala nmap <Leader>sc :ScalaSearch<CR>
 autocmd FileType scala nmap <Leader>jo :ScalaImport<CR>
 autocmd FileType scala nmap <Leader>tt :call ScalaTest()<CR>
-autocmd FileType scala nmap <Leader>ut :call ScalaTestFile()<CR>
+autocmd FileType scala nmap <Leader>ut :call TestFile('scala')<CR>
+" autocmd FileType scala nmap <Leader>rn :call JavaRun('')<CR>
 autocmd FileType scala nmap <Leader>rn :call EclimRun('')<CR>
 autocmd FileType scala nmap <Leader>nc :call EclimNew('class', input(''))<CR>
 autocmd FileType scala nmap <Leader>ni :call EclimNew('interface', input(''))<CR>
@@ -38,19 +30,28 @@ autocmd FileType scala nmap <Leader>na :call EclimNew('@interface', input(''))<C
 autocmd FileType scala nmap <Leader>n@ :call EclimNew('abstract', input(''))<CR>
 autocmd FileType scala nmap <Leader>ne :call EclimNew('enum', input(''))<CR>
 autocmd FileType scala nmap <Leader>nt :call EclimNew('class', expand('<cword>') . "Test")<CR>
+
+autocmd FileType kotlin imap <C-i> <C-X><C-O>
+autocmd FileType kotlin imap <C-n> <C-X><C-N>
+autocmd FileType kotlin imap <C-p> <C-X><C-P>
+autocmd FileType kotlin nmap <C-]> :call EclimSearch('references')<CR>
+autocmd FileType kotlin nmap <Leader>sc :call EclimSearch('references')CR>
+autocmd FileType kotlin nmap <Leader>tt :call KotlinTest()<CR>
+autocmd FileType kotlin nmap <Leader>ut :call TestFile('kt')<CR>
+autocmd FileType kotlin nmap <Leader>rn :call JavaRun('Kt')<CR>
+
 autocmd FileType java imap <C-i> <C-X><C-O>
 autocmd FileType java imap <C-n> <C-X><C-N>
 autocmd FileType java imap <C-p> <C-X><C-P>
+autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
 autocmd FileType java nmap <C-]> :JavaSearchContext<CR>
-autocmd FileType java nmap <Leader>nc :JavaNew class 
-autocmd FileType java nmap <Leader>ni :JavaNew interface 
-autocmd FileType java nmap <Leader>na :JavaNew abstract 
-autocmd FileType java nmap <Leader>n@ :JavaNew @interface 
-autocmd FileType java nmap <Leader>ne :JavaNew enum 
+autocmd FileType java nmap <Leader>nc :JavaNew class
+autocmd FileType java nmap <Leader>ni :JavaNew interface
+autocmd FileType java nmap <Leader>na :JavaNew abstract
+autocmd FileType java nmap <Leader>n@ :JavaNew @interface
+autocmd FileType java nmap <Leader>ne :JavaNew enum
 autocmd FileType java nmap <Leader>nt :execute "JavaNew class " . expand('<cword>') . "Test"<CR>
 autocmd FileType java nmap <Leader>jc :JavaCorrect <CR>
-autocmd FileType java nmap <Leader>sa :call SearchWithAg(expand('<cword>'), input('')) <CR>
-autocmd FileType java vmap <Leader>sa :call SearchWithAg(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], input('')) <CR>
 autocmd FileType java nmap <Leader>sc :JavaSearchContext<CR>
 autocmd FileType java nmap <Leader>si :JavaSearch -x implementors<CR>
 autocmd FileType java nmap <Leader>sr :JavaSearch -x references<CR>
@@ -88,14 +89,15 @@ autocmd FileType java nmap <F7> <Leader>dsr <bar> <Leader>jds
 autocmd FileType java nmap <F8> <Leader>dbt <bar> <Leader>jds
 set statusline=%<%f\ %M\ %h%r%=%-10.(%l,%c%V\ %{eclim#project#util#ProjectStatusLine()}%)\ %P
 
-fu! ScalaTestFile()
+fu! TestFile(suffix)
+  let ext = a:suffix
   let file = expand('%:p')
-  if (stridx(file, "Test.scala") == -1)
+  if (stridx(file, "Test." . ext) == -1)
     let new_file = substitute(file, "/main/", "/test/", "")
-    let new_file = substitute(new_file, "\.scala$", "Test\.scala", "")
+    let new_file = substitute(new_file, "\." . ext . "$", "Test\." . ext, "")
   else
     let new_file = substitute(file, "/test/", "/main/", "")
-    let new_file = substitute(new_file, "Test\.scala", "\.scala", "")
+    let new_file = substitute(new_file, "Test\." . ext, "\." . ext, "")
   endif
   let exist = findfile(new_file)
   if (exist == new_file)
@@ -104,9 +106,47 @@ fu! ScalaTestFile()
     echo 'can not find file '. new_file
   endif
 endf
-autocmd FileType scala nmap <Leader>ut :call ScalaTestFile()<CR>
 
-fu! ScalaTest() 
+fu! KotlinTest()
+  let file = expand('%:p')
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '/')[-1]
+  let class = substitute(file, project_root, "", "")
+  let class = substitute(class, "/src/test/kotlin/", "", "")
+  let class = substitute(class, "/tst/", "", "")
+  let class = split(class, '\.')[0]
+  let class = substitute(class, "/", ".", "g")
+  let currentLine = getline(".")
+  let spec = matchlist(currentLine, '\v.*\s*[should|must]\s*\"(.*)\"\s*in.*')
+  if (len(spec) >= 2)
+    let spec = spec[1]
+  endif
+  if(empty(spec))
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar " . "junit.textui.TestRunner " . class
+  endif
+  call RunCommand(cmd)
+endf
+
+fu! JavaRun(args)
+  let file = expand('%:p')
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '/')[-1]
+  let class = substitute(file, project_root, "", "")
+  let class = substitute(class, "/src/main/java/", "", "")
+  let class = substitute(class, "/src/main/scala/", "", "")
+  let class = substitute(class, "/src/main/kotlin/", "", "")
+  let class = substitute(class, "/src/test/java/", "", "")
+  let class = substitute(class, "/src/test/scala/", "", "")
+  let class = substitute(class, "/src/test/kotlin/", "", "")
+  let class = substitute(class, "/src/", "", "")
+  let class = substitute(class, "/tst/", "", "")
+  let class = split(class, '\.')[0]
+  let class = substitute(class, "/", ".", "g")
+  let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar "  . class . a:args
+  call RunCommand(cmd)
+endf
+
+fu! ScalaTest()
   let project = eclim#project#util#GetCurrentProjectName()
   let file = eclim#project#util#GetProjectRelativeFilePath()
   let project_root = eclim#project#util#GetProject(project).path
@@ -121,12 +161,13 @@ fu! ScalaTest()
     let spec = spec[1]
   endif
   if(empty(spec))
-    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar" . ":bin/:bin/test:bin/main org.scalatest.tools.Runner -o -s " . class
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar " . "org.scalatest.tools.Runner -o -s " . class
   else
-    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar" . ":bin/:bin/test:bin/main org.scalatest.tools.Runner -o -s " . class . " -z '" . spec . "'"
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar " . "org.scalatest.tools.Runner -o -s " . class . " -z '" . spec . "'"
   endif
   call RunCommand(cmd)
 endf
+
 fu! RunScalaSpec()
   call EasyMotion#JK(0,2)
   call feedkeys("\<Space>tt")
@@ -134,39 +175,48 @@ endf
 autocmd FileType scala nmap <Leader>ts :call RunScalaSpec()<CR>
 
 
-fu! EclimJunit() 
+fu! EclimJunit()
   let project = eclim#project#util#GetCurrentProjectName()
   let file = eclim#project#util#GetProjectRelativeFilePath()
   let cmd = "eclim -command java_junit -p " . project . " -f " . file
   call RunCommand(cmd)
 endf
 
-fu! EclimJunitFind() 
+fu! EclimJunitFind()
   let project = eclim#project#util#GetCurrentProjectName()
   let file = eclim#project#util#GetProjectRelativeFilePath()
   let cmd = "eclim -command java_junit_find -p " . project . " -f " . file
   call RunCommand(cmd)
 endf
 
-fu! EclimRun(args) 
+fu! EclimRun(args)
   let project = eclim#project#util#GetCurrentProjectName()
+  let project_root = eclim#project#util#GetProject(project).path
   let file = eclim#project#util#GetProjectRelativeFilePath()
   let class = substitute(file, "^src/main/java/", "", "")
   let class = substitute(class, "^src/main/scala/", "", "")
+  let class = substitute(class, "^src/main/kotlin/", "", "")
+  let class = substitute(class, "^src/test/java/", "", "")
+  let class = substitute(class, "^src/test/scala/", "", "")
+  let class = substitute(class, "^src/test/kotlin/", "", "")
   let class = substitute(class, "^src/", "", "")
+  let class = substitute(class, "^tst/", "", "")
   let class = split(class, '\.')[0]
   let class = substitute(class, "/", ".", "g")
   let cmd = "eclim -command java -p " . project . " -c " . class . " " . a:args
   call RunCommand(cmd)
 endf
 
-fu! EclimNew(type, name) 
+fu! EclimNew(type, name)
   let project = eclim#project#util#GetCurrentProjectName()
   let cmd = "eclim -command java_new -p " . project . " -t " . a:type . " -n " . a:name
   call RunCommand(cmd)
 endf
 
-fu! EclimSearch(type, name) 
-  let cmd = "eclim -command java_search -x " . type . " -t all " " -p " . a:name
+fu! EclimSearch(type)
+  let tag = expand("<cword>")
+  echo tag
+  " let cmd = "eclim -command java_search -x " . a:type . " -t all -p " . tag
+  let cmd = "eclim -command java_search -x " . a:type . " -t all -p " . tag
   call RunCommand(cmd)
 endf
