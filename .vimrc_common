@@ -20,7 +20,6 @@ Plugin 'tagbar'
 Plugin 'vim-addon-mw-utils'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'tomtom/tcomment_vim'
-Plugin 'scrooloose/syntastic'
 Plugin 'vim-fugitive'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -34,7 +33,8 @@ Plugin 'fatih/vim-go'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'kotlin-vim'
 Plugin 'rails.vim'
-" Plugin 'ale'
+Plugin 'ale'
+" Plugin 'scrooloose/syntastic'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 
@@ -468,11 +468,13 @@ endf
 autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
 
 " ALE options
-let g:ale_fixers = {
-      \   'javascript': ['eslint'],
-      \}
-
-" if you want to fix files automatically on save, off by default.
+let g:airline#extensions#ale#enabled = 1
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_open_list = 1
+let g:ale_list_window_size = 5
+let g:ale_lint_on_text_changed = 'normal'
+" let g:ale_lint_on_text_changed = 'never'
 " let g:ale_fix_on_save = 1
 
 " Syntastic options
@@ -635,11 +637,11 @@ endf
 nmap mm :call MoveToWord()<CR>
 imap mm<CR> <C-o>:call IMoveToWord()<CR>
 
-" git
-nmap <Leader>gls :Glog<CR> <bar> :q<CR> <bar> :vert copen<CR>
-nmap <Leader>gdf :Gvdiff<CR>
-nmap <Leader>glg :Glog<CR>
-nmap <Leader>gst :Gstatus<CR>
+" " git
+" nmap <Leader>gls :Glog<CR> <bar> :q<CR> <bar> :vert copen<CR>
+" nmap <Leader>gdf :Gvdiff<CR>
+" nmap <Leader>glg :Glog<CR>
+" nmap <Leader>gst :Gstatus<CR>
 
 " vimux
 fu! GetVisualText()
