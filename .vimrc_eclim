@@ -5,7 +5,6 @@ autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or 
 " for eclim
 let g:EclimCompletionMethod = 'omnifunc'
 
-
 nmap <Leader>lf :LocateFile<CR>
 nmap <Leader>pb :ProjectBuild<CR>
 nmap <Leader>pl :ProjectList<CR>
@@ -15,7 +14,10 @@ nmap <Leader>po :ProjectOpen<CR>
 nmap <Leader>pc :ProjectClose<CR>
 nmap <Leader>pr :ProjectRefreshAll<CR>
 
+let g:EclimScalaValidate = 0
 autocmd FileType scala let b:ale_scala_scalac_classpath=eclim#Execute('-command java_classpath -p ' . eclim#project#util#GetCurrentProjectName())
+autocmd FileType scala let b:ale_scala_scalac_srcpath=GetSourcePaths('scala')
+autocmd FileType scala let b:ale_scala_scalac_outputpath=GetALEOutputPath()
 autocmd FileType scala setlocal omnifunc=eclim#scala#complete#CodeComplete
 autocmd FileType scala imap <C-i> <C-X><C-O>
 autocmd FileType scala imap <C-n> <C-X><C-N>
@@ -35,7 +37,7 @@ autocmd FileType scala nmap <buffer> <Leader>nt :call EclimNew('class', expand('
  
 autocmd FileType kotlin let g:ale_kotlin_kotlinc_enable_config=1
 autocmd FileType kotlin let b:ale_kotlin_kotlinc_config_file=CurrentJavaPackagePath() . '/.ale_kotlinc_config'
-autocmd FileType kotlin let b:ale_kotlin_kotlinc_options='-d ' . CurrentJavaPackagePath() . '/bin'
+autocmd FileType kotlin let b:ale_kotlin_kotlinc_options='-d ' . GetALEOutputPath()
 autocmd FileType kotlin imap <C-i> <C-X><C-O>
 autocmd FileType kotlin imap <C-n> <C-X><C-N>
 autocmd FileType kotlin imap <C-p> <C-X><C-P>
@@ -151,6 +153,22 @@ fu! JavaRun(args)
   let class = substitute(class, "/", ".", "g")
   let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar "  . class . a:args
   call RunCommand(cmd)
+endf
+
+fu! GetALEOutputPath()
+  let project_root = CurrentJavaPackagePath()
+  if project_root == '/'
+    let project_root = '/tmp'
+  endif
+  let path = project_root . '/.ale/classes/'
+  silent! call system('mkdir -p '. path)
+  return path
+endf
+
+fu! GetSourcePaths(type)
+  let project = eclim#project#util#GetCurrentProjectName()
+  let project_root = eclim#project#util#GetProject(project).path
+  return '.'
 endf
 
 fu! ScalaTest()
