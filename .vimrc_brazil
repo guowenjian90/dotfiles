@@ -64,4 +64,10 @@ fu! BrazilRelease()
   call RunCommand(cmd)
 endf
 nmap <Leader>br :call BrazilRelease()<CR>
-nmap <Leader>lvd :call BrazilRelease()<CR> <bar> :call RunCommand("sh ./local-overrides.sh")<CR>
+
+fu! BrazilReleaseLvd()
+  let file_dir = CurrentBrazilPackagePath()
+  let cmd = " cd ". file_dir . "; brazil-build clean; brazil-build release; sh ./local-overrides.sh"
+  call RunCommand(cmd)
+endf
+nmap <Leader>lvd :call BrazilReleaseLvd()<CR>

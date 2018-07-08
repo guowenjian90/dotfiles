@@ -2,6 +2,10 @@ autocmd FileType java set shiftwidth=4          " Set indention level to be the 
 autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
 autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
 
+autocmd FileType scala set shiftwidth=4          " Set indention level to be the same as softtabstop
+autocmd FileType scala set softtabstop=4         " Why are tabs so big?  This fixes it
+autocmd FileType scala set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+
 " for eclim
 let g:EclimCompletionMethod = 'omnifunc'
 
@@ -14,10 +18,12 @@ nmap <Leader>po :ProjectOpen<CR>
 nmap <Leader>pc :ProjectClose<CR>
 nmap <Leader>pr :ProjectRefreshAll<CR>
 
-let g:EclimScalaValidate = 0
-autocmd FileType scala let b:ale_scala_scalac_classpath=eclim#Execute('-command java_classpath -p ' . eclim#project#util#GetCurrentProjectName())
+let g:EclimScalaValidate = 1
+" autocmd FileType scala let b:ale_scala_scalac_classpath=eclim#Execute('-command java_classpath -p ' . eclim#project#util#GetCurrentProjectName())
+autocmd FileType scala let b:ale_scala_scalac_classpath=ClasspathJar()
 autocmd FileType scala let b:ale_scala_scalac_srcpath=GetSourcePaths('scala')
 autocmd FileType scala let b:ale_scala_scalac_outputpath=GetALEOutputPath()
+autocmd FileType scala let b:ale_scala_scalac_options=' -d ' . b:ale_scala_scalac_outputpath . ' -sourcepath ' . b:ale_scala_scalac_srcpath . ' -usemanifestcp -classpath ' . b:ale_scala_scalac_classpath
 autocmd FileType scala setlocal omnifunc=eclim#scala#complete#CodeComplete
 autocmd FileType scala imap <C-i> <C-X><C-O>
 autocmd FileType scala imap <C-n> <C-X><C-N>
@@ -34,7 +40,7 @@ autocmd FileType scala nmap <buffer> <Leader>na :call EclimNew('@interface', inp
 autocmd FileType scala nmap <buffer> <Leader>n@ :call EclimNew('abstract', input(''))<CR>
 autocmd FileType scala nmap <buffer> <Leader>ne :call EclimNew('enum', input(''))<CR>
 autocmd FileType scala nmap <buffer> <Leader>nt :call EclimNew('class', expand('<cword>') . "Test")<CR>
- 
+
 autocmd FileType kotlin let g:ale_kotlin_kotlinc_enable_config=1
 autocmd FileType kotlin let b:ale_kotlin_kotlinc_config_file=CurrentJavaPackagePath() . '/.ale_kotlinc_config'
 autocmd FileType kotlin let b:ale_kotlin_kotlinc_options='-d ' . GetALEOutputPath()
@@ -47,7 +53,7 @@ autocmd FileType kotlin nmap <buffer> <Leader>tt :call KotlinTest()<CR>
 autocmd FileType kotlin nmap <buffer> <Leader>ut :call TestFile('kt')<CR>
 autocmd FileType kotlin nmap <buffer> <Leader>rn :call JavaRun('Kt')<CR>
 
-let g:EclimJavaValidate = 0
+let g:EclimJavaValidate = 1
 autocmd FileType java let b:ale_java_javac_classpath=eclim#Execute('-command java_classpath -p ' . eclim#project#util#GetCurrentProjectName())
 autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
 autocmd FileType java imap <buffer> <C-i> <C-X><C-O>
@@ -165,16 +171,11 @@ fu! GetALEOutputPath()
   return path
 endf
 
-fu! GetSourcePaths(type)
-  let project = eclim#project#util#GetCurrentProjectName()
-  let project_root = eclim#project#util#GetProject(project).path
-  return '.'
-endf
-
 fu! ScalaTest()
-  let project = eclim#project#util#GetCurrentProjectName()
-  let file = eclim#project#util#GetProjectRelativeFilePath()
-  let project_root = eclim#project#util#GetProject(project).path
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '\/')[-1]
+  let file = expand('%:p')
+  let file = substitute(file, project_root . "/", "", "")
   let class = substitute(file, "^src/test/scala/", "", "")
   let class = substitute(class, "^tst/", "", "")
   let class = split(class, '\.')[0]
@@ -199,6 +200,18 @@ fu! RunScalaSpec()
 endf
 autocmd FileType scala nmap <Leader>ts :call RunScalaSpec()<CR>
 
+fu! ClasspathJar()
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '\/')[-1]
+  let classpath_jar =  project_root . "/" . project . "-classpath.jar" 
+  return classpath_jar
+endf
+
+fu! GetSourcePaths(type)
+  let project = eclim#project#util#GetCurrentProjectName()
+  let project_root = eclim#project#util#GetProject(project).path
+  return '.'
+endf
 
 fu! EclimJunit()
   let project = eclim#project#util#GetCurrentProjectName()
