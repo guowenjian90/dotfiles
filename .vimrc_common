@@ -164,6 +164,13 @@ endif
 "don't automatically spell check!
 let spell_auto_type=""
 
+"auto format
+let g:formatdef_scalafmt = "'/home/wenjian/scala/scalafmt/scalafmt --stdin 2>/dev/null'"
+let g:formatters_scala = ['scalafmt']
+let g:formatdef_googlefmt = "'java -jar /home/wenjian/astyle/google-java-format-1.6-all-deps.jar --skip-sorting-imports - '"
+let g:formatters_java = ['googlefmt']
+" let g:autoformat_verbosemode=1
+
 " LargeFile.vim settings
 " don't run syntax and other expensive things on files
 let g:LargeFile = 100
@@ -303,6 +310,23 @@ vmap <Leader>ss :s/\<\@!\([A-Z]\)/\_\l\1/g<cr>gul
 vmap <Leader>cs :s/_\([a-z]\)/\u\1/g<cr>gul
 
 " tabbar
+let g:tagbar_type_scala = {
+    \ 'ctagstype' : 'scala',
+    \ 'sro'        : '.',
+    \ 'kinds'     : [
+      \ 'p:packages',
+      \ 'T:types:1',
+      \ 't:traits',
+      \ 'o:objects',
+      \ 'O:case objects',
+      \ 'c:classes',
+      \ 'C:case classes',
+      \ 'm:methods',
+      \ 'V:values:1',
+      \ 'v:variables:1'
+    \ ]
+\ }
+
 let g:tagbar_type_go = {
       \ 'ctagstype' : 'go',
       \ 'kinds'     : [
@@ -404,61 +428,6 @@ endf
 nmap <Leader>sa :call SearchWithAg(expand('<cword>'), input('')) <CR>
 vmap <Leader>sa :call SearchWithAg(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], input('')) <CR>
 
-" Ruby build functions
-fu! CurrentRubyPackagePath()
-  let savedir = getcwd()
-  let dir = expand('%:p:h')
-  exe "cd " . dir
-  while (dir != '/')
-    let configfile = dir . '/' . "Rakefile"
-    if filereadable(configfile)
-      break
-    endif
-    cd ..
-    let dir = getcwd()
-  endw
-  exe "cd " savedir
-  return dir
-endf
-
-fu! RubyTestFile()
-  let file = expand('%:p')
-  if (stridx(file, "_spec.rb") == -1)
-    let new_file = substitute(file, "/lib/", "/spec/", "")
-    let new_file = substitute(new_file, ".rb", "_spec.rb", "")
-  else
-    let new_file = substitute(file, "/spec/", "/lib/", "")
-    let new_file = substitute(new_file, "_spec.rb", ".rb", "")
-  endif
-  let exist = findfile(new_file)
-  if (exist == new_file)
-    exe "edit " new_file
-  else
-    echo 'can not find file '. new_file
-  endif
-endf
-autocmd FileType ruby nmap <Leader>ut :call RubyTestFile()<CR>
-
-fu! CurrentJavaPackagePath()
-  let savedir = getcwd()
-  let dir = expand('%:p:h')
-  exe "cd " . dir
-  while (dir != '/')
-    let configfile = dir . '/' . "build.xml"
-    if filereadable(configfile)
-      break
-    endif
-    let configfile = dir . '/' . "build.gradle"
-    if filereadable(configfile)
-      break
-    endif
-    cd ..
-    let dir = getcwd()
-  endw
-  exe "cd " savedir
-  return dir
-endf
-
 fu! RunShell()
   let file = expand('%:p')
   let file_dir = expand('%:p:h')
@@ -471,7 +440,7 @@ autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
-let g:ale_open_list = 1
+let g:ale_open_list = 0
 let g:ale_list_window_size = 5
 " let g:ale_lint_on_text_changed = 'normal'
 " let g:ale_lint_on_text_changed = 'never'

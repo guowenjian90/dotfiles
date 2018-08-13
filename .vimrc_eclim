@@ -1,10 +1,65 @@
-autocmd FileType java set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType java set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType java set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+autocmd FileType java set shiftwidth=2          " Set indention level to be the same as softtabstop
+autocmd FileType java set softtabstop=2         " Why are tabs so big?  This fixes it
+autocmd FileType java set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
 
-autocmd FileType scala set shiftwidth=4          " Set indention level to be the same as softtabstop
-autocmd FileType scala set softtabstop=4         " Why are tabs so big?  This fixes it
-autocmd FileType scala set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+autocmd FileType scala set shiftwidth=2          " Set indention level to be the same as softtabstop
+autocmd FileType scala set softtabstop=2         " Why are tabs so big?  This fixes it
+autocmd FileType scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
+
+fu! CurrentJavaPackagePath()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "build.xml"
+    if filereadable(configfile)
+      break
+    endif
+    let configfile = dir . '/' . "build.gradle"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+" Ruby build functions
+fu! CurrentRubyPackagePath()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "Rakefile"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! RubyTestFile()
+  let file = expand('%:p')
+  if (stridx(file, "_spec.rb") == -1)
+    let new_file = substitute(file, "/lib/", "/spec/", "")
+    let new_file = substitute(new_file, ".rb", "_spec.rb", "")
+  else
+    let new_file = substitute(file, "/spec/", "/lib/", "")
+    let new_file = substitute(new_file, "_spec.rb", ".rb", "")
+  endif
+  let exist = findfile(new_file)
+  if (exist == new_file)
+    exe "edit " new_file
+  else
+    echo 'can not find file '. new_file
+  endif
+endf
+autocmd FileType ruby nmap <Leader>ut :call RubyTestFile()<CR>
 
 " for eclim
 let g:EclimCompletionMethod = 'omnifunc'
@@ -208,9 +263,8 @@ fu! ClasspathJar()
 endf
 
 fu! GetSourcePaths(type)
-  let project = eclim#project#util#GetCurrentProjectName()
-  let project_root = eclim#project#util#GetProject(project).path
-  return '.'
+  let project_root = CurrentJavaPackagePath()
+  return project_root + '/src/'
 endf
 
 fu! EclimJunit()
