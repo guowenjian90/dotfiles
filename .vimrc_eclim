@@ -6,6 +6,17 @@ autocmd FileType scala set shiftwidth=2          " Set indention level to be the
 autocmd FileType scala set softtabstop=2         " Why are tabs so big?  This fixes it
 autocmd FileType scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
 
+fu! CodeCompletion()
+  let codeFiles = ['python', 'ruby', 'java', 'scala', 'cpp']
+  if !pumvisible() && ((v:char >= 'a' && v:char <= 'z') || (v:char >= 'A' && v:char <= 'Z'))
+      call feedkeys("\<C-x>\<C-n>", "n")
+  elseif !pumvisible() && (v:char == '.') && index(codeFiles, &filetype) >= 0
+      call feedkeys("\<C-x>\<C-o>", "n")
+  endif
+endf
+
+autocmd InsertCharPre * call CodeCompletion()
+
 fu! CurrentJavaPackagePath()
   let savedir = getcwd()
   let dir = expand('%:p:h')
@@ -61,6 +72,9 @@ fu! RubyTestFile()
 endf
 autocmd FileType ruby nmap <Leader>ut :call RubyTestFile()<CR>
 
+autocmd Filetype ruby compiler ruby
+" autocmd Filetype ruby set makeprg=ruby\ -c\ %
+
 " for eclim
 let g:EclimCompletionMethod = 'omnifunc'
 
@@ -87,7 +101,7 @@ autocmd FileType scala nmap <buffer> <C-]> :ScalaSearch<CR>
 autocmd FileType scala nmap <buffer> <Leader>sc :ScalaSearch<CR>
 autocmd FileType scala nmap <buffer> <Leader>jo :ScalaImport<CR>
 autocmd FileType scala nmap <buffer> <Leader>tt :call ScalaTest()<CR>
-autocmd FileType scala nmap <buffer> <Leader>ut :call TestFile('scala')<CR>
+autocmd FileType scala nmap <buffer> <Leader>ut :call TestFile('Spec', 'scala')<CR>
 autocmd FileType scala nmap <buffer> <Leader>rn :call JavaRun('')<CR>
 autocmd FileType scala nmap <buffer> <Leader>nc :call EclimNew('class', input(''))<CR>
 autocmd FileType scala nmap <buffer> <Leader>ni :call EclimNew('interface', input(''))<CR>
@@ -105,7 +119,7 @@ autocmd FileType kotlin imap <C-p> <C-X><C-P>
 autocmd FileType kotlin nmap <buffer> <C-]> :call EclimSearch('references')<CR>
 autocmd FileType kotlin nmap <buffer> <Leader>sc :call EclimSearch('references')CR>
 autocmd FileType kotlin nmap <buffer> <Leader>tt :call KotlinTest()<CR>
-autocmd FileType kotlin nmap <buffer> <Leader>ut :call TestFile('kt')<CR>
+autocmd FileType kotlin nmap <buffer> <Leader>ut :call TestFile('Test', 'kt')<CR>
 autocmd FileType kotlin nmap <buffer> <Leader>rn :call JavaRun('Kt')<CR>
 
 let g:EclimJavaValidate = 1
@@ -159,15 +173,16 @@ autocmd FileType java nmap <buffer> <F7> <Leader>dsr <bar> <Leader>jds
 autocmd FileType java nmap <buffer> <F8> <Leader>dbt <bar> <Leader>jds
 set statusline=%<%f\ %M\ %h%r%=%-10.(%l,%c%V\ %{eclim#project#util#ProjectStatusLine()}%)\ %P
 
-fu! TestFile(suffix)
+fu! TestFile(test, suffix)
+  let test = a:test
   let ext = a:suffix
   let file = expand('%:p')
-  if (stridx(file, "Test." . ext) == -1)
+  if (stridx(file, test."." . ext) == -1)
     let new_file = substitute(file, "/main/", "/test/", "")
-    let new_file = substitute(new_file, "\." . ext . "$", "Test\." . ext, "")
+    let new_file = substitute(new_file, "\." . ext . "$", test."\." . ext, "")
   else
     let new_file = substitute(file, "/test/", "/main/", "")
-    let new_file = substitute(new_file, "Test\." . ext, "\." . ext, "")
+    let new_file = substitute(new_file, test."\." . ext, "\." . ext, "")
   endif
   let exist = findfile(new_file)
   if (exist == new_file)

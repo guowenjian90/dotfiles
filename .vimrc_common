@@ -144,15 +144,15 @@ set statusline+=%*
 " set clipboard=unnamed
 
 " File type auto cmd
+set completeopt=menuone,preview,noinsert
+" set completeopt=longest,menuone,preview,noinsert
 set omnifunc=syntaxcomplete#Complete
+autocmd FileType * setlocal omnifunc=syntaxcomplete#Complete
 autocmd QuickFixCmdPost [^l]* nested cwindow
 autocmd QuickFixCmdPost    l* nested lwindow
 autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 autocmd BufReadPost location nnoremap <buffer> <CR> <CR>
-autocmd FileType * setlocal omnifunc=syntaxcomplete#Complete
-autocmd Filetype ruby compiler ruby
-" autocmd Filetype ruby set makeprg=ruby\ -c\ %
-"
+
 " syntax checking
 "Adding mail as a spell checked type, only if in 7.0 >
 if (v:version >= 700)
@@ -165,7 +165,7 @@ endif
 let spell_auto_type=""
 
 "auto format
-let g:formatdef_scalafmt = "'/home/wenjian/scala/scalafmt/scalafmt --stdin 2>/dev/null'"
+let g:formatdef_scalafmt = "'/home/wenjian/scala/scalafmt/scalafmt --config ~/.scalafmt.conf --stdin 2>/dev/null'"
 let g:formatters_scala = ['scalafmt']
 let g:formatdef_googlefmt = "'java -jar /home/wenjian/astyle/google-java-format-1.6-all-deps.jar --skip-sorting-imports - '"
 let g:formatters_java = ['googlefmt']
