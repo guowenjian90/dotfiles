@@ -240,8 +240,6 @@ nmap <c-,> :g,<CR>
 nmap <Leader>num :set number<CR>
 nmap <Leader>b :b
 nmap <Leader>z <C-z>
-nmap <Leader>cq :cclose<CR>
-nmap <Leader>oq :copen<CR>
 nmap <Leader>x :x<CR>
 nmap <Leader>w :w<CR>
 nmap <Leader>q :q<CR>
@@ -311,9 +309,9 @@ vmap <Leader>cs :s/_\([a-z]\)/\u\1/g<cr>gul
 
 " tabbar
 let g:tagbar_type_scala = {
-    \ 'ctagstype' : 'scala',
-    \ 'sro'        : '.',
-    \ 'kinds'     : [
+      \ 'ctagstype' : 'scala',
+      \ 'sro'        : '.',
+      \ 'kinds'     : [
       \ 'p:packages',
       \ 'T:types:1',
       \ 't:traits',
@@ -324,8 +322,8 @@ let g:tagbar_type_scala = {
       \ 'm:methods',
       \ 'V:values:1',
       \ 'v:variables:1'
-    \ ]
-\ }
+      \ ]
+      \ }
 
 let g:tagbar_type_go = {
       \ 'ctagstype' : 'go',
@@ -438,16 +436,16 @@ autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
 
 " ALE options
 let g:airline#extensions#ale#enabled = 1
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
+let g:ale_set_loclist = 1
+let g:ale_set_quickfix = 0
 let g:ale_open_list = 0
 let g:ale_list_window_size = 5
-" let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_text_changed = 'normal'
 " let g:ale_lint_on_text_changed = 'never'
 " let g:ale_fix_on_save = 1
 let g:ale_linters = {
-\   'scala': ['scalac'],
-\}
+      \   'scala': ['scalac'],
+      \}
 
 " Syntastic options
 let g:syntastic_always_populate_loc_list = 0
@@ -645,12 +643,13 @@ endf
 nmap <Leader>rr :VimuxRunLastCommand<CR>
 let g:VimuxOrientation = 'v'
 
-fu! TaggleQuickList()
-  let qf = bufexists("[Location List]")
-  if (qf == 1)
-    exe "close"
+fu! TaggleQuickFix()
+  if exists("g:qfix_win")
+    exe "cclose"
+    unlet g:qfix_win
   else
     exe "copen"
+    let g:qfix_win = bufnr("$")
   endif
 endf
-nmap ql :call TaggleQuickList()<CR>
+nmap ql :call TaggleQuickFix()<CR>
