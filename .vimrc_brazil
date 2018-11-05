@@ -71,3 +71,12 @@ fu! BrazilReleaseLvd()
   call RunCommand(cmd)
 endf
 nmap <Leader>lvd :call BrazilReleaseLvd()<CR>
+
+fu! CDBrazilPackageRoot()
+  let tag = expand("<cword>")
+  let file_dir = CurrentBrazilPackagePath()
+  let project = eclim#project#util#GetCurrentProjectName()
+  let cmd = "cd " . file_dir
+  call RunCommand(cmd)
+endf
+nmap <Leader>bp :call CDBrazilPackageRoot()<CR>

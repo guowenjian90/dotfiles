@@ -423,6 +423,7 @@ fu! SearchWithAg(text, extension)
     execute "Ag " . a:text . " **/*" . a:extension
   end
 endf
+nmap <Leader>ss :call SearchWithAg(input(''), input('')) <CR>
 nmap <Leader>sa :call SearchWithAg(expand('<cword>'), input('')) <CR>
 vmap <Leader>sa :call SearchWithAg(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], input('')) <CR>
 
@@ -462,21 +463,6 @@ let g:syntastic_kotlin_checkers = ['kotlinc']
 nmap <Leader>sc :Errors
 " nmap <C-n> :lnext<CR>
 " nmap <C-p> :lprev<CR>
-
-" go lang setting
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
-autocmd FileType go imap <C-I> <C-X><C-O>
-autocmd FileType go nmap <Leader>tt :GoTest<CR>
-autocmd FileType go nmap <Leader>fmt :GoFmt<CR>
-autocmd FileType go nmap <Leader>gr :GoRename<CR>
-autocmd FileType go nmap <Leader>gp :GoImpl<CR>
-autocmd FileType go nmap <Leader>gi :GoImports<CR>
-autocmd FileType go nmap <Leader>gc :GoErrCheck<CR>
-autocmd FileType go nmap <Leader>gsc :GoCallers<CR>
 
 " super tab
 let g:SuperTabLongestEnhanced = 1
@@ -627,16 +613,19 @@ endf
 fu! RunCommandVis() range
   let cmd = GetVisualText()
   if exists('$TMUX')
-    exe "VimuxRunCommand \"" . cmd . "\""
+    call RunCommand(cmd)
   end
 endf
 vmap <Leader>rn :call RunCommandVis()<CR>
 
 fu! RunCommand(cmd)
+  let cmd = escape(a:cmd, '\')
+  let cmd = escape(cmd, '"')
   if exists('$TMUX')
-    exe "VimuxRunCommand \"" . a:cmd . "; tmux display-message cmd-finished;\""
+    exe "VimuxRunCommand \"" . cmd . "\""
+    " exe "VimuxRunCommand \"" . cmd . "; tmux display-message cmd-finished;\""
   else
-    exe "!" . a:cmd
+    exe '!' . cmd
   end
 endf
 

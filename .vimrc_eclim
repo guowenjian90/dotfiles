@@ -1,3 +1,18 @@
+" go lang setting
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+autocmd FileType go imap <C-I> <C-X><C-O>
+autocmd FileType go nmap <Leader>tt :GoTest<CR>
+autocmd FileType go nmap <Leader>fmt :GoFmt<CR>
+autocmd FileType go nmap <Leader>gr :GoRename<CR>
+autocmd FileType go nmap <Leader>gp :GoImpl<CR>
+autocmd FileType go nmap <Leader>gi :GoImports<CR>
+autocmd FileType go nmap <Leader>gc :GoErrCheck<CR>
+autocmd FileType go nmap <Leader>gsc :GoCallers<CR>
+
 autocmd FileType java set shiftwidth=2          " Set indention level to be the same as softtabstop
 autocmd FileType java set softtabstop=2         " Why are tabs so big?  This fixes it
 autocmd FileType java set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
@@ -8,10 +23,11 @@ autocmd FileType scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or
 
 fu! CodeCompletion()
   let codeFiles = ['python', 'ruby', 'java', 'scala', 'cpp']
-  if !pumvisible() && ((v:char >= 'a' && v:char <= 'z') || (v:char >= 'A' && v:char <= 'Z'))
-      call feedkeys("\<C-x>\<C-n>", "n")
-  elseif !pumvisible() && (v:char == '.') && index(codeFiles, &filetype) >= 0
+  if !pumvisible() && (v:char == '.') && index(codeFiles, &filetype) >= 0
       call feedkeys("\<C-x>\<C-o>", "n")
+    " elseif !pumvisible() && ((v:char >= 'a' && v:char <= 'z') || (v:char >= 'A' && v:char <= 'Z'))
+  elseif !pumvisible() && v:char != ' '
+      call feedkeys("\<C-x>\<C-n>", "n")
   endif
 endf
 
