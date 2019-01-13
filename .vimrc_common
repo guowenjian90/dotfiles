@@ -1,6 +1,7 @@
 "  Plugin loading
 " set the runtime path to include Vundle and initialize
 set nocompatible              " be iMproved, required
+set relativenumber            " be iMproved, required
 filetype off                  " required
 set rtp+=~/.vim/bundle/Vundle.vim
 " alternatively, pass a path where Vundle should install plugins
@@ -29,7 +30,7 @@ Plugin 'vim-repeat'
 Plugin 'matchit'
 Plugin 'ag.vim'
 Plugin 'vimux'
-Plugin 'tslime.vim'
+" Plugin 'tslime.vim'
 Plugin 'fatih/vim-go'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'kotlin-vim'
@@ -37,7 +38,7 @@ Plugin 'rails.vim'
 Plugin 'ale'
 " Plugin 'scrooloose/syntastic'
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
+" call vundle#end()            " required
 
 "Set colorscheme.  This is a black background colorscheme
 colorscheme desert
@@ -269,19 +270,22 @@ cmap <C-k> <S-Right><C-w>
 cmap <C-h> <S-Left>
 cmap <C-l> <S-Right>
 
+imap <M-j> <Down>
+imap <M-k> <Up>
+imap <M-h> <Left>
+imap <M-l> <Right>
 imap <S-Up> <C-o>v<Up>
 imap <S-Down> <C-o>v<Down>
 imap <S-Left> <Left><C-o>v
 imap <S-Right> <C-o>v<Right>
 imap ii <Esc>
+imap vv <C-o>v
+imap <C-h> <BS>
+imap <C-l> <Del>
+imap <C-k> <C-o>d$
+imap <C-^> <C-o><C-^>
 imap gl<CR> <C-o>$
 imap gh<CR> <C-o>^
-imap <C-^> <C-o><C-^>
-imap vv <C-o>v
-imap <C-j> <Down>
-imap <C-k> <Up>
-imap <C-h> <Left>
-imap <C-l> <Right>
 " imap <C-b> <C-o>B<C-w>
 imap <C-d><CR> <C-o>d$<Right>
 imap <C-y><CR> <C-o>y$
@@ -291,7 +295,8 @@ imap <C-y>t <C-o>yt
 imap <C-y>f <C-o>yf
 imap <C-y>i <C-o>yi
 imap <C-y>a <C-o>ya
-imap <C-y>p <C-o>P
+imap <C-y>p <C-o>p
+imap <C-y>P <C-o>P
 imap <C-_> <C-o>u
 " inoremap <expr> j pumvisible() ? "\<C-n>" : "j"
 " inoremap <expr> k pumvisible() ? "\<C-p>" : "k"
@@ -438,9 +443,9 @@ autocmd FileType shell nmap <Leader>rn :call RunShell()<CR>
 
 " ALE options
 let g:airline#extensions#ale#enabled = 1
-let g:ale_set_loclist = 1
-let g:ale_set_quickfix = 0
-let g:ale_open_list = 0
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_open_list = 1
 let g:ale_list_window_size = 5
 let g:ale_lint_on_text_changed = 'normal'
 " let g:ale_lint_on_text_changed = 'never'
