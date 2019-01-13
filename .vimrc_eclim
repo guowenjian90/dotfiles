@@ -22,12 +22,11 @@ autocmd FileType scala set softtabstop=2         " Why are tabs so big?  This fi
 autocmd FileType scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
 
 fu! CodeCompletion()
-  let codeFiles = ['python', 'ruby', 'java', 'scala', 'cpp']
+  let codeFiles = ['java', 'scala', 'cpp']
   if !pumvisible() && (v:char == '.') && index(codeFiles, &filetype) >= 0
-      call feedkeys("\<C-x>\<C-o>", "n")
-    " elseif !pumvisible() && ((v:char >= 'a' && v:char <= 'z') || (v:char >= 'A' && v:char <= 'Z'))
-  elseif !pumvisible() && v:char != ' '
-      call feedkeys("\<C-x>\<C-n>", "n")
+      call feedkeys("\<C-x>\<C-o>")
+  elseif !pumvisible() && ((v:char >= 'a' && v:char <= 'z') || (v:char >= 'A' && v:char <= 'Z'))
+      call feedkeys("\<C-x>\<C-n>")
   endif
 endf
 
@@ -103,7 +102,7 @@ nmap <Leader>po :ProjectOpen<CR>
 nmap <Leader>pc :ProjectClose<CR>
 nmap <Leader>pr :ProjectRefreshAll<CR>
 
-let g:EclimScalaValidate = 1
+let g:EclimScalaValidate = 0
 " autocmd FileType scala let b:ale_scala_scalac_classpath=eclim#Execute('-command java_classpath -p ' . eclim#project#util#GetCurrentProjectName())
 autocmd FileType scala let b:ale_scala_scalac_classpath=ClasspathJar()
 autocmd FileType scala let b:ale_scala_scalac_srcpath=GetSourcePaths('scala')

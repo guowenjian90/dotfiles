@@ -13,8 +13,9 @@ Plugin 'easymotion/vim-easymotion'
 Plugin 'auto_mkdir'
 Plugin 'SuperTab'
 Plugin 'nerdtree'
-Plugin 'vim-snipmate'
-Plugin 'vim-snippets'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
+Plugin 'vim-ultisnip-scala'
 Plugin 'tlib_vim'
 Plugin 'tagbar'
 Plugin 'vim-addon-mw-utils'
@@ -544,11 +545,14 @@ else
   nmap <Leader>e :e <C-R>=expand("%:p:h") . "\\"<CR>
 endif
 
-" snipMate
-imap <C-e>s <Plug>snipMateShow
-smap <C-e>s <Plug>snipMateShow
-imap <C-e><CR> <Plug>snipMateNextOrTrigger
-smap <C-e><CR> <Plug>snipMateNextOrTrigger
+" UltiSnipsExpandTrigger configuration
+let g:UltiSnipsExpandTrigger="<c-u><CR>"
+let g:UltiSnipsListSnippets="<c-u>l"
+let g:UltiSnipsJumpForwardTrigger="<c-u>j"
+let g:UltiSnipsJumpBackwardTrigger="<c-u>k"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
 
 " easy motion
 let g:EasyMotion_do_mapping = 1 " Disable default mappings
@@ -610,10 +614,18 @@ fu! GetVisualText()
   endtry
 endf
 
+fu! RunCommandInTmuxWindow(cmd)
+  let cmd = escape(a:cmd, '\')
+  let cmd = escape(cmd, '"')
+  exe "VimuxRunCommand \"" . cmd . "\""
+  " exe "!tmux new-window -n console"
+  " exe "tmux send-keys " . cmd
+endf
+
 fu! RunCommandVis() range
   let cmd = GetVisualText()
   if exists('$TMUX')
-    call RunCommand(cmd)
+    call RunCommandInTmuxWindow(cmd)
   end
 endf
 vmap <Leader>rn :call RunCommandVis()<CR>
@@ -622,8 +634,7 @@ fu! RunCommand(cmd)
   let cmd = escape(a:cmd, '\')
   let cmd = escape(cmd, '"')
   if exists('$TMUX')
-    exe "VimuxRunCommand \"" . cmd . "\""
-    " exe "VimuxRunCommand \"" . cmd . "; tmux display-message cmd-finished;\""
+    call RunCommandInTmuxWindow(cmd)
   else
     exe '!' . cmd
   end

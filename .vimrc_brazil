@@ -14,6 +14,15 @@ fu! CurrentBrazilPackagePath()
   return dir
 endf
 
+fu! CDBrazilPackageRoot()
+  let tag = expand("<cword>")
+  let file_dir = CurrentBrazilPackagePath()
+  let project = eclim#project#util#GetCurrentProjectName()
+  let cmd = "cd " . file_dir
+  call RunCommand(cmd)
+endf
+nmap <Leader>bp :call CDBrazilPackageRoot()<CR>
+
 fu! BrazilRubyRunTest()
   let file = expand('%:p')
   if (stridx(file, "_spec.rb") != -1)
@@ -23,8 +32,9 @@ fu! BrazilRubyRunTest()
     return
   end
   let line_no = line(".")
-  let env_dir = substitute(file_dir, "/src/", "/env/", "")
-  let cmd = " cd ". file_dir . "; " . env_dir . "*/test-runtime/ruby2.3.x/gem_bin/rspec --format documentation " . file . ":" . line_no
+  " let env_dir = substitute(file_dir, "/src/", "/env/", "")
+  " let cmd = " cd ". file_dir . "; " . env_dir . "*/test-runtime/ruby2.3.x/gem_bin/rspec --format documentation " . file . ":" . line_no
+  let cmd = " cd ". file_dir . "; " . "build/private/env/ruby2.3.x/ruby2.3.x/gem_bin/rspec --format documentation " . file . ":" . line_no
   call RunCommand(cmd)
 endf
 autocmd FileType ruby nmap <Leader>tt :call BrazilRubyRunTest()<CR>
@@ -32,13 +42,14 @@ autocmd FileType ruby nmap <Leader>tt :call BrazilRubyRunTest()<CR>
 fu! BrazilRubyRun()
   let file = expand('%:p')
   let file_dir = CurrentBrazilPackagePath()
-  let env_dir = substitute(file_dir, "/src/", "/env/", "")
-  let cmd = " cd ". file_dir . "; brazil-test-exec " . env_dir . "*/test-runtime/ruby2.3.x/bin/ruby " . file
+  " let env_dir = substitute(file_dir, "/src/", "/env/", "")
+  " let cmd = " cd ". file_dir . "; brazil-test-exec " . env_dir . "*/test-runtime/ruby2.3.x/bin/ruby " . file
+  let cmd = " cd ". file_dir . "; brazil-test-exec build/private/env/ruby2.3.x/ruby2.3.x/bin/ruby " . file
   call RunCommand(cmd)
 endf
 autocmd FileType ruby nmap <Leader>br :call BrazilRubyRun()<CR>
 
-fu! BBJavaUnit()
+fu! BrazilJavaUnitTest()
   let file = expand('%:p')
   let savedir = getcwd()
   let file_dir = CurrentBrazilPackagePath()
@@ -49,7 +60,7 @@ fu! BBJavaUnit()
   let cmd = "cd ". file_dir . "; bb single-unit-test -DtestClass=" . class
   call RunCommand(cmd)
 endf
-autocmd FileType java nmap <Leader>btt :call BBJavaUnit()<CR>
+autocmd FileType java nmap <Leader>btt :call BrazilJavaUnitTest()<CR>
 
 fu! BrazilBuild()
   let file_dir = CurrentBrazilPackagePath()
@@ -71,12 +82,3 @@ fu! BrazilReleaseLvd()
   call RunCommand(cmd)
 endf
 nmap <Leader>lvd :call BrazilReleaseLvd()<CR>
-
-fu! CDBrazilPackageRoot()
-  let tag = expand("<cword>")
-  let file_dir = CurrentBrazilPackagePath()
-  let project = eclim#project#util#GetCurrentProjectName()
-  let cmd = "cd " . file_dir
-  call RunCommand(cmd)
-endf
-nmap <Leader>bp :call CDBrazilPackageRoot()<CR>
