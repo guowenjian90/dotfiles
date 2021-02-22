@@ -8,12 +8,9 @@ Plugin 'easymotion/vim-easymotion'
 Plugin 'auto_mkdir'
 Plugin 'auto-pairs'
 Plugin 'SuperTab'
-Plugin 'nerdtree'
 Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
 Plugin 'tlib_vim'
 Plugin 'tagbar'
-Plugin 'vim-addon-mw-utils'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'tomtom/tcomment_vim'
 Plugin 'vim-fugitive'
@@ -23,17 +20,19 @@ Plugin 'vim-surround'
 Plugin 'vim-repeat'
 Plugin 'matchit'
 Plugin 'ag.vim'
-Plugin 'vimux'
+Plugin 'preservim/vimux'
+Plugin 'preservim/nerdtree'
 Plugin 'vim-ultisnip-scala'
 Plugin 'vim-scala'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'fatih/vim-go'
-Plugin 'kotlin-vim'
-Plugin 'rails.vim'
-Plugin 'coc.nvim'
+Plugin 'neoclide/coc.nvim'
 Plugin 'echodoc.vim'
-
 Plugin 'ale'
+
+" Plugin 'honza/vim-snippets'
+" Plugin 'kotlin-vim'
+" Plugin 'rails.vim'
 " Plugin 'scrooloose/syntastic'
 " Plugin 'mileszs/ack.vim'
 " Plugin 'tslime.vim'
@@ -43,6 +42,6 @@ call vundle#end()            " required
 " source $HOME/envImprovement/vim/vimruntimehook
 source $HOME/.vim/vimrc_common
 source $HOME/.vim/vimrc_lang
-" source $HOME/.vim/vimrc_eclim
 source $HOME/.vim/vimrc_coc
 source $HOME/.vim/vimrc_brazil
+highlight Pmenu ctermbg=gray guibg=gray

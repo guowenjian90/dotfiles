@@ -1,0 +1,216 @@
+" let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+" let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
+
+" coc
+set statusline+=%{coc#status()}
+" if hidden is not set, TextEdit might fail.
+set hidden
+
+" Some server have issues with backup files, see #649
+set nobackup
+set nowritebackup
+
+" Better display for messages
+set cmdheight=2
+
+" Smaller updatetime for CursorHold & CursorHoldI
+set updatetime=300
+
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+
+" always show signcolumns
+set signcolumn=yes
+
+autocmd FileType java let b:coc_root_patterns = ['.classpath']
+autocmd FileType scala let b:coc_root_patterns = ['build.sbt']
+autocmd FileType java let g:VimuxRunnerType = "window"
+autocmd FileType scala let g:VimuxRunnerType = "window"
+autocmd FileType java let g:UseVimuxConsole = "vimux-console"
+autocmd FileType scala let g:UseVimuxConsole = "vimux-console"
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> for trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> for confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use `[c` and `]c` for navigate diagnostics
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+autocmd filetype java nmap <silent> <C-]> <Plug>(coc-definition)
+autocmd filetype scala nmap <silent> <C-]> <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K for show documentation in preview window
+nmap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if &filetype == 'vim'
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+function! s:show_signature()
+  call CocActionAsync('showSignatureHelp')
+endfunction
+imap <F9> <C-o>:call <SID>show_signature()<CR>
+
+fu! IMoveToHelp()
+  call EasyMotion#WB(0,2)
+  call feedkeys("F9")
+endf
+imap mk<CR> <C-o>:call IMoveToHelp()<CR>
+
+fu! MoveToImpl()
+  call EasyMotion#WB(0,2)
+  call feedkeys("gi")
+endf
+nmap mi :call MoveToImpl()<CR>
+
+" Introduce function text object
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
+
+" Use <TAB> for selections ranges.
+" NOTE: Requires 'textDocument/selectionRange' support from the language server.
+" coc-tsserver, coc-python are the examples of servers that support it.
+" nmap <silent> <TAB> <Plug>(coc-range-select)
+" xmap <silent> <TAB> <Plug>(coc-range-select)
+
+" Highlight symbol under cursor on CursorHold
+" autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap for rename current word
+nmap <leader>cn <Plug>(coc-rename)
+
+" Remap for format selected region
+vmap <leader>cf  <Plug>(coc-format-selected)
+nmap <leader>cf  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+vmap <leader>cv  <Plug>(coc-codeaction-selected)
+nmap <leader>cv  <Plug>(coc-codeaction-selected)
+
+" Remap for do codeAction of current line
+nmap <leader>ca  <Plug>(coc-codeaction)
+
+" Fix autofix problem of current line
+nmap <leader>cx  <Plug>(coc-fix-current)
+
+" Use `:Format` for format current buffer
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` for fold current buffer
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+
+
+" Add diagnostic info for https://github.com/itchyny/lightline.vim
+" let g:lightline = {
+"       \ 'colorscheme': 'wombat',
+"       \ 'active': {
+"       \   'left': [ [ 'mode', 'paste' ],
+"       \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+"       \ },
+"       \ 'component_function': {
+"       \   'cocstatus': 'coc#status'
+"       \ },
+"       \ }
+
+
+" Using CocList
+" Show all projects
+nmap <silent> <Leader>clf  :<C-u>CocList folders<cr>
+" Show all diagnostics
+nmap <silent> <Leader>cld  :<C-u>CocList diagnostics<cr>
+" Manage extensions
+nmap <silent> <Leader>cle  :<C-u>CocList extensions<cr>
+" Show commands
+nmap <silent> <Leader>clc  :<C-u>CocList commands<cr>
+" Find symbol of current document
+nmap <silent> <Leader>clo  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nmap <silent> <Leader>cls  :<C-u>CocList -I symbols<cr>
+" Resume latest coc list
+nmap <silent> <Leader>clr  :<C-u>CocListResume<CR>
+
+autocmd FileType sbt nmap <buffer> <leader>pi :CocCommand metals.build-import <CR>
+autocmd FileType sbt nmap <buffer> <leader>pc :CocCommand metals.build-restart <CR>
+autocmd FileType sbt nmap <buffer> <leader>pb :CocCommand metals.compile-cascade <CR>
+
+autocmd FileType scala nmap <buffer> <leader>pi :CocCommand metals.build-import <CR>
+autocmd FileType scala nmap <buffer> <leader>pc :CocCommand metals.build-restart <CR>
+autocmd FileType scala nmap <buffer> <leader>pb :CocCommand metals.compile-cascade <CR>
+autocmd FileType scala nmap <buffer> <leader>nc :CocCommand metals.new-scala-file <CR>
+autocmd FileType scala nmap <buffer> gu :CocCommand metals.go-to-super-method <CR>
+autocmd FileType scala nmap <buffer> <leader>sh :CocCommand metals.super-method-hierarchy <CR>
+
+autocmd FileType java nmap <buffer> <leader>pb :CocCommand java.workspace.compile <CR>
+autocmd FileType java nmap <buffer> <leader>pc :CocCommand java.clean.workspace <CR>
+autocmd FileType java nmap <buffer> <leader>sh :CocCommand java.super-method-hierarchy <CR>
+
+autocmd FileType java nmap <buffer> <leader>jo :CocCommand java.action.organizeImports <CR>
+autocmd FileType scala nmap <buffer> <leader>jo :CocCommand editor.action.organizeImport <CR>
+
+" Use <C-l> for trigger snippet expand.
+" imap <C-l> <Plug>(coc-snippets-expand)
+
+" Use <C-j> for select text for visual placeholder of snippet.
+" vmap <C-j> <Plug>(coc-snippets-select)
+
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+" let g:coc_snippet_next = '<c-j>'
+
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+" let g:coc_snippet_prev = '<c-k>'
+
+" Use <C-j> for both expand and jump (make expand higher priority.)
+" imap <C-j> <Plug>(coc-snippets-expand-jump)
+"
+" Used to expand decorations in worksheets
+autocmd FileType scala nmap <Leader>mws <Plug>(coc-metals-expand-decoration)
+
+" Toggle panel with Tree Views
+autocmd FileType scala nmap <silent> <Leader>mt :<C-u>CocCommand metals.tvp<CR>
+" Toggle Tree View 'metalsBuild'
+autocmd FileType scala nmap <silent> <Leader>mtb :<C-u>CocCommand metals.tvp metalsBuild<CR>
+" Toggle Tree View 'metalsCompile'
+autocmd FileType scala nmap <silent> <Leader>mtc :<C-u>CocCommand metals.tvp metalsCompile<CR>
+" Reveal current current class (trait or object) in Tree View 'metalsBuild'
+autocmd FileType scala nmap <silent> <Leader>mtf :<C-u>CocCommand metals.revealInTreeView metalsBuild<CR>
+
+highlight link EchoDocPopup markdown
+highlight link CocPumFloatingDetail markdown
+highlight CocFloating ctermbg=Black guifg=Black
+highlight CocPumFloatingDetail ctermbg=Black guifg=Black

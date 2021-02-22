@@ -1,0 +1,539 @@
+set statusline+=%{fugitive#statusline()}
+set statusline+=%#warningmsg#
+set statusline+=%*
+" set statusline+=%{SyntasticStatuslineFlag()}
+
+"auto format
+let g:formatdef_scalafmt = "'/home/wenjian/scala/scalafmt/scalafmt --config ~/.vim/.scalafmt.conf --stdin 2>/dev/null'"
+let g:formatters_scala = ['scalafmt']
+let g:formatdef_googlefmt = "'java -jar /home/wenjian/google/google-java-format-1.6/google-java-format-1.6-all-deps.jar --skip-sorting-imports - '"
+let g:formatters_java = ['googlefmt']
+let g:autoformat_verbosemode=1
+
+" ALE options
+let g:airline#extensions#ale#enabled = 1
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 0
+let g:ale_open_list = 1
+let g:ale_list_window_size = 5
+let g:ale_disable_lsp = 1
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_completion_enabled = 0
+let g:ale_sign_error = '✘'
+let g:ale_sign_warning = '⚠'
+highlight ALEErrorSign ctermbg=NONE ctermfg=red
+highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+" let g:ale_lint_on_text_changed = 'never'
+" let g:ale_fix_on_save = 1
+" let g:ale_linters = {
+"       \   'scala': ['scalac'],
+"       \}
+
+" turn off ale for coc supported language
+let g:ale_pattern_options = {
+      \   '.*\.java$': {'ale_enabled': 0},
+      \   '.*\.scala$': {'ale_enabled': 0},
+      \}
+
+" autocmd FileType scala let b:ale_java_javac_classpath=ClasspathJar()
+" autocmd FileType scala let b:ale_java_javac_srcpath=GetSourcePaths('java')
+" autocmd FileType scala let b:ale_java_javac_outputpath=GetALEOutputPath()
+" autocmd FileType scala let b:ale_java_javac_options=' -d ' . b:ale_java_javac_outputpath . ' -sourcepath ' . b:ale_java_javac_srcpath . ' -usemanifestcp -classpath ' . b:ale_java_javac_classpath
+"
+" autocmd FileType scala let b:ale_scala_scalac_classpath=ClasspathJar()
+" autocmd FileType scala let b:ale_scala_scalac_srcpath=GetSourcePaths('scala')
+" autocmd FileType scala let b:ale_scala_scalac_outputpath=GetALEOutputPath()
+" autocmd FileType scala let b:ale_scala_scalac_options=' -d ' . b:ale_scala_scalac_outputpath . ' -sourcepath ' . b:ale_scala_scalac_srcpath . ' -usemanifestcp -classpath ' . b:ale_scala_scalac_classpath
+"
+" autocmd FileType kotlin let g:ale_kotlin_kotlinc_enable_config=1
+" autocmd FileType kotlin let b:ale_kotlin_kotlinc_config_file=CurrentJavaPackagePath() . '/.ale_kotlinc_config'
+" autocmd FileType kotlin let b:ale_kotlin_kotlinc_options='-d ' . GetALEOutputPath()
+
+" Syntastic options
+" let g:syntastic_always_populate_loc_list = 0
+" let g:syntastic_auto_loc_list = 0
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 1
+" let g:syntastic_mode_map = { "mode": "active",
+"       \ "active_filetypes": [],
+"       \ "passive_filetypes": ["scala"] }
+" let g:syntastic_quiet_messages = { "type": "style" }
+" let g:syntastic_go_checkers = ['errcheck', 'golint']
+" let g:syntastic_kotlin_kotlinc_config_file_enabled = 1
+" let g:syntastic_kotlin_checkers = ['kotlinc']
+
+" super tab
+let g:SuperTabLongestEnhanced = 1
+let g:SuperTabLeadingSpaceCompletion = 0
+let g:SuperTabClosePreviewOnPopupClose = 1
+let g:SuperTabContextDefaultCompletionType ="<C-X><C-O>"
+"let g:SuperTabDefaultCompletionType = "context"
+autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+autocmd FileType go setlocal omnifunc=go#complete#Complete
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+autocmd Filetype ruby compiler ruby
+" autocmd Filetype ruby set makeprg=ruby\ -c\ %
+
+" go lang setting
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+autocmd FileType go imap <C-I> <C-X><C-O>
+autocmd FileType go nmap <Leader>tt :GoTest<CR>
+autocmd FileType go nmap <Leader>fmt :GoFmt<CR>
+autocmd FileType go nmap <Leader>gr :GoRename<CR>
+autocmd FileType go nmap <Leader>gp :GoImpl<CR>
+autocmd FileType go nmap <Leader>gi :GoImports<CR>
+autocmd FileType go nmap <Leader>gc :GoErrCheck<CR>
+autocmd FileType go nmap <Leader>gsc :GoCallers<CR>
+
+autocmd FileType java set shiftwidth=2          " Set indention level to be the same as softtabstop
+autocmd FileType java set softtabstop=2         " Why are tabs so big?  This fixes it
+autocmd FileType java set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
+
+autocmd FileType scala set shiftwidth=2          " Set indention level to be the same as softtabstop
+autocmd FileType scala set softtabstop=2         " Why are tabs so big?  This fixes it
+autocmd FileType scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
+
+" tabbar
+let g:tagbar_type_scala = {
+      \ 'ctagstype' : 'scala',
+      \ 'sro'        : '.',
+      \ 'kinds'     : [
+      \ 'p:packages',
+      \ 'T:types:1',
+      \ 't:traits',
+      \ 'o:objects',
+      \ 'O:case objects',
+      \ 'c:classes',
+      \ 'C:case classes',
+      \ 'm:methods',
+      \ 'V:values:1',
+      \ 'v:variables:1'
+      \ ]
+      \ }
+
+let g:tagbar_type_go = {
+      \ 'ctagstype' : 'go',
+      \ 'kinds'     : [
+      \ 'p:package',
+      \ 'i:imports:1',
+      \ 'c:constants',
+      \ 'v:variables',
+      \ 't:types',
+      \ 'n:interfaces',
+      \ 'w:fields',
+      \ 'e:embedded',
+      \ 'm:methods',
+      \ 'r:constructor',
+      \ 'f:functions'
+      \ ],
+      \ 'sro' : '.',
+      \ 'kind2scope' : {
+      \ 't' : 'ctype',
+      \ 'n' : 'ntype'
+      \ },
+      \ 'scope2kind' : {
+      \ 'ctype' : 't',
+      \ 'ntype' : 'n'
+      \ },
+      \ 'ctagsbin'  : 'gotags',
+      \ 'ctagsargs' : '-sort -silent'
+      \ }
+nmap <Leader>tb :Tagbar<CR> <C-W>l
+
+" cscope
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"   's'   symbol: find all references to the token under cursor
+"   'g'   global: find global definition(s) of the token under cursor
+"   'c'   calls:  find all calls to the function name under cursor
+"   't'   text:   find all instances of the text under cursor
+"   'e'   egrep:  egrep search for the word under cursor
+"   'f'   file:   open the filename under cursor
+"   'i'   includes: find files that include the filename under cursor
+"   'd'   called: find functions that function under cursor calls
+" cscope setting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("cscope")
+  set cscopequickfix=s-,c-,d-,i-,t-,e-,g-,f-   " useful for cscope in quickfix
+  set csprg=cscope
+  set csto=1
+  set cst
+  set nocsverb
+  " add any database in current directory
+  if filereadable("cscope.out")
+    cs add cscope.out
+  endif
+  set csverb
+  set cscopetag
+  "set cscopequickfix=s-,g-,c-,d-,t-,e-,f-,i-
+  set cscopequickfix=
+  nmap <C-[>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-[>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+  nmap <C-[>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+  nmap <C-[>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+  " nmap <C-[>r :cs reset<CR><CR>
+  nmap <C-[>r :!sh ./cscope.sh<CR>
+endif
+
+"Functions
+fu! CscopeAdd() " Add Cscope database named .cscope.out
+  let dir = getcwd()
+  let savedir = getcwd()
+  wh (dir != '/')
+    let scopefile = dir . '/' . ".cscope.out"
+    if filereadable(scopefile)
+      exe "cs add " scopefile
+      exe "cd " savedir
+      return dir
+    en
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+endf
+
+" comment options
+let g:tcomment_mapleader1 = '<c-c>'
+let g:tcomment_mapleader2 = '<c-c>'
+let g:EnhCommentifyBindInInsert = "No"
+
+" autocmd FileType scala let b:ale_scala_scalac_classpath=eclim#Execute('-command java_classpath -p ' . eclim#project#util#GetCurrentProjectName())
+fu! CodeCompletion()
+  let codeFiles = ['java', 'scala', 'cpp']
+  if !pumvisible() && (v:char == '.') && index(codeFiles, &filetype) >= 0
+      call feedkeys("\<C-x>\<C-o>")
+  elseif !pumvisible() && ((v:char >= 'a' && v:char <= 'z') || (v:char >= 'A' && v:char <= 'Z'))
+      call feedkeys("\<C-x>\<C-n>")
+  endif
+endf
+
+" autocmd InsertCharPre * call CodeCompletion()
+
+fu! CurrentJavaPackagePath()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "build.xml"
+    if filereadable(configfile)
+      break
+    endif
+    let configfile = dir . '/' . "build.gradle"
+    if filereadable(configfile)
+      break
+    endif
+    let configfile = dir . '/' . "build.sbt"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+" Ruby build functions
+fu! CurrentRubyPackagePath()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/' . "Rakefile"
+    if filereadable(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! RubyTestFile()
+  let file = expand('%:p')
+  if (stridx(file, "_spec.rb") == -1)
+    let new_file = substitute(file, "/lib/", "/spec/", "")
+    let new_file = substitute(new_file, ".rb", "_spec.rb", "")
+  else
+    let new_file = substitute(file, "/spec/", "/lib/", "")
+    let new_file = substitute(new_file, "_spec.rb", ".rb", "")
+  endif
+  let exist = findfile(new_file)
+  if (exist == new_file)
+    exe "edit " new_file
+  else
+    echo 'can not find file '. new_file
+  endif
+endf
+autocmd FileType ruby nmap <Leader>ut :call RubyTestFile()<CR>
+
+autocmd Filetype ruby compiler ruby
+" autocmd Filetype ruby set makeprg=ruby\ -c\ %
+
+autocmd FileType java nmap <buffer> <Leader>tt :call JUnitTest()<CR>
+autocmd FileType java nmap <buffer> <Leader>ut :call TestFile('Test', 'java')<CR>
+autocmd FileType java nmap <buffer> <Leader>ct :call NewTestFile('Test', 'java')<CR>
+autocmd FileType java nmap <buffer> <Leader>run :call JavaRun('')<CR>
+
+autocmd FileType scala nmap <buffer> <Leader>tt :call ScalaTest()<CR>
+autocmd FileType scala nmap <buffer> <Leader>ut :call TestFile('Spec', 'scala')<CR>
+autocmd FileType scala nmap <buffer> <Leader>ct :call NewTestFile('Spec', 'scala')<CR>
+autocmd FileType scala nmap <buffer> <Leader>run :call JavaRun('')<CR>
+
+autocmd FileType kotlin imap <C-i> <C-X><C-O>
+autocmd FileType kotlin imap <C-n> <C-X><C-N>
+autocmd FileType kotlin imap <C-p> <C-X><C-P>
+autocmd FileType kotlin nmap <buffer> <Leader>tt :call KotlinTest()<CR>
+autocmd FileType kotlin nmap <buffer> <Leader>ut :call TestFile('Test', 'kt')<CR>
+autocmd FileType kotlin nmap <buffer> <Leader>ct :call NewTestFile('Test', 'kt')<CR>
+autocmd FileType kotlin nmap <buffer> <Leader>run :call JavaRun('Kt')<CR>
+
+fu! KotlinTest()
+  let file = expand('%:p')
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '/')[-1]
+  let class = substitute(file, project_root, "", "")
+  let class = substitute(class, "/src/test/kotlin/", "", "")
+  let class = substitute(class, "/tst/", "", "")
+  let class = split(class, '\.')[0]
+  let class = substitute(class, "/", ".", "g")
+  let currentLine = getline(".")
+  let spec = matchlist(currentLine, '\v.*\s*[should|must]\s*\"(.*)\"\s*in.*')
+  if (len(spec) >= 2)
+    let spec = spec[1]
+  endif
+  if(empty(spec))
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar org.junit.runner.JUnitCore " . class
+  endif
+  call RunCommand(cmd)
+endf
+
+fu! JavaRun(args)
+  let file = expand('%:p')
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '/')[-1]
+  let class = substitute(file, project_root, "", "")
+  let class = substitute(class, "/src/main/java/", "", "")
+  let class = substitute(class, "/src/main/scala/", "", "")
+  let class = substitute(class, "/src/main/kotlin/", "", "")
+  let class = substitute(class, "/src/test/java/", "", "")
+  let class = substitute(class, "/src/test/scala/", "", "")
+  let class = substitute(class, "/src/test/kotlin/", "", "")
+  let class = substitute(class, "/src/", "", "")
+  let class = substitute(class, "/tst/", "", "")
+  let class = split(class, '\.')[0]
+  let class = substitute(class, "/", ".", "g")
+  let build_classpath = BuildClasspathDir()
+  let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar:" . build_classpath . " "  . class . a:args
+  call RunCommand(cmd)
+endf
+
+fu! JUnitTest()
+  let file = expand('%:p')
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '/')[-1]
+  let class = substitute(file, project_root, "", "")
+  let class = substitute(class, "/src/test/java/", "", "")
+  let class = substitute(class, "/src/test/scala/", "", "")
+  let class = substitute(class, "/src/test/kotlin/", "", "")
+  let class = substitute(class, "/src/", "", "")
+  let class = substitute(class, "/tst/", "", "")
+  let class = split(class, '\.')[0]
+  let class = substitute(class, "/", ".", "g")
+  let build_classpath = BuildClasspathDir()
+  let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar:" . build_classpath . " org.junit.runner.JUnitCore "  . class
+  call RunCommand(cmd)
+endf
+
+
+fu! GetALEOutputPath()
+  let project_root = CurrentJavaPackagePath()
+  if project_root == '/'
+    let project_root = '/tmp'
+  endif
+  let path = project_root . '/.ale/classes/'
+  silent! call system('mkdir -p '. path)
+  return path
+endf
+
+fu! RunScalaSpec()
+  call EasyMotion#JK(0,2)
+  call feedkeys("\<Space>tt")
+endf
+autocmd FileType scala nmap <Leader>ts :call RunScalaSpec()<CR>
+
+fu! ClasspathJar()
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '\/')[-1]
+  let classpath_jar =  project_root . "/" . project . "-classpath.jar" 
+  return classpath_jar
+endf
+
+fu! GetSourcePaths(type)
+  let project_root = CurrentJavaPackagePath()
+  return project_root + '/src/'
+endf
+
+fu! NewTestFile(test, suffix)
+  let test = a:test
+  let suffix = a:suffix
+  let new_file = GetTestFile(test, suffix)
+  let filename = split(new_file, '/')[-1]
+  let path = substitute(new_file, filename, "", "")
+  silent! call system('mkdir -p '. path)
+  exe "edit " new_file
+endf
+
+fu! TestFile(test, suffix)
+  let test = a:test
+  let suffix = a:suffix
+  let new_file = GetTestFile(test, suffix)
+  let exist = findfile(new_file)
+  if (exist == new_file)
+    exe "edit " new_file
+  else
+    echo 'can not find file '. new_file
+  endif
+endf
+
+fu! GetTestFile(test, suffix)
+  let test = a:test
+  let ext = a:suffix
+  let project_root = CurrentJavaPackagePath()
+  let file = expand('%:p')
+  if (stridx(file, test."." . ext) == -1)
+    let tst_dir = project_root."/tst/"
+    let exist_tst_dir = finddir(tst_dir)
+    if(exist_tst_dir == tst_dir)
+      let new_file = substitute(file, project_root."/src/", project_root."/tst/", "")
+    else
+      let new_file = file
+    endif
+    let new_file = substitute(new_file, "/main/", "/test/", "")
+    let new_file = substitute(new_file, "\." . ext . "$", test."\." . ext, "")
+  else
+    let new_file = substitute(file, project_root."/tst/", project_root."/src/", "")
+    let new_file = substitute(new_file, "/test/", "/main/", "")
+    let new_file = substitute(new_file, test."\." . ext, "\." . ext, "")
+  endif
+  return new_file
+endf
+
+fu! KotlinTest()
+  let file = expand('%:p')
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '/')[-1]
+  let class = substitute(file, project_root, "", "")
+  let class = substitute(class, "/src/test/kotlin/", "", "")
+  let class = substitute(class, "/tst/", "", "")
+  let class = split(class, '\.')[0]
+  let class = substitute(class, "/", ".", "g")
+  let currentLine = getline(".")
+  let spec = matchlist(currentLine, '\v.*\s*[should|must]\s*\"(.*)\"\s*in.*')
+  if (len(spec) >= 2)
+    let spec = spec[1]
+  endif
+  if(empty(spec))
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar " . "junit.textui.TestRunner " . class
+  endif
+  call RunCommand(cmd)
+endf
+
+fu! ScalaTest()
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '\/')[-1]
+  let file = expand('%:p')
+  let file = substitute(file, project_root . "/", "", "")
+  let class = substitute(file, "^src/test/scala/", "", "")
+  let class = substitute(class, "^src/main/scala/", "", "")
+  let class = substitute(class, "^tst/", "", "")
+  let class = split(class, '\.')[0]
+  let class = substitute(class, "/", ".", "g")
+  let currentLine   = getline(".")
+  let build_classpath = BuildClasspathDir()
+  let spec = matchlist(currentLine, '\v.*\s*[describe|should|must|it]\s*\(*\"(.*)\"\s*[)|in].*')
+  if (len(spec) >= 2)
+    let spec = spec[1]
+  endif
+  if(empty(spec))
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar:" . build_classpath . " org.scalatest.tools.Runner -o -s " . class
+  else
+    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar:" . build_classpath . " org.scalatest.tools.Runner -o -s " . class . " -z '" . spec . "'"
+  endif
+  call RunCommand(cmd)
+endf
+
+fu! BuildClasspathDir()
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '\/')[-1]
+  if !empty(glob(project_root."/build.sbt"))
+    return BloopBuildClasspathDir()
+  endif
+  if !empty(glob(project_root."/.classpath"))
+    return JdtBuildClasspathDir()
+  endif
+endf
+
+fu! FindBloopDir()
+  let savedir = getcwd()
+  let dir = expand('%:p:h')
+  exe "cd " . dir
+  while (dir != '/')
+    let configfile = dir . '/.bloop'
+    if isdirectory(configfile)
+      break
+    endif
+    cd ..
+    let dir = getcwd()
+  endw
+  exe "cd " savedir
+  return dir
+endf
+
+fu! BloopBuildClasspathDir()
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '\/')[-1]
+  let bloop_dir = FindBloopDir()
+  let bloop_classpath_dir = bloop_dir.'/.bloop/'.project.'/bloop-bsp-clients-classes/'
+
+  let impl_build_classes_directories=glob(bloop_classpath_dir.'/classes-Metals-*', 1, 1)
+  let impl_build_classes_dir = ""
+  let modify_time = 0
+  for class_dir in impl_build_classes_directories
+    if(modify_time < getftime(class_dir))
+      let modify_time = getftime(class_dir)
+      let impl_build_classes_dir = class_dir
+    endif
+  endfor
+
+  let test_build_classes_directories=glob(bloop_classpath_dir.'/test-classes-Metals-*', 1, 1)
+  let test_build_classes_dir = ""
+  let modify_time = 0
+  for class_dir in test_build_classes_directories
+    if(modify_time < getftime(class_dir))
+      let modify_time = getftime(class_dir)
+      let test_build_classes_dir = class_dir
+    endif
+  endfor
+
+  return impl_build_classes_dir.':'.test_build_classes_dir
+endf
+
+fu! JdtBuildClasspathDir()
+  let project_root = CurrentJavaPackagePath()
+  let project = split(project_root, '\/')[-1]
+  return project_root.'/bin/main:'.project_root.'/bin/test'
+endf
