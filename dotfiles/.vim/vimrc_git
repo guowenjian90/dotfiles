@@ -48,9 +48,9 @@ fu! GitToolDiffBranch(branch)
   if len(branch) == 0
     let branch = "HEAD"
   endif
-  silent exe '!git diff --name-status "' . branch . '">.tmp.gitdiff'
+  silent exe '!git diff --name-status "' . branch . '">/tmp/.tmp.gitdiff'
   exe "tabnew"
-  exe 'view .tmp.gitdiff'
+  exe 'view /tmp/.tmp.gitdiff'
   call SetGitToolDiffMenu(branch)
 endf
 command! -bar -bang -nargs=* -complete=customlist,fugitive#CompleteObject GitToolDiffBranch call GitToolDiffBranch(<q-args>)

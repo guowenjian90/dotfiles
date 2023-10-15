@@ -34,7 +34,8 @@ gittooldiff() {
   fi
 
   git diff --name-status $abranch $bbranch >.tmp.gitdiff
-  vi -M -c 'cd `pwd`' -c "call SetGitToolDiffMenu2Branch(\"$abranch\", \"$bbranch\")" -c "let g:coc_start_at_startup=v:false" -R .tmp.gitdiff
+  vi -M -c "cd $PWD" -c "call SetGitToolDiffMenu2Branch(\"$abranch\", \"$bbranch\")" -c "let g:coc_start_at_startup=v:false" .tmp.gitdiff
+  rm .tmp.gitdiff
 }
 compdef _git gittooldiff=git-diff
 
