@@ -402,7 +402,6 @@ endf
 fu! DoInBuffer(regex, cmd, exclude_bufno)
   let name = bufname()
   let bufno=bufnr()
-  echo bufno
   if bufno != a:exclude_bufno
     if a:regex == '*'
       exe a:cmd
