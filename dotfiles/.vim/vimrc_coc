@@ -284,7 +284,7 @@ nmap = :CocCommand git.chunkInfo<CR>
 nmap gu :CocCommand git.chunkUndo<CR>
 nmap <leader>git :CocCommand git.browserOpen<CR>
 " show commit contains current position
-nmap <leader>gsc <Plug>(coc-git-commit)
+nmap <leader>gc <Plug>(coc-git-commit)
 " create text object for git chunks
 omap <leader>gi <Plug>(coc-git-chunk-inner)
 xmap <leader>gi <Plug>(coc-git-chunk-inner)

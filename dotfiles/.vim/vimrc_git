@@ -38,7 +38,7 @@ fu! GoToCommitAndDiffThisFile()
   let file = substitute(file, cwd, "", "")
   let file = substitute(file, "^/", "", "")
   let file = escape(file, "/")
-  call feedkeys(" gsc " . ":sleep 500m\<CR>" . ":call GitDiffToolACommmit()\<CR>" . "/" . file . "\<CR>" . "\<CR>" . lineno ."\<CR>")
+  call feedkeys(" gc " . ":sleep 500m\<CR>" . ":call GitDiffToolACommmit()\<CR>" . "/" . file . "\<CR>" . "\<CR>" . lineno ."\<CR>")
 endfunction
 " nmap <silent> <Leader>gdc :call GitDiffToolACommmit()<CR>
 nmap <silent> <Leader>gdc :call GoToCommitAndDiffThisFile()<CR>
