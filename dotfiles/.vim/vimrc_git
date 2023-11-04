@@ -26,11 +26,13 @@ fu! GitDiffToolACommmit()
   let a = split(pc[0])
   let pc = a[1]
   silent exe 'bd'
-  silent exe '!git diff --name-status ' . pc . " " . cc . '>.tmp.gitdiff'
+  silent exe '!git diff --name-status ' . pc . " " . cc . '>/tmp/.tmp.gitdiff'
   exe "tabnew"
-  exe 'view .tmp.gitdiff'
+  exe 'view /tmp/.tmp.gitdiff'
   call SetGitToolDiffMenu2Branch(cc, pc)
 endf
+nmap <silent> <Leader>gdc :call GitDiffToolACommmit()<CR>
+
 fu! GoToCommitAndDiffThisFile()
   let lineno = line('.')
   let cwd = getcwd()
@@ -40,8 +42,7 @@ fu! GoToCommitAndDiffThisFile()
   let file = escape(file, "/")
   call feedkeys(" gc " . ":sleep 500m\<CR>" . ":call GitDiffToolACommmit()\<CR>" . "/" . file . "\<CR>" . "\<CR>" . lineno ."\<CR>")
 endfunction
-" nmap <silent> <Leader>gdc :call GitDiffToolACommmit()<CR>
-nmap <silent> <Leader>gdc :call GoToCommitAndDiffThisFile()<CR>
+nmap <silent> <Leader>gtc :call GoToCommitAndDiffThisFile()<CR>
 
 fu! GitToolDiffBranch(branch)
   let branch = a:branch
@@ -51,16 +52,12 @@ fu! GitToolDiffBranch(branch)
   silent exe '!git diff --name-status "' . branch . '">/tmp/.tmp.gitdiff'
   exe "tabnew"
   exe 'view /tmp/.tmp.gitdiff'
-  call SetGitToolDiffMenu(branch)
+  setlocal nomodifiable
+  exe 'let b:bbranch="' . a:branch . '"'
+  nmap <buffer> <silent> <CR> :call GitToolDiffFileInternalInSameTab(getline('.'), b:bbranch)<CR>
 endf
 command! -bar -bang -nargs=* -complete=customlist,fugitive#CompleteObject GitToolDiffBranch call GitToolDiffBranch(<q-args>)
 nmap <Leader>gtd :GitToolDiffBranch<SPACE>
-
-fu! SetGitToolDiffMenu(branch)
-  setlocal nomodifiable
-  exe 'let b:bbranch="' . a:branch . '"'
-  nmap <buffer> <silent> <CR> :call GitToolDiffFileInternal(getline('.'), b:bbranch)<CR>
-endf
 
 fu! NextGTDFile()
   call feedkeys(" qj\<CR>")
@@ -68,7 +65,37 @@ endf
 fu! PrevGTDFile()
   call feedkeys(" qk\<CR>")
 endf
-fu! GitToolDiffFileInternal(change, branch)
+fu! GitToolDiffFileInternalInSameTab(change, branch)
+  if winnr('$') > 1
+    exe '2,3windo bd'
+  endif
+  let changes = split(a:change)
+  let ct = changes[0]
+  let ff = changes[1]
+  " exe "tabedit " . ff
+  exe "belowright 80vsplit " . ff
+  exe "wincmd h | vertical resize 60 | setlocal winfixwidth | wincmd l"
+  exe "Gvdiffsplit " . a:branch
+
+  exe "wincmd l"
+  if len(changes) == 3
+    let nff = changes[2]
+    exe "e " . nff
+    exe "2,3windo diffthis"
+  endif
+
+  nmap <silent> <buffer> <leader>q :2,3windo bd<CR>
+  nmap <buffer> <silent> <CR> G
+  nmap <buffer> <C-n> :call NextGTDFile()<CR>
+  nmap <buffer> <C-p> :call PrevGTDFile()<CR>
+
+  nmap <silent> <buffer> <leader>q :2,3windo bd<CR>
+  nmap <buffer> <silent> <CR> G
+  nmap <buffer> <C-n> :call NextGTDFile()<CR>
+  nmap <buffer> <C-p> :call PrevGTDFile()<CR>
+endf
+
+fu! GitToolDiffFileInternalUsingTab(change, branch)
   let changes = split(a:change)
   let ct = changes[0]
   let ff = changes[1]
