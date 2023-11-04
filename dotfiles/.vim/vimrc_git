@@ -29,7 +29,7 @@ fu! GitDiffToolACommmit()
   silent exe '!git diff --name-status ' . pc . " " . cc . '>.tmp.gitdiff'
   exe "tabnew"
   exe 'view .tmp.gitdiff'
-  call SetGitToolDiffMenu2Branch(cc, pc)
+  call SetGitToolDiffMenu2Branch(pc, cc)
 endf
 nmap <silent> <Leader>gdc :call GitDiffToolACommmit()<CR>
 
@@ -54,8 +54,8 @@ fu! GitToolDiffBranch(branch)
   exe 'view /tmp/.tmp.gitdiff'
   setlocal nomodifiable
   exe 'let b:bbranch="' . a:branch . '"'
-  nmap <buffer> <silent> <CR> :call GitToolDiffFileInternalInSameTab(getline('.'), b:bbranch)<CR>
-  nmap <buffer> <silent> <LeftRelease> :call GitToolDiffFileInternalInSameTab(getline('.'), b:bbranch)<CR>
+  nmap <buffer> <silent> <CR> :call GitToolDiffFile2BranchInSameTab(getline('.'), b:bbranch, "")<CR>
+  nmap <buffer> <silent> <LeftRelease> :call GitToolDiffFile2BranchInSameTab(getline('.'), b:bbranch, "")<CR>
   if getline('.') != ''
     call feedkeys("\<CR>")
   endif
@@ -63,13 +63,16 @@ endf
 command! -bar -bang -nargs=* -complete=customlist,fugitive#CompleteObject GitToolDiffBranch call GitToolDiffBranch(<q-args>)
 nmap <Leader>gtd :GitToolDiffBranch<SPACE>
 
-fu! NextGTDFile()
-  call feedkeys(" qj\<CR>")
+" diff two random branchs
+fu! SetGitToolDiffMenu2Branch(abranch, bbranch)
+  setlocal nomodifiable
+  exe 'let b:abranch="' . a:abranch . '"'
+  exe 'let b:bbranch="' . a:bbranch . '"'
+  nmap <buffer> <silent> <CR> :call GitToolDiffFile2BranchInSameTab(getline('.'), b:abranch, b:bbranch)<CR>
+  nmap <buffer> <silent> <LeftRelease> :call GitToolDiffFile2BranchInSameTab(getline('.'), b:abranch, b:bbranch)<CR>
 endf
-fu! PrevGTDFile()
-  call feedkeys(" qk\<CR>")
-endf
-fu! GitToolDiffFileInternalInSameTab(change, branch)
+
+fu! GitToolDiffFile2BranchInSameTab(change, abranch, bbranch)
   if winnr('$') > 1
     exe '2,3windo bd'
   endif
@@ -78,65 +81,57 @@ fu! GitToolDiffFileInternalInSameTab(change, branch)
   let ff = changes[1]
   exe "belowright 80vsplit " . ff
   exe "wincmd h | vertical resize 60 | setlocal winfixwidth | wincmd l"
-  exe "Gvdiffsplit " . a:branch
-  nmap <silent> <buffer> <leader>q :2,3windo bd<CR>
-  nmap <buffer> <silent> <CR> G
-  nmap <buffer> <C-n> :call NextGTDFile()<CR>
-  nmap <buffer> <C-p> :call PrevGTDFile()<CR>
+  exe "Gvdiffsplit " . a:abranch
+  call SetupGitBufferMap()
 
   exe "wincmd l"
   if len(changes) == 3
-    let nff = changes[2]
-    exe "e " . nff
-    exe "2,3windo diffthis"
+    let ff = changes[2]
   endif
-  nmap <silent> <buffer> <leader>q :2,3windo bd<CR>
-  nmap <buffer> <silent> <CR> G
-  nmap <buffer> <C-n> :call NextGTDFile()<CR>
-  nmap <buffer> <C-p> :call PrevGTDFile()<CR>
+  exe "e " . ff
+  if a:bbranch != ""
+    exe "Gvdiffsplit " . a:bbranch
+    exe "wincmd l"
+    exe "wincmd q"
+  endif
+  exe "2,3windo diffthis"
+  call SetupGitBufferMap()
 endf
 
-fu! GitToolDiffFileInternalUsingTab(change, branch)
+fu! GitToolDiffFile2BranchUsingTab(change, abranch, bbranch)
   let changes = split(a:change)
-  let ct = changes[0]
   let ff = changes[1]
   exe "tabedit " . ff
-  exe "Gvdiffsplit " . a:branch
-  nmap <silent> <buffer> <leader>q :windo bd<CR>
-  nmap <buffer> <silent> <CR> G
-  nmap <buffer> <C-n> :call NextGTDFile()<CR>
-  nmap <buffer> <C-p> :call PrevGTDFile()<CR>
+  exe "Gvdiffsplit " . a:abranch
+  call SetupGitBufferMap()
 
   exe "wincmd l"
   if len(changes) == 3
-    let nff = changes[2]
-    exe "e " . nff
-    exe "windo diffthis"
+    let ff = changes[2]
   endif
-  nmap <silent> <buffer> <leader>q :windo bd<CR>
-  nmap <buffer> <silent> <CR> G
-  nmap <buffer> <C-n> :call NextGTDFile()<CR>
-  nmap <buffer> <C-p> :call PrevGTDFile()<CR>
+  exe "e " . ff
+  if a:bbranch != ""
+    exe "Gvdiffsplit " . a:bbranch
+    exe "wincmd l"
+    exe "wincmd q"
+  endif
+  exe "windo diffthis"
+  call SetupGitBufferMap()
 endf
 
-" diff two random branchs not current branch
-fu! SetGitToolDiffMenu2Branch(abranch, bbranch)
-  setlocal nomodifiable
-  exe 'let b:abranch="' . a:abranch . '"'
-  exe 'let b:bbranch="' . a:bbranch . '"'
-  nmap <buffer> <silent> <CR> :call GitToolDiffFile2Branch(getline('.'), b:abranch, b:bbranch)<CR>
+fu! NextGTDFile()
+  call feedkeys(" qj\<CR>")
 endf
-
-fu! GitToolDiffFile2Branch(change, abranch, bbranch)
-  let ff = split(a:change)[1]
-  exe "Git difftool --no-prompt " . a:bbranch . " " . a:abranch . " -- " . ff
-  nmap <buffer> <silent> <leader>q :windo bd<CR>
+fu! PrevGTDFile()
+  call feedkeys(" qk\<CR>")
+endf
+fu! SetupGitBufferMap()
+  if winnr('$') > 2
+    nmap <buffer> <silent> <leader>q :2,3windo bd<CR>
+  else
+    nmap <buffer> <silent> <leader>q :windo bd<CR>
+  endif
   nmap <buffer> <silent> <CR> G
   nmap <buffer> <C-n> :call NextGTDFile()<CR>
   nmap <buffer> <C-p> :call PrevGTDFile()<CR>
-  exe "wincmd l"
-  nmap <buffer> <silent> <leader>q :windo bd<CR>
-  nmap <buffer> <silent> <CR> G
-  nmap <buffer> <C-n> :call NextGTDFile()<CR>
-  nmap <buffer> <C-p> :call PrevGTDFile()<CR>
-endf
+endfunction
