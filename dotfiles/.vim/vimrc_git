@@ -33,7 +33,7 @@ fu! GitDiffToolACommmit()
 endf
 nmap <silent> <Leader>gdc :call GitDiffToolACommmit()<CR>
 
-fu! GoToCommitAndDiffThisFile()
+fu! GoToCommitAndFindThisChange()
   let lineno = line('.')
   let cwd = getcwd()
   let file = expand('%p')
@@ -42,7 +42,7 @@ fu! GoToCommitAndDiffThisFile()
   let file = escape(file, "/")
   call feedkeys(" gc " . ":sleep 500m\<CR>" . ":call GitDiffToolACommmit()\<CR>" . "/" . file . "\<CR>" . "\<CR>" . lineno ."\<CR>")
 endfunction
-nmap <silent> <Leader>gtc :call GoToCommitAndDiffThisFile()<CR>
+nmap <silent> <Leader>gfc :call GoToCommitAndFindThisChange()<CR>
 
 fu! GitToolDiffBranch(branch)
   let branch = a:branch
@@ -91,8 +91,7 @@ fu! GitToolDiffFile2BranchInSameTab(change, abranch, bbranch)
   exe "e " . ff
   if a:bbranch != ""
     exe "Gvdiffsplit " . a:bbranch
-    exe "wincmd l"
-    exe "wincmd q"
+    exe "wincmd l | q"
   endif
   exe "2,3windo diffthis"
   call SetupGitBufferMap()
@@ -112,8 +111,7 @@ fu! GitToolDiffFile2BranchUsingTab(change, abranch, bbranch)
   exe "e " . ff
   if a:bbranch != ""
     exe "Gvdiffsplit " . a:bbranch
-    exe "wincmd l"
-    exe "wincmd q"
+    exe "wincmd l | q"
   endif
   exe "windo diffthis"
   call SetupGitBufferMap()
