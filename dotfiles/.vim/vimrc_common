@@ -16,7 +16,7 @@ set cul
 let &t_SI = "\e[5 q"
 let &t_EI = "\e[2 q"
 let &t_mb = "1"
-set guicursor+=a:-blinkwait175-blinkoff150-blinkon175
+set guicursor+=a:-blinkwait10-blinkoff150-blinkon150
 
 "Turn on filetype plugins to automagically
 "Grab commands for particular filetypes.
@@ -31,7 +31,6 @@ syntax on             " Enable syntax highlighting
 
 "  vim options
 set mouse=a               " enable mouse mode
-set nocompatible          " be iMproved, required
 set cmdheight=1           " Better display for messages if larger
 " set paste                 " paste mode, good for terminal
 set autoindent            " always set autoindenting on
@@ -83,11 +82,10 @@ set path+=.,**
 " These are files I am not likely to want to edit or read.
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc,.class
 "Disabled options
-"set noswapfile              " this guy is really annoyoing sometimes
+set noswapfile              " this guy is really annoyoing sometimes
 set directory=$HOME/.swp
 " viminfo options
-" read/write a .viminfo file, don't store more than
-" 50 lines of registers
+" read/write a .viminfo file, don't store more than 50 lines of registers
 set viminfo='20,\"50
 set guifont=-adobe-courier-medium-r-normal--14-100-100-100-m-90-iso8859-1
 set bs=indent,eol,start

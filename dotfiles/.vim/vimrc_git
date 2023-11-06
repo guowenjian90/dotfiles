@@ -81,8 +81,10 @@ fu! GitToolDiffFile2BranchInSameTab(change, abranch, bbranch)
   let changes = split(a:change)
   let ct = changes[0]
   let ff = changes[1]
-  exe "belowright 80vsplit " . ff
-  exe "wincmd h | vertical resize 60 | setlocal winfixwidth | wincmd l"
+  " exe "belowright 80vsplit " . ff
+  " exe "wincmd h | vertical resize 60 | setlocal winfixwidth | wincmd l"
+  exe "belowright split " . ff
+  exe "wincmd k | resize 10 | setlocal winfixwidth | wincmd j"
   exe "Gvdiffsplit " . a:abranch
   call SetupGitBufferMap()
 
