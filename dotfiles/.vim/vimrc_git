@@ -9,7 +9,7 @@ fu! ToggleGit()
     exe 'bd ' . bufname
   endif
 endf
-nmap <silent>  <C-g> :call ToggleGit()<CR>
+nmap <silent> <C-g> :call ToggleGit()<CR>
 nmap <Leader>gdf :Gvdiffsplit<SPACE>
 
 fu! SearchInGit(text)
@@ -26,9 +26,9 @@ fu! GitDiffToolACommmit()
   let a = split(pc[0])
   let pc = a[1]
   silent exe 'bd'
-  silent exe '!git diff --name-status ' . pc . " " . cc . '>.tmp.gitdiff'
+  silent exe '!git diff --name-status ' . pc . " " . cc . '>/tmp/.tmp.gitdiff'
   exe "tabnew"
-  exe 'view .tmp.gitdiff'
+  exe 'view /tmp/.tmp.gitdiff'
   call SetGitToolDiffMenu2Branch(pc, cc)
 endf
 nmap <silent> <Leader>gdc :call GitDiffToolACommmit()<CR>
@@ -122,10 +122,20 @@ fu! GitToolDiffFile2BranchUsingTab(change, abranch, bbranch)
 endf
 
 fu! NextGTDFile()
-  call feedkeys(" qj\<CR>")
+  call feedkeys(" q")
+  if line('.', win_getid(1)) == line('$', win_getid(1))
+    call feedkeys("gg\<CR>")
+  else
+    call feedkeys("j\<CR>")
+  endif
 endf
 fu! PrevGTDFile()
-  call feedkeys(" qk\<CR>")
+  call feedkeys(" q")
+  if line('.', win_getid(1)) == 1
+    call feedkeys("G\<CR>")
+  else
+    call feedkeys("k\<CR>")
+  endif
 endf
 fu! SetupGitBufferMap()
   if winnr('$') > 2
@@ -134,6 +144,6 @@ fu! SetupGitBufferMap()
     nmap <buffer> <silent> <leader>q :windo bd<CR>
   endif
   nmap <buffer> <silent> <CR> G
-  nmap <buffer> <C-n> :call NextGTDFile()<CR>
-  nmap <buffer> <C-p> :call PrevGTDFile()<CR>
+  nmap <buffer> <silent> <C-n> :call NextGTDFile()<CR>
+  nmap <buffer> <silent> <C-p> :call PrevGTDFile()<CR>
 endfunction
