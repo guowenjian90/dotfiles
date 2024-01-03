@@ -2,7 +2,7 @@ nmap <Leader>fmt :Autoformat<CR>
 "auto format
 let g:autoformat_verbosemode=1
 let g:formatters_scala = ['scalafmt']
-let g:formatdef_scalafmt = "'$HOME/Scala/scalafmt/scalafmt --config ~/.vim/scalafmt.conf --stdin 2>/dev/null'"
+let g:formatdef_scalafmt = "'$HOME/Scala/scalafmt/scalafmt --config ./.scalafmt.conf --stdin 2>/dev/null'"
 let g:formatters_java = ['googlefmt']
 let g:formatdef_googlefmt = "'java -jar $HOME/Java/google-java-format-1.14.0-all-deps.jar --skip-sorting-imports - '"
 let g:formatters_go = ['gofmt']

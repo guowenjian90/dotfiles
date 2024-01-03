@@ -312,10 +312,10 @@ endf
 nmap <Leader>num :call ToggleLineNumber()<CR>
 
 " vim windows
-nmap <Leader>< :exe "vertical resize " . (winwidth(0) * 4/5)<CR>
-nmap <Leader>> :exe "vertical resize " . (winwidth(0) * 5/4)<CR>
-nmap <Leader>- :exe "resize " . (winheight(0) * 4/5)<CR>
-nmap <Leader>+ :exe "resize " . (winheight(0) * 5/4)<CR>
+" nmap <Leader>< :exe "vertical resize " . (winwidth(0) * 4/5)<CR>
+" nmap <Leader>> :exe "vertical resize " . (winwidth(0) * 5/4)<CR>
+" nmap <Leader>- :exe "resize " . (winheight(0) * 4/5)<CR>
+" nmap <Leader>+ :exe "resize " . (winheight(0) * 5/4)<CR>
 nmap <C-w>z :call ToggleMaxWindow()<CR>
 nmap <C-w>\ :vs<CR>
 nmap <C-w>- :sp<CR>
@@ -392,7 +392,7 @@ fu! Bufdo()
   let regex = GetInput("Input buffer name regex: *=all")
   let cmd = GetInput("Input cmd to execute")
   let bufno = -1
-  exe 'bufdo call DoInBuffer("' . regex . '","' . cmd . '",' , bufno . ')'
+  exe 'bufdo call DoInBuffer("' . regex . '","' . cmd . '",' . bufno . ')'
 endf
 fu! BufdoCmd(cmd, exclude_bufno)
   let regex = GetInput("Input buffer name regex: *=all")
@@ -418,5 +418,7 @@ fu! DoInBuffer(regex, cmd, exclude_bufno)
 endf
 nmap <Leader>bfd :call Bufdo()<CR>
 nmap <Leader>bd :call BufdoCmd('bd', bufnr('%'))<CR>
+nmap <Leader>bw :call BufdoCmd('w', -1)<CR>
+nmap <Leader>br :call BufdoCmd('e', -1)<CR>
 
 set statusline+=%#warningmsg#

@@ -67,7 +67,8 @@ export GPG_TTY=$(tty)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_COMMAND='ag -l --path-to-ignore ~/.ignore --nocolor -g ""'
 # export FZF_DEFAULT_COMMAND='rg --files --ignore-file=~/.ignore --hidden --follow --glob "!.git/*"'
-export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview='batcat --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
+# export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview='batcat --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
+export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
 export FZF_CTRL_R_OPTS="
   --preview 'echo {}' --preview-window up:3:hidden:wrap
   --bind 'ctrl-/:toggle-preview'"
@@ -142,6 +143,7 @@ bindkey "^V" vi-cmd-mode
 
 HISTSIZE=10000000
 SAVEHIST=10000000
+HISTORY_IGNORE="(^cd$|^cd *$|^vi$|^vi *$)"
 
 setopt BANG_HIST                 # Treat the '!' character specially during expansion.
 setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
@@ -156,6 +158,8 @@ setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history 
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
 setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
 setopt HIST_BEEP                 # Beep when accessing nonexistent history.
+setopt HIST_NO_STORE
+setopt HIST_NO_FUNCTIONS
 
 # tell me git branch
 git_prompt() {

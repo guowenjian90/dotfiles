@@ -10,6 +10,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', {'dir': '~/.fzf','do': './install --all'}
 Plug 'junegunn/fzf.vim' " needed for previews
+Plug 'yuki-yano/fzf-preview.vim', {'branch': 'release/rpc'}
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'preservim/nerdtree'
 Plug 'preservim/tagbar'
@@ -59,3 +60,5 @@ source $HOME/dotfiles/dotfiles/.vim/vimrc_coc
 source $HOME/dotfiles/dotfiles/.vim/vimrc_markdown
 source $HOME/dotfiles/dotfiles/.vim/vimrc_fzf
 " source $HOME/dotfiles/dotfiles/.vim/vimrc_fornax
+"
+let g:preview_uml_url='http://localhost:8888'

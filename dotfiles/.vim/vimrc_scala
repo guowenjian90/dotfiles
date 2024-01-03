@@ -95,7 +95,7 @@ fu! OpenSbtPane(project_root)
     let atts = split(pane, ":")
     let pane_title = atts[0]
     let pane_id = atts[1]
-    let spec = match(pane_title, '.*;\s*sbt')
+    let spec = match(pane_title, '.*;\s*sbt\|sbt')
     if spec == 0
       let sbt_pane = pane_id
     endif
@@ -196,6 +196,9 @@ fu! RunSbtTestOnly(class, spec)
   let path = expand('%')
   let it = match(path, '.*src/it/.*')
   if it == -1
+    let it = match(path, '.*integration/src/test/.*')
+  endif
+  if it == -1
     let cmd = 'testOnly '
   else
     let cmd = 'IntegrationTest / testOnly '
@@ -208,9 +211,16 @@ fu! RunSbtTestOnly(class, spec)
   call RunCommand(cmd, 1)
 endf
 
+fu! RunScalaFixOnly(file)
+  let cmd = 'scalafix --files ' . a:file
+  call RunCommand(cmd, 1)
+  exe 'e'
+endf
+
 autocmd filetype scala set shiftwidth=2          " Set indention level to be the same as softtabstop
 autocmd filetype scala set softtabstop=2         " Why are tabs so big?  This fixes it
 autocmd filetype scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
+autocmd filetype scala nmap <buffer> <Leader>fix :call RunScalaFixOnly(expand('%'))<CR>
 autocmd filetype scala nmap <buffer> <Leader>tt :call SbtTestFocus()<CR>
 autocmd filetype scala nmap <buffer> <Leader>ta :call SbtTestCurrentFile()<CR>
 autocmd filetype scala nmap <buffer> <Leader>ut :call OpenTestFile('Spec', 'scala')<CR>
