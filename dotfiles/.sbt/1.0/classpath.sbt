@@ -17,3 +17,5 @@ cpjar := {
         FileOutputStream(s"./${name.value}-classpath.jar"), manifest)
     jar.close
 }]
+
+Global / semanticdbEnabled := true

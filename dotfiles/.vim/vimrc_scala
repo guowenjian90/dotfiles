@@ -95,7 +95,7 @@ fu! OpenSbtPane(project_root)
     let atts = split(pane, ":")
     let pane_title = atts[0]
     let pane_id = atts[1]
-    let spec = match(pane_title, '.*;\s*sbt')
+    let spec = match(pane_title, '.*;\s*sbt\|sbt')
     if spec == 0
       let sbt_pane = pane_id
     endif

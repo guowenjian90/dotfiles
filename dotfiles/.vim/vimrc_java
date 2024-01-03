@@ -160,7 +160,7 @@ autocmd filetype java set tabstop=2 shiftwidth=2      " a tab is two spaces (or 
 autocmd filetype java nmap <buffer> <Leader>tt :call JUnitTest()<CR>
 autocmd filetype java nmap <buffer> <Leader>ta :call JUnitTest()<CR>
 autocmd filetype java nmap <buffer> <Leader>ut :call OpenTestFile('Test', 'java')<CR>
-autocmd filetype java nmap <buffer> <Leader>ct :call NewTestFile('Test', 'java')<CR>
+autocmd filetype java nmap <buffer> <Leader>nt :call NewTestFile('Test', 'java')<CR>
 autocmd filetype java nmap <buffer> <Leader>run :call JavaRun('')<CR>
 autocmd filetype java nmap <Leader>bb :call BuildJavaPackage()<CR>
 autocmd BufRead,BufNewFile build.xml nmap <buffer> <Leader>bb :call BuildJavaPackage()<CR>
@@ -184,7 +184,7 @@ endf
 
 autocmd filetype kotlin nmap <buffer> <Leader>tt :call KotlinTest()<CR>
 autocmd filetype kotlin nmap <buffer> <Leader>ut :call OpenTestFile('Test', 'kt')<CR>
-autocmd filetype kotlin nmap <buffer> <Leader>ct :call NewTestFile('Test', 'kt')<CR>
+autocmd filetype kotlin nmap <buffer> <Leader>nt :call NewTestFile('Test', 'kt')<CR>
 autocmd filetype kotlin nmap <buffer> <Leader>run :call JavaRun('Kt')<CR>
 autocmd filetype kotlin nmap <Leader>bb :call BuildJavaPackage()<CR>
 
