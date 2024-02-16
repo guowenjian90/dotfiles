@@ -418,6 +418,7 @@ fu! DoInBuffer(regex, cmd, exclude_bufno)
 endf
 nmap <Leader>bfd :call Bufdo()<CR>
 nmap <Leader>bd :call BufdoCmd('bd', bufnr('%'))<CR>
-nmap <Leader>bw :call BufdoCmd('w', bufnr('%'))<CR>
+nmap <Leader>bw :call BufdoCmd('w', -1)<CR>
+nmap <Leader>br :call BufdoCmd('e', -1)<CR>
 
 set statusline+=%#warningmsg#

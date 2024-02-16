@@ -210,7 +210,7 @@ fu! CocPrevError()
   endif
 endf
 
-for ft in ['java', 'scala', 'go', 'rust', 'python']
+for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
   exe 'autocmd filetype ' . ft . ' nmap <C-d> <Plug>(coc-diagnostic-next)'
   exe 'autocmd filetype ' . ft . ' nmap <C-n> :call CocNextError()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <C-p> :call CocPrevError()<CR>'
