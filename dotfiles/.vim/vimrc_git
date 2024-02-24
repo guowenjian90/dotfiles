@@ -53,11 +53,7 @@ fu! GitToolDiffBranch(branch)
   silent exe '!git diff --name-status "' . branch . '">/tmp/.tmp.gitdiff'
   exe "tabnew"
   exe 'view /tmp/.tmp.gitdiff'
-  setlocal nomodifiable
-  exe 'let b:bbranch="' . a:branch . '"'
-  nmap <buffer> <silent> <leader>q :windo bd<CR>
-  nmap <buffer> <silent> <CR> :call GitToolDiffFile2BranchInSameTab(getline('.'), b:bbranch, "")<CR>
-  nmap <buffer> <silent> <LeftRelease> :call GitToolDiffFile2BranchInSameTab(getline('.'), b:bbranch, "")<CR>
+  call SetGitToolDiffMenu2Branch(branch, "")
   if getline('.') != ''
     call feedkeys("\<CR>")
   endif
@@ -74,6 +70,7 @@ fu! SetGitToolDiffMenu2Branch(abranch, bbranch)
   nmap <buffer> <silent> <CR> :call GitToolDiffFile2BranchUsingTab(getline('.'), b:abranch, b:bbranch)<CR>
   " nmap <buffer> <silent> <LeftRelease> :call GitToolDiffFile2BranchInSameTab(getline('.'), b:abranch, b:bbranch)<CR>
   nmap <buffer> <silent> <2-LeftMouse> :call GitToolDiffFile2BranchUsingTab(getline('.'), b:abranch, b:bbranch)<CR>
+  let g:difflisttab = tabpagenr()
 endf
 
 fu! GitToolDiffFile2BranchInSameTab(change, abranch, bbranch)
@@ -127,7 +124,8 @@ endf
 
 fu! NextGTDFile()
   call feedkeys(" q")
-  if line('.', win_getid(1)) == line('$', win_getid(1))
+  let tabno = g:difflisttab
+  if line('.', win_getid(1, tabno)) == line('$', win_getid(1, tabno))
     call feedkeys("gg\<CR>")
   else
     call feedkeys("j\<CR>")
@@ -135,7 +133,8 @@ fu! NextGTDFile()
 endf
 fu! PrevGTDFile()
   call feedkeys(" q")
-  if line('.', win_getid(1)) == 1
+  let tabno = g:difflisttab
+  if line('.', win_getid(1, tabno)) == 1
     call feedkeys("G\<CR>")
   else
     call feedkeys("k\<CR>")

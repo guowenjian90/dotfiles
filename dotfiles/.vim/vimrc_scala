@@ -196,6 +196,9 @@ fu! RunSbtTestOnly(class, spec)
   let path = expand('%')
   let it = match(path, '.*src/it/.*')
   if it == -1
+    let it = match(path, '.*integration/src/test/.*')
+  endif
+  if it == -1
     let cmd = 'testOnly '
   else
     let cmd = 'IntegrationTest / testOnly '
