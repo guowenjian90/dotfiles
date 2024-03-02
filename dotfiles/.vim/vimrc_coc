@@ -64,8 +64,9 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
 inoremap <silent><expr> <C-l> coc#pum#visible() ? "\<Esc>a" : "\<Right>"
 inoremap <silent><expr> <C-h> coc#pum#visible() ? "\<Esc>a" : "\<Left>"
 
-nmap ` <ESC><C-]>
 " Use K for show documentation in preview window
+nmap ` K
+" nmap ` <ESC><C-]>
 nmap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
@@ -80,17 +81,6 @@ function! s:show_signature()
   call CocActionAsync('showSignatureHelp')
 endfunction
 imap <F9> <C-o>:call <SID>show_signature()<CR>
-
-" Introduce function text object
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)o0
-omap if <Plug>(coc-funcobj-i)
-omap af <Plug>(coc-funcobj-a)
-xmap io <Plug>(coc-classobj-i)
-omap io <Plug>(coc-classobj-i)
-xmap ao <Plug>(coc-classobj-a)
-omap ao <Plug>(coc-classobj-a)
 
 " jump to next function
 nmap ]] ^vafo<Esc>2j^
@@ -203,16 +193,12 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
 
   " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
   exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
-  exe 'autocmd filetype ' . ft . ' 
 
   " Remap for do codeAction of current line
   exe 'autocmd filetype ' . ft . ' nmap <silent><leader>ca  <Plug>(coc-codeaction)'
-  exe 'autocmd filetype ' . ft . ' 
 
   " Fix autofix problem of current line
   exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cx  <Plug>(coc-fix-current)'
-  exe 'autocmd filetype ' . ft . ' 
 
   " Remap keys for applying code actions at the cursor position
   exe 'autocmd filetype ' . ft . ' nmap <leader>cc  <Plug>(coc-codeaction-cursor)'
@@ -220,7 +206,6 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
   " Remap keys for apply code actions affect whole buffer
   " nmap <leader>cb  <Plug>(coc-codeaction-source)
 
-  exe 'autocmd filetype ' . ft . ' 
   " Remap keys for applying refactor code actions
 
   exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cr <Plug>(coc-codeaction-refactor)'
@@ -232,6 +217,16 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
   " Remap for rename current word
   exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cn <Plug>(coc-rename)'
 
+  " Introduce function text object
+  " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+  exe 'autocmd filetype ' . ft . ' xmap if <Plug>(coc-funcobj-i)'
+  exe 'autocmd filetype ' . ft . ' xmap af <Plug>(coc-funcobj-a)'
+  exe 'autocmd filetype ' . ft . ' omap if <Plug>(coc-funcobj-i)'
+  exe 'autocmd filetype ' . ft . ' omap af <Plug>(coc-funcobj-a)'
+  exe 'autocmd filetype ' . ft . ' xmap io <Plug>(coc-classobj-i)'
+  exe 'autocmd filetype ' . ft . ' omap io <Plug>(coc-classobj-i)'
+  exe 'autocmd filetype ' . ft . ' xmap ao <Plug>(coc-classobj-a)'
+  exe 'autocmd filetype ' . ft . ' omap ao <Plug>(coc-classobj-a)'
 endfor
 
 autocmd filetype java nmap <leader>pb :CocCommand java.workspace.compile <CR>
