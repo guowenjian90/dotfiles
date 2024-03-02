@@ -47,11 +47,13 @@ gitdeltadiff (){
 compdef _git gitdeltadiff=git-diff
 alias gts='git status'
 alias gtd='gittooldiff'
-alias glp='git log -p'
-alias gtr='git stash; git pull --rebase; git stash pop;'
-alias grbd='git push origin --delete '
-alias gitprune='git fetch --all --force --prune --prune-tags'
 alias gdd='gitdeltadiff'
+alias gl='git log'
+alias glp='git log -p'
+alias gp='git stash; git pull --rebase; git stash pop;'
+alias grd='git push origin --delete '
+alias gd='git branch -D '
+alias gf='git fetch --all --force --prune --prune-tags'
 alias jq='jq -S -M'
 
 export JAVA_HOME=$HOME/Java/latest
