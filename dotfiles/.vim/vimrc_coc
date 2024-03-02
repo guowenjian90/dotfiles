@@ -1,4 +1,3 @@
-" unmap gd
 " let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 " let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 "
@@ -65,13 +64,10 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
 inoremap <silent><expr> <C-l> coc#pum#visible() ? "\<Esc>a" : "\<Right>"
 inoremap <silent><expr> <C-h> coc#pum#visible() ? "\<Esc>a" : "\<Left>"
 
+" Use K for show documentation in preview window
 nmap ` K
-vmap ` <ESC><C-]>
-" Use K for show documentation in preview window
+" nmap ` <ESC><C-]>
 nmap <silent> K :call <SID>show_documentation()<CR>
-
-" Use K for show documentation in preview window
-nnoremap <silent><nowait> <space>vd :call CocAction('jumpDefinition', v:false)<CR>
 
 function! s:show_documentation()
   if &filetype == 'vim'
@@ -86,20 +82,9 @@ function! s:show_signature()
 endfunction
 imap <F9> <C-o>:call <SID>show_signature()<CR>
 
-" Introduce function text object
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)o0
-omap if <Plug>(coc-funcobj-i)
-omap af <Plug>(coc-funcobj-a)
-xmap io <Plug>(coc-classobj-i)
-omap io <Plug>(coc-classobj-i)
-xmap ao <Plug>(coc-classobj-a)
-omap ao <Plug>(coc-classobj-a)
-
 " jump to next function
-nmap ]] ^vafo<Esc>2j^
-nmap [[ ^vaf<Esc>2kvaf<Esc>^
+nmap <silent> ]] ^vafo<Esc>2j^
+nmap <silent> [[ ^vaf<Esc>2kvaf<Esc>^
 
 " Use <TAB> for selections ranges.
 " NOTE: Requires 'textDocument/selectionRange' support from the language server.
@@ -108,10 +93,8 @@ nmap <silent> <leader>cs <Plug>(coc-range-select)
 xmap <silent> <leader>cs <Plug>(coc-range-select)
 
 " Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Remap for rename current word
-nmap <silent><leader>cn <Plug>(coc-rename)
+" autocmd CursorHold * silent call CocActionAsync('showSignatureHelp')
+" autocmd CursorHoldI * silent call CocActionAsync('showSignatureHelp')
 
 " Remap for format selected region
 vmap <silent><leader>cf  <Plug>(coc-format-selected)
@@ -124,28 +107,6 @@ augroup mygroup
   " Update signature help on jump placeholder
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
-
-" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
-vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)
-nmap <silent><leader>cv  <Plug>(coc-codeaction-selected)
-
-" Remap for do codeAction of current line
-nmap <silent><leader>ca  <Plug>(coc-codeaction)
-
-" Fix autofix problem of current line
-nmap <silent><leader>cx  <Plug>(coc-fix-current)
-
-" Remap keys for applying code actions at the cursor position
-nmap <leader>cc  <Plug>(coc-codeaction-cursor)
-" Remap keys for apply code actions affect whole buffer
-" nmap <leader>cb  <Plug>(coc-codeaction-source)
-
-" Remap keys for applying refactor code actions
-nmap <silent> <leader>cr <Plug>(coc-codeaction-refactor)
-vmap <silent> <leader>cr <Plug>(coc-codeaction-refactor-selected)
-
-" Run the Code Lens action on the current line
-nmap <leader>cl  <Plug>(coc-codelens-action)J
 
 " Use `:Format` for format current buffer
 command! -nargs=0 CocFormat :call CocAction('format')
@@ -174,21 +135,26 @@ nmap <silent> <Leader>ox  :<C-u>CocFzfList commands<cr>
 nmap <silent> <Leader>oo  :<C-u>CocFzfList outline<cr>
 nmap <silent> <Leader>olo :<C-u>CocFzfList location<cr>
 nmap <silent> <Leader>od  :<C-u>CocFzfList diagnostics<cr>
+nmap <silent> <Leader>oe  :call <SID>coc_open_error()<cr>
 nmap <silent> <Leader>clb :<C-u>CocFzfList branches<cr>
 nmap <silent> <Leader>cle :<C-u>CocFzfList extensions<cr>
+function! s:coc_open_error()
+  exe "CocFzfList diagnostics"
+  call feedkeys("'Error")
+endf
 
 " Remap keys for go to
-fu! ShowReference()
+fu! s:coc_show_reference()
   call EasyMotion#WB(0,2)
   call feedkeys("gr")
 endf
 
-fu! ShowImplementation()
+fu! s:coc_show_implementation()
   call EasyMotion#WB(0,2)
   call feedkeys("gi")
 endf
 
-fu! CocNextError()
+fu! s:coc_next_error()
   if HasQuickFix() == 1
     exe "cnext"
   elseif HasLocList() == 1
@@ -199,7 +165,7 @@ fu! CocNextError()
   endif
 endf
 
-fu! CocPrevError()
+fu! s:coc_prev_error()
   if HasQuickFix() == 1
     exe "cprev"
   elseif HasLocList() == 1
@@ -211,50 +177,90 @@ fu! CocPrevError()
 endf
 
 for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
-  exe 'autocmd filetype ' . ft . ' nmap <C-d> <Plug>(coc-diagnostic-next)'
-  exe 'autocmd filetype ' . ft . ' nmap <C-n> :call CocNextError()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <C-p> :call CocPrevError()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-d> <Plug>(coc-diagnostic-next)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-n> :call <SID>coc_next_error()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-p> :call <SID>coc_prev_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-]> <Plug>(coc-definition)'
+  " Use vd for show documentation in preview window
+  exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vd :call CocAction("jumpDefinition", v:false)<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gd <Plug>(coc-definition)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gi <Plug>(coc-implementation)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gy <Plug>(coc-type-definition)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> mr :call ShowReference()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call ShowImplementation()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <leader>oi :CocCommand editor.action.organizeImport <CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mr :call <SID>coc_show_reference()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call <SID>coc_show_implementation()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <leader>oi :CocCommand editor.action.organizeImport <CR>'
+
+  exe 'autocmd filetype ' . ft . ' nmap <silent> [e <Plug>(coc-diagnostic-prev-error)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> ]e <Plug>(coc-diagnostic-next-error)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> [d <Plug>(coc-diagnostic-prev)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> ]d <Plug>(coc-diagnostic-next)'
+
+  " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+  exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
+
+  " Remap for do codeAction of current line
+  exe 'autocmd filetype ' . ft . ' nmap <silent><leader>ca  <Plug>(coc-codeaction)'
+
+  " Fix autofix problem of current line
+  exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cx  <Plug>(coc-fix-current)'
+
+  " Remap keys for applying code actions at the cursor position
+  exe 'autocmd filetype ' . ft . ' nmap <leader>cc  <Plug>(coc-codeaction-cursor)'
+
+  " Remap keys for apply code actions affect whole buffer
+  " nmap <leader>cb  <Plug>(coc-codeaction-source)
+
+  " Remap keys for applying refactor code actions
+
+  exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cr <Plug>(coc-codeaction-refactor)'
+  exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cr <Plug>(coc-codeaction-refactor-selected)'
+   
+  " Run the Code Lens action on the current line
+  exe 'autocmd filetype ' . ft . ' nmap <leader>cl <Plug>(coc-codelens-action)'
+
+  " Remap for rename current word
+  exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cn <Plug>(coc-rename)'
+
+  " Introduce function text object
+  " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+  exe 'autocmd filetype ' . ft . ' xmap if <Plug>(coc-funcobj-i)'
+  exe 'autocmd filetype ' . ft . ' xmap af <Plug>(coc-funcobj-a)'
+  exe 'autocmd filetype ' . ft . ' omap if <Plug>(coc-funcobj-i)'
+  exe 'autocmd filetype ' . ft . ' omap af <Plug>(coc-funcobj-a)'
+  exe 'autocmd filetype ' . ft . ' xmap io <Plug>(coc-classobj-i)'
+  exe 'autocmd filetype ' . ft . ' omap io <Plug>(coc-classobj-i)'
+  exe 'autocmd filetype ' . ft . ' xmap ao <Plug>(coc-classobj-a)'
+  exe 'autocmd filetype ' . ft . ' omap ao <Plug>(coc-classobj-a)'
 endfor
 
-nmap <silent> [e <Plug>(coc-diagnostic-prev-error)
-nmap <silent> ]e <Plug>(coc-diagnostic-next-error)
-nmap <silent> [d <Plug>(coc-diagnostic-prev)
-nmap <silent> ]d <Plug>(coc-diagnostic-next)
-autocmd filetype java nmap <leader>pb :CocCommand java.workspace.compile <CR>
-autocmd filetype java nmap <leader>pr :CocCommand java.clean.workspace <CR>
-autocmd filetype java nmap <leader>sm :CocCommand java.super-method-hierarchy <CR>
-autocmd filetype java nmap <leader>mh :CocCommand java.super-method-hierarchy <CR>
+autocmd filetype java nmap <silent> <leader>pb :CocCommand java.workspace.compile <CR>
+autocmd filetype java nmap <silent> <leader>pr :CocCommand java.clean.workspace <CR>
+autocmd filetype java nmap <silent> <leader>sm :CocCommand java.super-method-hierarchy <CR>
+autocmd filetype java nmap <silent> <leader>mh :CocCommand java.super-method-hierarchy <CR>
 " autocmd filetype java nmap <leader>oi :CocCommand java.action.organizeImports <CR>
 
-autocmd filetype sbt nmap <buffer> <leader>pi :CocCommand metals.build-import <CR>
-autocmd filetype sbt nmap <buffer> <leader>pr :CocCommand metals.build-restart <CR>
-autocmd filetype sbt nmap <buffer> <leader>pc :CocCommand metals.build-connect <CR>
+autocmd filetype sbt nmap <silent> <leader>pi :CocCommand metals.build-import <CR>
+autocmd filetype sbt nmap <silent> <leader>pr :CocCommand metals.build-restart <CR>
+autocmd filetype sbt nmap <silent> <leader>pc :CocCommand metals.build-connect <CR>
 
-autocmd filetype scala nmap <buffer> <leader>pi :CocCommand metals.build-import <CR>
-autocmd filetype scala nmap <buffer> <leader>pr :CocCommand metals.build-restart <CR>
-autocmd filetype scala nmap <buffer> <leader>pb :CocCommand metals.compile-cascade <CR>
-autocmd filetype scala nmap <buffer> <leader>pc :CocCommand metals.build-connect <CR>
-autocmd filetype scala nmap <buffer> <leader>nc :CocCommand metals.new-scala-file <CR>
-autocmd filetype scala nmap <buffer> <leader>sm :CocCommand metals.go-to-super-method <CR>
-autocmd filetype scala nmap <buffer> <leader>mh :CocCommand metals.super-method-hierarchy <CR>
-autocmd filetype scala nmap <Leader>mws <Plug>(coc-metals-expand-decoration)
+autocmd filetype scala nmap <silent> <leader>pi :CocCommand metals.build-import <CR>
+autocmd filetype scala nmap <silent> <leader>pr :CocCommand metals.build-restart <CR>
+autocmd filetype scala nmap <silent> <leader>pb :CocCommand metals.compile-cascade <CR>
+autocmd filetype scala nmap <silent> <leader>pc :CocCommand metals.build-connect <CR>
+autocmd filetype scala nmap <silent> <leader>nc :CocCommand metals.new-scala-file <CR>
+autocmd filetype scala nmap <silent> <leader>sm :CocCommand metals.go-to-super-method <CR>
+autocmd filetype scala nmap <silent> <leader>mh :CocCommand metals.super-method-hierarchy <CR>
 
 " Toggle panel with Tree Views
+" autocmd filetype scala nmap <silent> <Leader>mws <Plug>(coc-metals-expand-decoration)
 " autocmd filetype scala nmap <silent> <Leader>mt :<C-u>CocCommand metals.tvp<CR>
 " autocmd filetype scala nmap <silent> <Leader>mtb :<C-u>CocCommand metals.tvp metalsBuild<CR>
 " autocmd filetype scala nmap <silent> <Leader>mtc :<C-u>CocCommand metals.tvp metalsCompile<CR>
 " autocmd filetype scala nmap <silent> <Leader>mtf :<C-u>CocCommand metals.revealInTreeView metalsBuild<CR>
 
-autocmd filetype go nmap <leader>ut :CocCommand go.test.toggle <CR>
-autocmd filetype go nmap <leader>tg :CocCommand go.tags.add.prompt<CR>
+autocmd filetype go nmap <silent> <leader>ut :CocCommand go.test.toggle <CR>
+autocmd filetype go nmap <silent> <leader>tg :CocCommand go.tags.add.prompt<CR>
 
 
 " Use <C-s> for trigger snippet expand.
@@ -274,17 +280,17 @@ imap <C-s> <Plug>(coc-snippets-expand)
 "
 
 " coc-git
-nmap [c <Plug>(coc-git-prevchunk)
-nmap ]c <Plug>(coc-git-nextchunk)
-nmap <C-c> <Plug>(coc-git-nextchunk)
-" nmap [c <Plug>(coc-git-prevConflict)
-" nmap ]f <Plug>(coc-git-nextConflict)
+nmap <silent> [c <Plug>(coc-git-prevchunk)
+nmap <silent> ]c <Plug>(coc-git-nextchunk)
+nmap <silent> <C-c> <Plug>(coc-git-nextchunk)
+" nmap <silent> [c <Plug>(coc-git-prevConflict)
+" nmap <silent> ]f <Plug>(coc-git-nextConflict)
 " show chunk diff at current position
-nmap = :CocCommand git.chunkInfo<CR>
-nmap gu :CocCommand git.chunkUndo<CR>
-nmap <leader>git :CocCommand git.browserOpen<CR>
+nmap <silent> = :CocCommand git.chunkInfo<CR>
+nmap <silent> gu :CocCommand git.chunkUndo<CR>
+nmap <silent> <leader>git :CocCommand git.browserOpen<CR>
 " show commit contains current position
-nmap <leader>gc <Plug>(coc-git-commit)
+nmap <silent> <leader>gc <Plug>(coc-git-commit)
 " create text object for git chunks
 omap <leader>gi <Plug>(coc-git-chunk-inner)
 xmap <leader>gi <Plug>(coc-git-chunk-inner)

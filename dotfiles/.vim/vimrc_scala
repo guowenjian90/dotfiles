@@ -1,4 +1,4 @@
-fu! SbtPackageRoot()
+fu! s:sbt_package_root()
   let savedir = getcwd()
   let dir = expand('%:p:h')
   exe "cd " . dir
@@ -15,13 +15,13 @@ fu! SbtPackageRoot()
 endf
 
 fu! ScalaTest()
-  let project_root = SbtPackageRoot()
+  let project_root = <SID>sbt_package_root()
   let project = split(project_root, '\/')[-1]
   let build_classpath = BuildClasspath()
   let class = FindClassToRun()
-  let spec = FindScalaTestSpec()
+  let spec = <SID>find_scala_test_spec()
   if spec == ''
-    let spec = FindScalaTestBehavior()
+    let spec = <SID>find_scala_test_behavior()
   endif
 
   if(empty(spec))
@@ -32,7 +32,7 @@ fu! ScalaTest()
   call RunCommand(cmd, 1)
 endf
 
-fu! FindBloopDir()
+fu! s:find_bloop_dir()
   let savedir = getcwd()
   let dir = expand('%:p:h')
   exe "cd " . dir
@@ -48,10 +48,10 @@ fu! FindBloopDir()
   return dir
 endf
 
-fu! BloopBuildClasspath()
-  let project_root = SbtPackageRoot()
+fu! s:bloop_build_classpath()
+  let project_root = <SID>sbt_package_root()
   let project = split(project_root, '\/')[-1]
-  let bloop_dir = FindBloopDir()
+  let bloop_dir = <SID>find_bloop_dir()
   let bloop_classpath_dir = bloop_dir.'/.bloop/'.project.'/bloop-bsp-clients-classes'
 
   let impl_build_classes_directories=glob(bloop_classpath_dir.'/classes-Metals-*', 1, 1)
@@ -87,7 +87,7 @@ fu! BloopBuildClasspath()
   return impl_build_classes_dir.':'.test_build_classes_dir.':'.it_build_classes_dir
 endf
 
-fu! OpenSbtPane(project_root)
+fu! s:open_sbt_pane(project_root)
   let sbt_pane = -1
   let panes = VimuxTmux("list-panes -F '#{pane_title}:#{pane_id}'")
   let panes = split(panes, "\n")
@@ -106,17 +106,17 @@ fu! OpenSbtPane(project_root)
   endif
 endfunction
 
-fu! BuildSbtPackage()
-  let package_root = SbtPackageRoot()
-  call OpenSbtPane(package_root)
+fu! s:build_sbt_package()
+  let package_root = <SID>sbt_package_root()
+  call <SID>open_sbt_pane(package_root)
   let buildsystem = "set coverageEnabled := true; coverage; test; coverageAggregate"
   let tmux = 1
   call RunCommand(buildsystem, tmux)
 endf
 
-fu! SbtTestFocus()
-  let project_root = SbtPackageRoot()
-  call OpenSbtPane(project_root)
+fu! s:sbt_test_focus()
+  let project_root = <SID>sbt_package_root()
+  call <SID>open_sbt_pane(project_root)
   let package_line = search('^package ', 'Wnbc')
   if package_line ==# 0
     return
@@ -129,17 +129,17 @@ fu! SbtTestFocus()
   let class_name = split(path, '/')[-1]
   let class = package_name . '.' . class_name
 
-  let spec = FindScalaTestSpec()
+  let spec = <SID>find_scala_test_spec()
   if spec == ''
-    let spec = FindScalaTestBehavior()
+    let spec = <SID>find_scala_test_behavior()
   endif
 
-  call RunSbtTestOnly(class, spec)
+  call <SID>run_sbt_test_only(class, spec)
 endf
 
-fu! SbtTestCurrentFile()
-  let project_root = SbtPackageRoot()
-  call OpenSbtPane(project_root)
+fu! s:sbt_test_current_file()
+  let project_root = <SID>sbt_package_root()
+  call <SID>open_sbt_pane(project_root)
   let package_line = search('^package ', 'Wnbc')
   if package_line ==# 0
     return
@@ -152,10 +152,10 @@ fu! SbtTestCurrentFile()
   let class_name = split(path, '/')[-1]
   let class = package_name . '.' . class_name
 
-  call RunSbtTestOnly(class, '')
+  call <SID>run_sbt_test_only(class, '')
 endf
 
-fu! FindScalaTestSpec()
+fu! s:find_scala_test_spec()
   let spec_line = search( '\v.*\"(.+)\"\s+in\s+\{\s*', 'Wnbc')
   let behavior_line = search( '\v\s*behavior of\s+"(.+)\"\s*', 'Wnbc')
   if spec_line ==# 0 && behavior_line ==# 0
@@ -176,7 +176,7 @@ fu! FindScalaTestSpec()
   return spec
 endf
 
-fu! FindScalaTestBehavior()
+fu! s:find_scala_test_behavior()
   let spec_line = search( '\v\s*behavior of\s+"(.+)\"\s*', 'Wnbc')
   if spec_line ==# 0
     return ''
@@ -192,7 +192,7 @@ fu! FindScalaTestBehavior()
   return spec
 endf
  
-fu! RunSbtTestOnly(class, spec)
+fu! s:run_sbt_test_only(class, spec)
   let path = expand('%')
   let it = match(path, '.*src/it/.*')
   if it == -1
@@ -211,7 +211,7 @@ fu! RunSbtTestOnly(class, spec)
   call RunCommand(cmd, 1)
 endf
 
-fu! RunScalaFixOnly(file)
+fu! s:run_scala_fix_only(file)
   let cmd = 'scalafix --files ' . a:file
   call RunCommand(cmd, 1)
   exe 'e'
@@ -220,11 +220,11 @@ endf
 autocmd filetype scala set shiftwidth=2          " Set indention level to be the same as softtabstop
 autocmd filetype scala set softtabstop=2         " Why are tabs so big?  This fixes it
 autocmd filetype scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
-autocmd filetype scala nmap <buffer> <Leader>fix :call RunScalaFixOnly(expand('%'))<CR>
-autocmd filetype scala nmap <buffer> <Leader>tt :call SbtTestFocus()<CR>
-autocmd filetype scala nmap <buffer> <Leader>ta :call SbtTestCurrentFile()<CR>
-autocmd filetype scala nmap <buffer> <Leader>ut :call OpenTestFile('Spec', 'scala')<CR>
-autocmd filetype scala nmap <buffer> <Leader>ct :call NewTestFile('Spec', 'scala')<CR>
-autocmd filetype scala nmap <buffer> <Leader>run :call JavaRun('')<CR>
-autocmd filetype scala nmap <Leader>bb :call BuildSbtPackage()<CR>
-autocmd BufRead,BufNewFile build.sbt nmap <buffer> <Leader>bb :call BuildSbtPackage()<CR>
+autocmd filetype scala nmap <silent> <Leader>fix :call <SID>run_scala_fix_only(expand('%'))<CR>
+autocmd filetype scala nmap <silent> <Leader>tt :call <SID>sbt_test_focus()<CR>
+autocmd filetype scala nmap <silent> <Leader>ta :call <SID>sbt_test_current_file()<CR>
+autocmd filetype scala nmap <silent> <Leader>ut :call OpenTestFile('Spec', 'scala')<CR>
+autocmd filetype scala nmap <silent> <Leader>ct :call NewTestFile('Spec', 'scala')<CR>
+autocmd filetype scala nmap <silent> <Leader>run :call JavaRun('')<CR>
+autocmd filetype scala nmap <silent> <Leader>bb :call <SID>build_sbt_package()<CR>
+autocmd BufRead,BufNewFile build.sbt nmap <silent> <Leader>bb :call <SID>build_sbt_package()<CR>

@@ -1,6 +1,6 @@
 " require vim-fugitive
 
-fu! ToggleGit()
+fu! s:toggle_git()
   let bufname=bufname('fugitive:')
   let bufno = bufname->bufloaded()
   if bufno == 0
@@ -9,17 +9,17 @@ fu! ToggleGit()
     exe 'bd ' . bufname
   endif
 endf
-nmap <silent> <C-g> :call ToggleGit()<CR>
-nmap <Leader>gp :Git stash <bar> Git pull --rebase <bar> Git stash pop<CR>
-nmap <Leader>gdf :Gvdiffsplit<SPACE>
+nmap <silent> <C-g> :call <SID>toggle_git()<CR>
+nmap <silent> <Leader>gp :Git stash <bar> Git pull --rebase <bar> Git stash pop<CR>
+nmap <silent> <Leader>gdf :Gvdiffsplit<SPACE>
 
-fu! SearchInGit(text)
+fu! s:search_in_git(text)
   exe 'Gclog -S' . a:text . ' -- %'
   call feedkeys("/".a:text."\r")
 endf
-nmap <silent> <Leader>gss :call SearchInGit(expand('<cword>'))<CR>
+nmap <silent> <Leader>gss :call <SID>search_in_git(expand('<cword>'))<CR>
 
-fu! GitDiffToolACommmit()
+fu! s:git_tool_diff_a_commit()
   let cc = getline(1, 1)
   let a = split(cc[0])
   let cc = a[1]
@@ -30,22 +30,22 @@ fu! GitDiffToolACommmit()
   silent exe '!git diff --name-status ' . pc . " " . cc . '>/tmp/.tmp.gitdiff'
   exe "tabnew"
   exe 'view /tmp/.tmp.gitdiff'
-  call SetGitToolDiffMenu2Branch(pc, cc)
+  call <SID>set_git_tool_diff_menu_2branch(pc, cc)
 endf
-nmap <silent> <Leader>gdc :call GitDiffToolACommmit()<CR>
+nmap <silent> <Leader>gdc :call <SID>git_tool_diff_a_commit()<CR>
 
-fu! GoToCommitAndFindThisChange()
+fu! s:goto_commint_and_find_this_change()
   let lineno = line('.')
   let cwd = getcwd()
   let file = expand('%p')
   let file = substitute(file, cwd, "", "")
   let file = substitute(file, "^/", "", "")
   let file = escape(file, "/")
-  call feedkeys(" gc " . ":sleep 500m\<CR>" . ":call GitDiffToolACommmit()\<CR>" . "/" . file . "\<CR>" . "\<CR>" . lineno ."\<CR>")
+  call feedkeys(" gc " . ":sleep 500m\<CR>" . " gdc " . "/" . file . "\<CR>" . "\<CR>" . lineno ."\<CR>")
 endfunction
-nmap <silent> <Leader>gfc :call GoToCommitAndFindThisChange()<CR>
+nmap <silent> <Leader>gfc :call <SID>goto_commint_and_find_this_change()<CR>
 
-fu! GitToolDiffBranch(branch)
+fu! s:git_tool_diff_branch(branch)
   let branch = a:branch
   if len(branch) == 0
     let branch = "HEAD"
@@ -53,27 +53,27 @@ fu! GitToolDiffBranch(branch)
   silent exe '!git diff --name-status "' . branch . '">/tmp/.tmp.gitdiff'
   exe "tabnew"
   exe 'view /tmp/.tmp.gitdiff'
-  call SetGitToolDiffMenu2Branch(branch, "")
+  call <SID>set_git_tool_diff_menu_2branch(branch, "")
   if getline('.') != ''
     call feedkeys("\<CR>")
   endif
 endf
-command! -bar -bang -nargs=* -complete=customlist,fugitive#CompleteObject GitToolDiffBranch call GitToolDiffBranch(<q-args>)
-nmap <Leader>gtd :GitToolDiffBranch<SPACE>
+command! -bar -bang -nargs=* -complete=customlist,fugitive#CompleteObject GitToolDiffBranch call <SID>git_tool_diff_branch(<q-args>)
+nmap <silent> <Leader>gtd :GitToolDiffBranch<SPACE>
 
 " diff two random branchs
-fu! SetGitToolDiffMenu2Branch(abranch, bbranch)
+fu! s:set_git_tool_diff_menu_2branch(abranch, bbranch)
   setlocal nomodifiable
   exe 'let b:abranch="' . a:abranch . '"'
   exe 'let b:bbranch="' . a:bbranch . '"'
   nmap <buffer> <silent> <leader>q :windo bd<CR>
-  nmap <buffer> <silent> <CR> :call GitToolDiffFile2BranchUsingTab(getline('.'), b:abranch, b:bbranch)<CR>
-  " nmap <buffer> <silent> <LeftRelease> :call GitToolDiffFile2BranchInSameTab(getline('.'), b:abranch, b:bbranch)<CR>
-  nmap <buffer> <silent> <2-LeftMouse> :call GitToolDiffFile2BranchUsingTab(getline('.'), b:abranch, b:bbranch)<CR>
+  nmap <buffer> <silent> <CR> :call <SID>git_tool_diff_file_2branch_using_tab(getline('.'), b:abranch, b:bbranch)<CR>
+  " nmap <buffer> <silent> <LeftRelease> :call git_tool_diff_file_2branch_in_same_tab(getline('.'), b:abranch, b:bbranch)<CR>
+  nmap <buffer> <silent> <2-LeftMouse> :call <SID>git_tool_diff_file_2branch_using_tab(getline('.'), b:abranch, b:bbranch)<CR>
   let g:difflisttab = tabpagenr()
 endf
 
-fu! GitToolDiffFile2BranchInSameTab(change, abranch, bbranch)
+fu! s:git_tool_diff_file_2branch_in_same_tab(change, abranch, bbranch)
   let height = 10
   if winnr('$') > 1
     let height = winheight(0)
@@ -87,7 +87,7 @@ fu! GitToolDiffFile2BranchInSameTab(change, abranch, bbranch)
   exe "belowright split " . ff
   exe "wincmd k | resize " . height . " | setlocal winfixwidth | wincmd j"
   exe "Gvdiffsplit " . a:abranch
-  call SetupGitBufferMap()
+  call <SID>setup_git_buffer_map()
 
   exe "wincmd l"
   if len(changes) == 3
@@ -99,15 +99,15 @@ fu! GitToolDiffFile2BranchInSameTab(change, abranch, bbranch)
     exe "wincmd l | q"
   endif
   exe "2,3windo diffthis"
-  call SetupGitBufferMap()
+  call <SID>setup_git_buffer_map()
 endf
 
-fu! GitToolDiffFile2BranchUsingTab(change, abranch, bbranch)
+fu! s:git_tool_diff_file_2branch_using_tab(change, abranch, bbranch)
   let changes = split(a:change)
   let ff = changes[1]
   exe "tabedit " . ff
   exe "Gvdiffsplit " . a:abranch
-  call SetupGitBufferMap()
+  call <SID>setup_git_buffer_map()
 
   exe "wincmd l"
   if len(changes) == 3
@@ -119,10 +119,10 @@ fu! GitToolDiffFile2BranchUsingTab(change, abranch, bbranch)
     exe "wincmd l | q"
   endif
   exe "windo diffthis"
-  call SetupGitBufferMap()
+  call <SID>setup_git_buffer_map()
 endf
 
-fu! NextGTDFile()
+fu! s:next_gtd_file()
   call feedkeys(" q")
   let tabno = g:difflisttab
   if line('.', win_getid(1, tabno)) == line('$', win_getid(1, tabno))
@@ -131,7 +131,7 @@ fu! NextGTDFile()
     call feedkeys("j\<CR>")
   endif
 endf
-fu! PrevGTDFile()
+fu! s:prev_gtd_file()
   call feedkeys(" q")
   let tabno = g:difflisttab
   if line('.', win_getid(1, tabno)) == 1
@@ -140,13 +140,13 @@ fu! PrevGTDFile()
     call feedkeys("k\<CR>")
   endif
 endf
-fu! SetupGitBufferMap()
+fu! s:setup_git_buffer_map()
   if winnr('$') > 2
     nmap <buffer> <silent> <leader>q :2,3windo bd<CR>
   else
     nmap <buffer> <silent> <leader>q :windo bd<CR>
   endif
   nmap <buffer> <silent> <CR> G
-  nmap <buffer> <silent> <C-n> :call NextGTDFile()<CR>
-  nmap <buffer> <silent> <C-p> :call PrevGTDFile()<CR>
+  nmap <buffer> <silent> <C-n> :call <SID>next_gtd_file()<CR>
+  nmap <buffer> <silent> <C-p> :call <SID>prev_gtd_file()<CR>
 endfunction
