@@ -3,7 +3,7 @@ let g:fzf_layout = { 'window': { 'width': 0.88, 'height': 0.88 } }
 " search
 " let g:ag_prg='ag -S --nocolor --nogroup --column '
 command! -bang -nargs=* AgWithExt call fzf#vim#ag_raw(<q-args>, fzf#vim#with_preview(), <bang>0)
-fu! SearchWithAg(text, extension)
+fu! s:search_with_ag(text, extension)
   let stxt = a:text
   if stxt == ''
     let stxt = expand('<cword>')
@@ -14,29 +14,29 @@ fu! SearchWithAg(text, extension)
     execute 'AgWithExt -G "^.*\.' . a:extension. '$" ' . stxt . ''
   end
 endf
-nmap <Leader>ss :call SearchWithAg(GetInput("search: to search word under cursor, RETURN"), GetInput("file type:")) <CR>
-vmap <Leader>ss :call SearchWithAg(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], GetInput("file type:")) <CR>
+nmap <silent> <Leader>ss :call <SID>search_with_ag(GetInput("search: to search word under cursor, RETURN"), GetInput("file type:")) <CR>
+vmap <silent> <Leader>ss :call <SID>search_with_ag(getline('.')[getpos("'<")[2]-1:getpos("'>")[2]-1], GetInput("file type:")) <CR>
 
-fu! SearchInBuffer(text)
+fu! s:search_in_buffer(text)
     execute 'Lines ' . a:text
 endf
-nmap <Leader>sb :call SearchInBuffer(GetInput("search:")) <CR>
+nmap <silent> <Leader>sb :call <SID>search_in_buffer(GetInput("search:")) <CR>
 
-fu! MakeTags() "rebuild tags
+fu! s:make_tags() "rebuild tags
   exe "!ctags -R -o newtags; mv newtags tags"
 endf
-nmap <Leader>mtg :call MakeTags()<CR>
+nmap <silent> <Leader>mtg :call <SID>make_tags()<CR>
 
 " fzf
-nmap <Leader>og :Tags<CR>
-" nmap <Leader>oo :BTags<CR>
-nmap <Leader>of :Files<CR>
-nmap <Leader>ob :Buffers<CR>
-nmap <Leader>oh :History<CR>
-" nmap <Leader>oc :Commands<CR>
-nmap <Leader>om :Marks<CR>
-nmap <Leader>olc :Commits<SPACE>
-nmap <Leader>olb :BCommits<CR>
+nmap <silent> <Leader>og :Tags<CR>
+" nmap <silent> <Leader>oo :BTags<CR>
+nmap <silent> <Leader>of :Files<CR>
+nmap <silent> <Leader>ob :Buffers<CR>
+nmap <silent> <Leader>oh :History<CR>
+" nmap <silent> <Leader>oc :Commands<CR>
+nmap <silent> <Leader>om :Marks<CR>
+nmap <silent> <Leader>olc :Commits<SPACE>
+nmap <silent> <Leader>olb :BCommits<CR>
 command! -bar -bang -nargs=* -range=% -complete=customlist,fugitive#CompleteObject Commits let b:fzf_winview = winsaveview() | <line1>,<line2>call fzf#vim#commits(<q-args>, fzf#vim#with_preview({ "placeholder": "" }), <bang>0)
 
 function GoTo(jumpline)
@@ -46,21 +46,21 @@ function GoTo(jumpline)
   execute "normal zvzz"
 endfunction
 
-function! Jumps()
+function! s:jumps()
   " Get jumps with filename added
   let jumps = map(reverse(copy(getjumplist()[0])), { key, val -> extend(val, {'name': getbufinfo(val.bufnr)[0].name }) })
   " let jumps = map(filter(reverse(copy(getjumplist()[0])), {key, val -> val.filename =~ "__Tagbar__"}), { key, val -> extend(val, {'name': getbufinfo(val.bufnr)[0].name }) })
   let jumptext = map(copy(jumps), { index, val -> (val.name).':'.(val.lnum).':'.(val.col+1).': '.GetLine(val.bufnr, val.lnum) })
   call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': jumptext, 'column': 1, 'options': ['--delimiter', ':', '--bind', 'alt-a:select-all,alt-d:deselect-all', '--preview-window', '+{2}-/2'], 'sink': function('GoTo')})))
 endfunction
-command! Jumps call Jumps()
-nmap <Leader>oj :call Jumps()<CR>
+command! Jumps call <SID>jumps()
+nmap <silent> <Leader>oj :Jumps<cr>
 
-function! Changes()
+function! s:changes()
   let changes  = reverse(copy(getchangelist()[0]))
   let changetext = map(copy(changes), { index, val -> expand('%').':'.(val.lnum).':'.(val.col+1).': '.GetLine(bufnr('%'), val.lnum) })
   call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': changetext, 'column': 1, 'options': ['--delimiter', ':', '--bind', 'alt-a:select-all,alt-d:deselect-all', '--preview-window', '+{2}-/2'], 'sink': function('GoTo')})))
 endfunction
-command! Changes call Changes()
-nmap <Leader>oc :call Changes()<CR>
+command! Changes call <SID>changes()
+nmap <silent> <Leader>oc :Changes<cr>
 
