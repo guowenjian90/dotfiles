@@ -1,12 +1,12 @@
-command! CargoBuild :call CargoBuild()
-command! CargoRun :call CargoRun()
-command! CargoPromptArgs :call CargoPromptArgs()
-command! CargoTestAll :call CargoTestAll()
-command! CargoBenchAll :call CargoBenchAll()
-command! CargoUnitTestCurrentFile :call CargoUnitTestCurrentFile()
-command! CargoUnitTestFocused :call CargoUnitTestFocused()
+command! CargoBuild :call <SID>cargo_build()
+command! CargoRun :call <SID>cargo_run()
+command! CargoPromptArgs :call <SID>cargo_prompt_args()
+command! CargoTestAll :call <SID>cargo_test_all()
+command! CargoBenchAll :call <SID>cargo_bench_all()
+command! CargoUnitTestCurrentFile :call <SID>cargo_unittest_current_file()
+command! CargoUnitTestFocused :call <SID>cargo_unittest_focused()
 
-fu! CurrentRustPackagePath()
+fu! s:current_rust_package_root()
   let savedir = getcwd()
   let dir = expand('%:p:h')
   exe "cd " . dir
@@ -22,7 +22,7 @@ fu! CurrentRustPackagePath()
   return dir
 endf
 
-function! ShellCommandSeperator()
+function! s:shell_command_seperator()
   if empty(matchstr($SHELL, 'fish'))
     return '&&'
   else
@@ -30,39 +30,39 @@ function! ShellCommandSeperator()
   endif
 endfunction
 
-let s:separator = ShellCommandSeperator()
+let s:separator = <SID>shell_command_seperator()
 
-function! CargoBuild()
-  let project_root = CurrentRustPackagePath()
+function! s:cargo_build()
+  let project_root = <SID>current_rust_package_root()
   call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo build')
 endfunction
 
-function! CargoRun()
-  let project_root = CurrentRustPackagePath()
+function! s:cargo_run()
+  let project_root = <SID>current_rust_package_root()
   call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo run')
 endfunction
 
-function! CargoPromptArgs()
-  let project_root = CurrentRustPackagePath()
+function! s:cargo_prompt_args()
+  let project_root = <SID>current_rust_package_root()
   let l:args = input(VimuxOption('VimuxPromptString'))
   call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo run -- ' . l:args)
 endfunction
 
-function! CargoTestAll()
-  let project_root = CurrentRustPackagePath()
+function! s:cargo_test_all()
+  let project_root = <SID>current_rust_package_root()
   call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo test -- --color always --nocapture')
 endfunction
 
-function! CargoBenchAll()
-  let project_root = CurrentRustPackagePath()
+function! s:cargo_bench_all()
+  let project_root = <SID>current_rust_package_root()
   call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo bench')
 endfunction
 
-function! CargoUnitTestCurrentFile()
+function! s:cargo_unittest_current_file()
   call CargoRunTests('')
 endfunction
 
-function! CargoUnitTestFocused()
+function! s:cargo_unittest_focused()
   let test_line = search('#[test', 'Wnbc')
 
   if test_line ==# 0
@@ -78,7 +78,7 @@ function! CargoUnitTestFocused()
 endfunction
 
 function! CargoRunTests(test_name)
-  let project_root = CurrentRustPackagePath()
+  let project_root = <SID>current_rust_package_root()
   let path = expand('%:r')
   if match(path, '^src/') != -1
     let parts = split(path, '/')

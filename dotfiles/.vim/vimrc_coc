@@ -135,21 +135,26 @@ nmap <silent> <Leader>ox  :<C-u>CocFzfList commands<cr>
 nmap <silent> <Leader>oo  :<C-u>CocFzfList outline<cr>
 nmap <silent> <Leader>olo :<C-u>CocFzfList location<cr>
 nmap <silent> <Leader>od  :<C-u>CocFzfList diagnostics<cr>
+nmap <silent> <Leader>oe  :call <SID>coc_open_error()<cr>
 nmap <silent> <Leader>clb :<C-u>CocFzfList branches<cr>
 nmap <silent> <Leader>cle :<C-u>CocFzfList extensions<cr>
+function! s:coc_open_error()
+  exe "CocFzfList diagnostics"
+  call feedkeys("'Error")
+endf
 
 " Remap keys for go to
-fu! ShowReference()
+fu! s:coc_show_reference()
   call EasyMotion#WB(0,2)
   call feedkeys("gr")
 endf
 
-fu! ShowImplementation()
+fu! s:coc_show_implementation()
   call EasyMotion#WB(0,2)
   call feedkeys("gi")
 endf
 
-fu! CocNextError()
+fu! s:coc_next_error()
   if HasQuickFix() == 1
     exe "cnext"
   elseif HasLocList() == 1
@@ -160,7 +165,7 @@ fu! CocNextError()
   endif
 endf
 
-fu! CocPrevError()
+fu! s:coc_prev_error()
   if HasQuickFix() == 1
     exe "cprev"
   elseif HasLocList() == 1
@@ -173,8 +178,8 @@ endf
 
 for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
   exe 'autocmd filetype ' . ft . ' nmap <C-d> <Plug>(coc-diagnostic-next)'
-  exe 'autocmd filetype ' . ft . ' nmap <C-n> :call CocNextError()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <C-p> :call CocPrevError()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <C-n> :call <SID>coc_next_error()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <C-p> :call <SID>coc_prev_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-]> <Plug>(coc-definition)'
   " Use vd for show documentation in preview window
   exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vd :call CocAction("jumpDefinition", v:false)<CR>'
@@ -182,8 +187,8 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> gi <Plug>(coc-implementation)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gy <Plug>(coc-type-definition)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> mr :call ShowReference()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call ShowImplementation()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mr :call <SID>coc_show_reference()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call <SID>coc_show_implementation()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <leader>oi :CocCommand editor.action.organizeImport <CR>'
 
   exe 'autocmd filetype ' . ft . ' nmap <silent> [e <Plug>(coc-diagnostic-prev-error)'
