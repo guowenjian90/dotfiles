@@ -35,7 +35,7 @@ nmap <silent> <Leader>ob :Buffers<CR>
 nmap <silent> <Leader>oh :History<CR>
 " nmap <silent> <Leader>oc :Commands<CR>
 nmap <silent> <Leader>om :Marks<CR>
-nmap <silent> <Leader>olc :Commits<SPACE>
+nmap <Leader>olc :Commits<SPACE>
 nmap <silent> <Leader>olb :BCommits<CR>
 command! -bar -bang -nargs=* -range=% -complete=customlist,fugitive#CompleteObject Commits let b:fzf_winview = winsaveview() | <line1>,<line2>call fzf#vim#commits(<q-args>, fzf#vim#with_preview({ "placeholder": "" }), <bang>0)
 

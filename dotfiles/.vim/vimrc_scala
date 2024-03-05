@@ -14,7 +14,7 @@ fu! s:sbt_package_root()
   return dir
 endf
 
-fu! ScalaTest()
+fu! s:scala_test()
   let project_root = <SID>sbt_package_root()
   let project = split(project_root, '\/')[-1]
   let build_classpath = BuildClasspath()
@@ -114,21 +114,47 @@ fu! s:build_sbt_package()
   call RunCommand(buildsystem, tmux)
 endf
 
-fu! s:sbt_test_focus()
+fu! s:get_package_name()
   let project_root = <SID>sbt_package_root()
   call <SID>open_sbt_pane(project_root)
+
   let package_line = search('^package ', 'Wnbc')
   if package_line ==# 0
-    return
+    let package_name = ""
+  else
+    let package = getline(package_line)
+    let package_name = split(package, ' ')[1]
   endif
+  return package_name
+endf
 
-  let package = getline(package_line)
-  let package_name = split(package, ' ')[1]
+fu! s:get_class_name()
+  let package_name = <SID>get_package_name()
 
   let path = expand('%:r')
   let class_name = split(path, '/')[-1]
-  let class = package_name . '.' . class_name
+  if package_name == ''
+    let class = class_name
+  else
+    let class = package_name . '.' . class_name
+  endif
+  return class
+endf
 
+fu! s:sbt_run_current_file()
+  let project_root = <SID>sbt_package_root()
+  call <SID>open_sbt_pane(project_root)
+
+  let class = <SID>get_class_name()
+  let cmd = 'runMain ' . class
+  call RunCommand(cmd, 1)
+endf
+
+fu! s:sbt_test_focus()
+  let project_root = <SID>sbt_package_root()
+  call <SID>open_sbt_pane(project_root)
+
+  let class = <SID>get_class_name()
   let spec = <SID>find_scala_test_spec()
   if spec == ''
     let spec = <SID>find_scala_test_behavior()
@@ -140,22 +166,24 @@ endf
 fu! s:sbt_test_current_file()
   let project_root = <SID>sbt_package_root()
   call <SID>open_sbt_pane(project_root)
-  let package_line = search('^package ', 'Wnbc')
-  if package_line ==# 0
-    return
-  endif
 
-  let package = getline(package_line)
-  let package_name = split(package, ' ')[1]
-
-  let path = expand('%:r')
-  let class_name = split(path, '/')[-1]
-  let class = package_name . '.' . class_name
-
+  let class = <SID>get_class_name()
   call <SID>run_sbt_test_only(class, '')
 endf
 
 fu! s:find_scala_test_spec()
+  " scala fun test
+  let test_line = search( '\v\s*test\(\"(.+)\"\)\s*{\s*', 'Wnbc')
+  if test_line !=# 0
+    let test = getline(test_line)
+    let test_parts = matchlist(test, '\v\s*test\(\"(.+)\"\)\s*{\s*')
+    if (len(test_parts) >= 2)
+      let test = test_parts[1]
+      return test
+    endif
+  endif
+
+  " scala fun spec
   let spec_line = search( '\v.*\"(.+)\"\s+in\s+\{\s*', 'Wnbc')
   let behavior_line = search( '\v\s*behavior of\s+"(.+)\"\s*', 'Wnbc')
   if spec_line ==# 0 && behavior_line ==# 0
@@ -212,6 +240,9 @@ fu! s:run_sbt_test_only(class, spec)
 endf
 
 fu! s:run_scala_fix_only(file)
+  let project_root = <SID>sbt_package_root()
+  call <SID>open_sbt_pane(project_root)
+
   let cmd = 'scalafix --files ' . a:file
   call RunCommand(cmd, 1)
   exe 'e'
@@ -225,6 +256,6 @@ autocmd filetype scala nmap <silent> <Leader>tt :call <SID>sbt_test_focus()<CR>
 autocmd filetype scala nmap <silent> <Leader>ta :call <SID>sbt_test_current_file()<CR>
 autocmd filetype scala nmap <silent> <Leader>ut :call OpenTestFile('Spec', 'scala')<CR>
 autocmd filetype scala nmap <silent> <Leader>ct :call NewTestFile('Spec', 'scala')<CR>
-autocmd filetype scala nmap <silent> <Leader>run :call JavaRun('')<CR>
+autocmd filetype scala nmap <silent> <Leader>run :call <SID>sbt_run_current_file()<CR>
 autocmd filetype scala nmap <silent> <Leader>bb :call <SID>build_sbt_package()<CR>
 autocmd BufRead,BufNewFile build.sbt nmap <silent> <Leader>bb :call <SID>build_sbt_package()<CR>

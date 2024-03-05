@@ -82,6 +82,8 @@ function! s:show_signature()
 endfunction
 imap <F9> <C-o>:call <SID>show_signature()<CR>
 
+autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+
 " jump to next function
 nmap <silent> ]] ^vafo<Esc>2j^
 nmap <silent> [[ ^vaf<Esc>2kvaf<Esc>^
@@ -99,14 +101,6 @@ xmap <silent> <leader>cs <Plug>(coc-range-select)
 " Remap for format selected region
 vmap <silent><leader>cf  <Plug>(coc-format-selected)
 nmap <silent><leader>cf  <Plug>(coc-format-selected)
-
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd filetype typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
 
 " Use `:Format` for format current buffer
 command! -nargs=0 CocFormat :call CocAction('format')
@@ -140,7 +134,7 @@ nmap <silent> <Leader>clb :<C-u>CocFzfList branches<cr>
 nmap <silent> <Leader>cle :<C-u>CocFzfList extensions<cr>
 function! s:coc_open_error()
   exe "CocFzfList diagnostics"
-  call feedkeys("'Error")
+  call feedkeys("'\\ Error\\ ")
 endf
 
 " Remap keys for go to
@@ -176,7 +170,7 @@ fu! s:coc_prev_error()
   endif
 endf
 
-for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
+for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-d> <Plug>(coc-diagnostic-next)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-n> :call <SID>coc_next_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-p> :call <SID>coc_prev_error()<CR>'
@@ -232,6 +226,12 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript']
   exe 'autocmd filetype ' . ft . ' omap io <Plug>(coc-classobj-i)'
   exe 'autocmd filetype ' . ft . ' xmap ao <Plug>(coc-classobj-a)'
   exe 'autocmd filetype ' . ft . ' omap ao <Plug>(coc-classobj-a)'
+endfor
+
+for ft in ['json', 'typescript']
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-d> <Plug>(coc-diagnostic-next)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-n> :call <SID>coc_next_error()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-p> :call <SID>coc_prev_error()<CR>'
 endfor
 
 autocmd filetype java nmap <silent> <leader>pb :CocCommand java.workspace.compile <CR>

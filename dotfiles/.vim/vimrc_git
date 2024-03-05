@@ -11,7 +11,7 @@ fu! s:toggle_git()
 endf
 nmap <silent> <C-g> :call <SID>toggle_git()<CR>
 nmap <silent> <Leader>gp :Git stash <bar> Git pull --rebase <bar> Git stash pop<CR>
-nmap <silent> <Leader>gdf :Gvdiffsplit<SPACE>
+nmap <Leader>gdf :Gvdiffsplit<SPACE>
 
 fu! s:search_in_git(text)
   exe 'Gclog -S' . a:text . ' -- %'
@@ -59,7 +59,7 @@ fu! s:git_tool_diff_branch(branch)
   endif
 endf
 command! -bar -bang -nargs=* -complete=customlist,fugitive#CompleteObject GitToolDiffBranch call <SID>git_tool_diff_branch(<q-args>)
-nmap <silent> <Leader>gtd :GitToolDiffBranch<SPACE>
+nmap <Leader>gtd :GitToolDiffBranch<SPACE>
 
 " diff two random branchs
 fu! s:set_git_tool_diff_menu_2branch(abranch, bbranch)
