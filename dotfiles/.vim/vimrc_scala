@@ -117,6 +117,7 @@ endf
 fu! s:get_package_name()
   let project_root = <SID>sbt_package_root()
   call <SID>open_sbt_pane(project_root)
+
   let package_line = search('^package ', 'Wnbc')
   if package_line ==# 0
     let package_name = ""
@@ -227,6 +228,9 @@ fu! s:run_sbt_test_only(class, spec)
 endf
 
 fu! s:run_scala_fix_only(file)
+  let project_root = <SID>sbt_package_root()
+  call <SID>open_sbt_pane(project_root)
+
   let cmd = 'scalafix --files ' . a:file
   call RunCommand(cmd, 1)
   exe 'e'
