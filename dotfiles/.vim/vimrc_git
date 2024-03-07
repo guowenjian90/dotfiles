@@ -59,7 +59,7 @@ fu! s:git_tool_diff_branch(branch)
   endif
 endf
 command! -bar -bang -nargs=* -complete=customlist,fugitive#CompleteObject GitToolDiffBranch call <SID>git_tool_diff_branch(<q-args>)
-nmap <silent> <Leader>gtd :GitToolDiffBranch<SPACE>
+nmap <Leader>gtd :GitToolDiffBranch<SPACE>
 
 " diff two random branchs
 fu! s:set_git_tool_diff_menu_2branch(abranch, bbranch)

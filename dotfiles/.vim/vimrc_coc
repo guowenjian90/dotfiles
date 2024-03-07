@@ -232,7 +232,6 @@ for ft in ['json', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-d> <Plug>(coc-diagnostic-next)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-n> :call <SID>coc_next_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-p> :call <SID>coc_prev_error()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-p> :call <SID>coc_prev_error()<CR>'
 endfor
 
 autocmd filetype java nmap <silent> <leader>pb :CocCommand java.workspace.compile <CR>
