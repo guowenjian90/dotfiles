@@ -45,14 +45,14 @@ gitdeltadiff (){
   unset DELTA_FEATURES
 }
 compdef _git gitdeltadiff=git-diff
-alias gts='git status'
 alias gtd='gittooldiff'
 alias gdd='gitdeltadiff'
+alias gs='git status'
 alias gl='git log'
 alias glp='git log -p'
 alias gp='git stash; git pull --rebase; git stash pop;'
-alias grd='git push origin --delete '
-alias gd='git branch -D '
+alias gbd='git branch -D '
+alias grbd='git push origin --delete '
 alias gf='git fetch --all --force --prune --prune-tags'
 alias jq='jq -S -M'
 

@@ -179,10 +179,10 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vd :call CocAction("jumpDefinition", v:false)<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gd <Plug>(coc-definition)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gi <Plug>(coc-implementation)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references-used)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gy <Plug>(coc-type-definition)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> mr :call <SID>coc_show_reference()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call <SID>coc_show_implementation()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call CocActionAsync("showIncomingCalls")<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mo :call CocActionAsync("showOutgoingCalls")<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <leader>oi :CocCommand editor.action.organizeImport <CR>'
 
   exe 'autocmd filetype ' . ft . ' nmap <silent> [e <Plug>(coc-diagnostic-prev-error)'

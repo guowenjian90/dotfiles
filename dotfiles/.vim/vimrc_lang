@@ -48,7 +48,7 @@ nmap <Leader>tb :TagbarToggle<CR>
 " let g:tagbar_show_data_type = 1
  
 " Ruby build functions
-fu! CurrentRubyPackagePath()
+fu! s:get_ruby_package_root()
   let savedir = getcwd()
   let dir = expand('%:p:h')
   exe "cd " . dir
@@ -64,7 +64,7 @@ fu! CurrentRubyPackagePath()
   return dir
 endf
 
-fu! RubyTestFile()
+fu! s:run_ruby_test()
   let file = expand('%:p')
   if (stridx(file, "_spec.rb") == -1)
     let new_file = substitute(file, "/lib/", "/spec/", "")
@@ -80,7 +80,7 @@ fu! RubyTestFile()
     echo 'can not find file '. new_file
   endif
 endf
-autocmd filetype ruby nmap <Leader>ut :call RubyTestFile()<CR>
+autocmd filetype ruby nmap <Leader>ut :call <SID>run_ruby_test()<CR>
 autocmd filetype ruby compiler ruby
 
 fu! RunShell()
