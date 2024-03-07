@@ -113,3 +113,6 @@ echo "Reminder, execute :PluginInstall when you use vim first time, and install 
 # coc-yaml
 # coc-json
 # coc-markdown-preview-enhanced
+# coc-fzf-preview
+# coc-webview
+# coc-sh

@@ -148,8 +148,8 @@ fu! TaggleQuickFix()
   else
   endif
 endf
-nmap ql :call TaggleQuickFix()<CR>
-nmap qc :cexpr []<CR>
+nmap <c-q> :call TaggleQuickFix()<CR>
+" nmap qc :cexpr []<CR> "clear quickfix list
 
 fu! NextError()
   if HasQuickFix() == 1
@@ -241,8 +241,8 @@ nmap <Leader>q :bd<CR>
 " nmap <Leader>vs :vs<CR>
 " nmap <Leader>bd :bd<CR>
 nmap <Leader>bc :%bd<CR>
-nmap <Leader>uu viwU
-nmap <Leader>ll viwu
+nmap <Leader>uc viwU
+nmap <Leader>lc viwu
 nmap <Leader>cw <Right>bvU
 nmap <Leader>nh :nohlsearch<CR>
 nmap <Leader>sc :windo set scrollbind<CR>
@@ -420,5 +420,10 @@ nmap <Leader>bfd :call Bufdo()<CR>
 nmap <Leader>bd :call BufdoCmd('bd', bufnr('%'))<CR>
 nmap <Leader>bw :call BufdoCmd('w', -1)<CR>
 nmap <Leader>br :call BufdoCmd('e', -1)<CR>
+
+fu! WindoCmd(cmd)
+  exe 'windo ' . a:cmd
+endf
+nmap <Leader>df :call WindoCmd('diffthis')<CR>
 
 set statusline+=%#warningmsg#

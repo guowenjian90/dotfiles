@@ -100,3 +100,24 @@ autocmd filetype python nmap <Leader>tt :call PythonTestFocus()<CR>
 autocmd filetype python nmap <Leader>ta :call RunPythonTest('', '')<CR>
 autocmd filetype python nmap <Leader>run :call PythonRun()<CR>
 autocmd filetype python nmap <Leader>bb :call BuildPythonPackage()<CR>
+
+autocmd filetype python nnoremap <silent> <leader>jc :JupyterConnect<CR>
+" Run current file
+autocmd filetype python nnoremap <silent> <leader>jr :JupyterRunFile<CR>
+" nnoremap <buffer> <silent> <localleader>ji :PythonImportThisFile<CR>
+
+" Change to directory of current file
+autocmd filetype python nnoremap <buffer> <silent> <localleader>jd :JupyterCd %:p:h<CR>
+
+" Send a selection of lines
+fu! JupyterRun()
+  call feedkeys("vip\\r\<Esc>")
+endf
+autocmd filetype python nmap <silent> <localleader>r :call JupyterRun()<CR>
+autocmd filetype python vmap <silent> <localleader>r <Plug>JupyterRunVisual
+autocmd filetype python nmap <silent> <localleader>e <Plug>JupyterRunTextObj
+autocmd filetype python nmap <silent> <localleader>sc :JupyterSendCell<CR>
+autocmd filetype python nmap <silent> <localleader>sr :JupyterSendRange<CR>
+
+" Debugging maps
+autocmd filetype python nmap <silent> <localleader>b :PythonSetBreak<CR>

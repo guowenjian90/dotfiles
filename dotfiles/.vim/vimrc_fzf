@@ -1,4 +1,4 @@
-let g:fzf_layout = { 'window': { 'width': 0.88, 'height': 0.88 } }
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.9 } }
 
 " search
 " let g:ag_prg='ag -S --nocolor --nogroup --column '
@@ -51,7 +51,7 @@ function! s:jumps()
   let jumps = map(reverse(copy(getjumplist()[0])), { key, val -> extend(val, {'name': getbufinfo(val.bufnr)[0].name }) })
   " let jumps = map(filter(reverse(copy(getjumplist()[0])), {key, val -> val.filename =~ "__Tagbar__"}), { key, val -> extend(val, {'name': getbufinfo(val.bufnr)[0].name }) })
   let jumptext = map(copy(jumps), { index, val -> (val.name).':'.(val.lnum).':'.(val.col+1).': '.GetLine(val.bufnr, val.lnum) })
-  call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': jumptext, 'column': 1, 'options': ['--delimiter', ':', '--bind', 'alt-a:select-all,alt-d:deselect-all', '--preview-window', '+{2}-/2'], 'sink': function('GoTo')})))
+  call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': jumptext, 'column': 1, 'options': ['--delimiter', ':', '--bind', 'ctrl-a:select-all,ctrl-d:deselect-all'], 'sink': function('GoTo')})))
 endfunction
 command! Jumps call <SID>jumps()
 nmap <silent> <Leader>oj :Jumps<cr>
@@ -59,7 +59,7 @@ nmap <silent> <Leader>oj :Jumps<cr>
 function! s:changes()
   let changes  = reverse(copy(getchangelist()[0]))
   let changetext = map(copy(changes), { index, val -> expand('%').':'.(val.lnum).':'.(val.col+1).': '.GetLine(bufnr('%'), val.lnum) })
-  call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': changetext, 'column': 1, 'options': ['--delimiter', ':', '--bind', 'alt-a:select-all,alt-d:deselect-all', '--preview-window', '+{2}-/2'], 'sink': function('GoTo')})))
+  call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': changetext, 'column': 1, 'options': ['--delimiter', ':', '--bind', 'ctrl-a:select-all,ctrl-d:deselect-all'], 'sink': function('GoTo')})))
 endfunction
 command! Changes call <SID>changes()
 nmap <silent> <Leader>oc :Changes<cr>

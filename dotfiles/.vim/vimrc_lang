@@ -1,54 +1,9 @@
-" tabbar
-let g:tagbar_type_scala = {
-      \ 'ctagstype' : 'scala',
-      \ 'sro'        : '.',
-      \ 'kinds'     : [
-      \ 'p:packages',
-      \ 'T:types:1',
-      \ 't:traits',
-      \ 'o:objects',
-      \ 'O:case objects',
-      \ 'c:classes',
-      \ 'C:case classes',
-      \ 'm:methods',
-      \ 'V:values:1',
-      \ 'v:variables:1'
-      \ ]
-      \ }
-
-let g:tagbar_type_go = {
-      \ 'ctagstype' : 'go',
-      \ 'kinds'     : [
-      \ 'p:package',
-      \ 'i:imports:1',
-      \ 'c:constants',
-      \ 'v:variables',
-      \ 't:types',
-      \ 'n:interfaces',
-      \ 'w:fields',
-      \ 'e:embedded',
-      \ 'm:methods',
-      \ 'r:constructor',
-      \ 'f:functions'
-      \ ],
-      \ 'sro' : '.',
-      \ 'kind2scope' : {
-      \ 't' : 'ctype',
-      \ 'n' : 'ntype'
-      \ },
-      \ 'scope2kind' : {
-      \ 'ctype' : 't',
-      \ 'ntype' : 'n'
-      \ },
-      \ 'ctagsbin'  : 'gotags',
-      \ 'ctagsargs' : '-sort -silent'
-      \ }
 nmap <Leader>tb :TagbarToggle<CR>
 " let g:tagbar_autopreview = 1
 " let g:tagbar_show_data_type = 1
  
 " Ruby build functions
-fu! CurrentRubyPackagePath()
+fu! s:get_ruby_package_root()
   let savedir = getcwd()
   let dir = expand('%:p:h')
   exe "cd " . dir
@@ -64,7 +19,7 @@ fu! CurrentRubyPackagePath()
   return dir
 endf
 
-fu! RubyTestFile()
+fu! s:run_ruby_test()
   let file = expand('%:p')
   if (stridx(file, "_spec.rb") == -1)
     let new_file = substitute(file, "/lib/", "/spec/", "")
@@ -80,7 +35,7 @@ fu! RubyTestFile()
     echo 'can not find file '. new_file
   endif
 endf
-autocmd filetype ruby nmap <Leader>ut :call RubyTestFile()<CR>
+autocmd filetype ruby nmap <Leader>ut :call <SID>run_ruby_test()<CR>
 autocmd filetype ruby compiler ruby
 
 fu! RunShell()
@@ -89,7 +44,7 @@ fu! RunShell()
   let cmd = " cd ". file_dir . "; sh " . file
   call RunCommand(cmd, 1)
 endf
-autocmd filetype shell nmap <Leader>run :call RunShell()<CR>
+autocmd filetype sh nmap <Leader>run :call RunShell()<CR>
 
 " syntax checking
 "Adding mail as a spell checked type, only if in 7.0 >

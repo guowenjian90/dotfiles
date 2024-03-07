@@ -11,19 +11,19 @@ autocmd BufWritePost *.go silent :Autoformat
 autocmd filetype json nmap <Leader>fmt :%!jq<CR>
 
 " nerdtree
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-let NERDTreeQuitOnOpen = 1
-let NERDTreeHijackNetrw = 1
-let NERDTreeWinSize=60
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeDirArrows = 1
+let g:NERDTreeQuitOnOpen = 1
+let g:NERDTreeHijackNetrw = 1
+let g:NERDTreeWinSize=60
+let g:NERDTreeIgnore = ['^__pycache__$', '^.tmp.gitdiff$', '^.viminfo$', '^.git$', '^.metals$', '^.bloop$']
+let g:NERDTreeShowHidden=1
 nmap <silent> <C-f> :NERDTreeToggle<CR>
 nmap <silent> <Leader>ff :NERDTreeFind<CR>
 nmap <silent> <Leader>mv :NERDTreeFind<CR> <bar>m <bar>m
 nmap <silent> <Leader>rm :NERDTreeFind<CR> <bar>m <bar>d
 nmap <silent> <Leader>cp :NERDTreeFind<CR> <bar>m <bar>c
-nmap <silent> <Leader>nf :NERDTreeFind<CR> <bar>m <bar>a
-let g:NERDTreeIgnore = ['^__pycache__$', '^.tmp.gitdiff$', '^.viminfo$', '^.git$', '^.metals$', '^.bloop$']
-let g:NERDTreeShowHidden=1
+nmap <silent> <Leader>fp :NERDTreeFind<CR> <bar>m <bar>p <bar><C-f>
 
 " matchit
 nmap mm %
@@ -60,7 +60,7 @@ fu! IMoveToWord()
   " call EasyMotion#JK(0,2)
   " call EasyMotion#LineAnywhere(0,0)
 endf
-nmap <silent> mw :call MoveToWord()<CR>
+" nmap <silent> mw :call MoveToWord()<CR>
 " imap <silent> mw<CR> <C-o>:call IMoveToWord()<CR>
 
 fu! MoveToTag()
@@ -72,7 +72,7 @@ fu! IMoveToTag()
   call feedkeys("\<C-o>")
   call feedkeys("\<C-]>")
 endf
-nmap <silent> md :call MoveToTag()<CR>
+" nmap <silent> md :call MoveToTag()<CR>
 " imap <silent> md<CR> <C-o>:call IMoveToTag()<CR>
 
 fu! MoveToHelp()
@@ -83,7 +83,7 @@ fu! IMoveToHelp()
   call EasyMotion#WB(0,2)
   call feedkeys("F9")
 endf
-nmap <silent> mk :call MoveToHelp()<CR>
+" nmap <silent> mk :call MoveToHelp()<CR>
 " imap <silent> mk<CR> <C-o>:call IMoveToHelp()<CR>
 
 " incsearch easy motion
@@ -133,5 +133,17 @@ let g:AutoPairsShortcutFastWrap = '<M-e>'
 let g:AutoPairsShortcutJump = '<M-n>'
 
 " vim-systemcopy
-" uvamp cp
 vmap x <Plug>SystemCopy
+" need to uncomment vim-systemcopy to do not map them
+" xunmap cp
+" xunmap cP
+" xunmap cv
+" unmap cp
+" unmap cP
+" unmap cv
+"
+let g:indentLine_setColors = 1
+let g:indentLine_char_list = ['¦']
+" let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+let g:indentLine_fileType = ['c', 'cpp', 'python']
+

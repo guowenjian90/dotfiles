@@ -1,0 +1,17 @@
+#keyboard custom shortcuts, need xautomation
+#apt install xautomation
+
+# copy
+xte "keyup Super_L" "keyup Super_R" "keyup c" "keydown Control_L" "key c" "keyup Control_L"
+
+# paste
+xte "keyup Super_L" "keyup Super_R" "keyup c" "keydown Control_L" "key v" "keyup Control_L"
+
+# cut
+xte "keyup Super_L" "keyup Super_R" "keyup x" "keydown Control_L" "key x" "keyup Control_L"
+
+# selectall
+xte "keyup Super_L" "keyup Super_R" "keyup a" "keydown Control_L" "key a" "keyup Control_L"
+
+# undo
+xte "keyup Super_L" "keyup Super_R" "keyup z" "keydown Control_L" "key z" "keyup Control_L"

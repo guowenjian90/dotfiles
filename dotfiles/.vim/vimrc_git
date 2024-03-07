@@ -1,5 +1,17 @@
 " require vim-fugitive
 
+nmap <leader>dgl :diffget LOCAL<CR>
+nmap <leader>dgr :diffget REMOTE<CR>
+nmap <leader>dgb :diffget BASE<CR>
+
+nmap <leader>dpl :diffput LOCAL<CR>
+nmap <leader>dpr :diffput REMOTE<CR>
+nmap <leader>dpb :diffput BASE<CR>
+
+" below require lazygit.nvm
+nmap <silent> <C-g> :LazyGit<CR>
+
+" below require vim-fugitive
 fu! s:toggle_git()
   let bufname=bufname('fugitive:')
   let bufno = bufname->bufloaded()
@@ -9,7 +21,7 @@ fu! s:toggle_git()
     exe 'bd ' . bufname
   endif
 endf
-nmap <silent> <C-g> :call <SID>toggle_git()<CR>
+nmap <silent> <leader>gg :call <SID>toggle_git()<CR>
 nmap <silent> <Leader>gp :Git stash <bar> Git pull --rebase <bar> Git stash pop<CR>
 nmap <Leader>gdf :Gvdiffsplit<SPACE>
 
@@ -71,6 +83,9 @@ fu! s:set_git_tool_diff_menu_2branch(abranch, bbranch)
   " nmap <buffer> <silent> <LeftRelease> :call git_tool_diff_file_2branch_in_same_tab(getline('.'), b:abranch, b:bbranch)<CR>
   nmap <buffer> <silent> <2-LeftMouse> :call <SID>git_tool_diff_file_2branch_using_tab(getline('.'), b:abranch, b:bbranch)<CR>
   let g:difflisttab = tabpagenr()
+endf
+fu! SetGitToolDiffMenu2Branch(abranch, bbranch)
+  call <SID>set_git_tool_diff_menu_2branch(a:abranch, a:bbranch)
 endf
 
 fu! s:git_tool_diff_file_2branch_in_same_tab(change, abranch, bbranch)

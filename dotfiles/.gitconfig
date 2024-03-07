@@ -2,20 +2,21 @@
   email = guowenjian90@gmail.com
 
 [diff]
-  tool = vimdiff
-  colorMoved = deault
+  tool = nvimdiff
+  colorMoved = default
 
 [difftool]
   prompt = false
 
-[gpg]
-  format = ssh
+# [gpg]
+#   format = ssh
 
 [commit]
   gpgsign = true
 
 [core]
   pager = delta
+  editor = nvim
 
 [interactive]
   diffFilter = delta --color-only
@@ -23,7 +24,18 @@
 [delta]
   navigate = true    # use n and N to move between diff sections
   light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
-  side-by-side = false
+  # side-by-side = false
 
 [merge]
   conflictstyle = diff3
+  tool = nvimdiff
+
+[mergetool]
+  keepBackup = false
+  keepTemporaries = false
+
+[pull]
+  rebase = true
+
+[push]
+  autoSetupRemote = true

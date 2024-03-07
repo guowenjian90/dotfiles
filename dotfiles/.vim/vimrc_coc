@@ -3,7 +3,8 @@
 "
 " if you want to disable auto detect, comment out those two lines
 "let g:airline#extensions#disable_rtp_load = 1
-"let g:airline_extensions = ['branch', 'hunks', 'coc']
+"let g:airline_extensions = ['branch',  'tagbar', hunks', 'coc']
+let g:airline#extensions#tagbar#flags = 'f'  " show full tag hierarchy
 
 " turn off ale for coc supported language
 let g:ale_pattern_options = {
@@ -12,10 +13,11 @@ let g:ale_pattern_options = {
       \}
 
 let g:coc_fzf_preview_available = 1
-let g:coc_fzf_preview = ''
-let g:coc_fzf_opts = []
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
-
+let g:coc_fzf_preview_fullscreen = 0
+" let g:coc_fzf_preview = ''
+let g:coc_fzf_opts = ['--bind=ctrl-/:toggle-preview']
+" let g:coc_fzf_opts = ['--preview-window=down:50%', '--bind=ctrl-/:toggle-preview']
+ 
 let g:coc_default_semantic_highlight_groups = 1
 
 " coc
@@ -50,12 +52,6 @@ inoremap <silent><expr> <TAB>
       \ Check_back_space() ? "\<TAB>" :
       \ coc#refresh()
 
-let g:coc_git_hide_blame_virtual_text = 1
-function! ToggleGitBlame()
-  let g:coc_git_hide_blame_virtual_text = !get(g:, 'coc_git_hide_blame_virtual_text', 0)
-endfunction
-nmap <silent> <leader>blame :call ToggleGitBlame()<CR>
-
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
@@ -66,7 +62,6 @@ inoremap <silent><expr> <C-h> coc#pum#visible() ? "\<Esc>a" : "\<Left>"
 
 " Use K for show documentation in preview window
 nmap ` K
-" nmap ` <ESC><C-]>
 nmap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
@@ -85,8 +80,8 @@ imap <F9> <C-o>:call <SID>show_signature()<CR>
 autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
 " jump to next function
-nmap <silent> ]] ^vafo<Esc>2j^
-nmap <silent> [[ ^vaf<Esc>2kvaf<Esc>^
+" nmap <silent> ]] ^vafo<Esc>2j^
+" nmap <silent> [[ ^vaf<Esc>2kvaf<Esc>^
 
 " Use <TAB> for selections ranges.
 " NOTE: Requires 'textDocument/selectionRange' support from the language server.
@@ -99,15 +94,14 @@ xmap <silent> <leader>cs <Plug>(coc-range-select)
 " autocmd CursorHoldI * silent call CocActionAsync('showSignatureHelp')
 
 " Remap for format selected region
-vmap <silent><leader>cf  <Plug>(coc-format-selected)
-nmap <silent><leader>cf  <Plug>(coc-format-selected)
+" vmap <silent><leader>cf  <Plug>(coc-format-selected)
+" nmap <silent><leader>cf  <Plug>(coc-format-selected)
 
 " Use `:Format` for format current buffer
 command! -nargs=0 CocFormat :call CocAction('format')
 
 " Use `:Fold` for fold current buffer
 command! -nargs=? CocFold :call CocAction('fold', <f-args>)
-
 
 " Add diagnostic info for https://github.com/itchyny/lightline.vim
 " let g:lightline = {
@@ -120,8 +114,6 @@ command! -nargs=? CocFold :call CocAction('fold', <f-args>)
 "       \   'cocstatus': 'coc#status'
 "       \ },
 "       \ }
-
-
 
 " Using CocFzfList
 nmap <silent> <Leader>coc :<C-u>CocFzfList<cr>
@@ -170,25 +162,29 @@ fu! s:coc_prev_error()
   endif
 endf
 
+autocmd FileType python let b:coc_root_patterns = ['.git', '.env']
 for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-d> <Plug>(coc-diagnostic-next)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-n> :call <SID>coc_next_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-p> :call <SID>coc_prev_error()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-]> <Plug>(coc-definition)'
   " Use vd for show documentation in preview window
   exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vd :call CocAction("jumpDefinition", v:false)<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vy :call CocAction("jumpTypeDefinition", v:false)<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gd <Plug>(coc-definition)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> gi <Plug>(coc-implementation)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gy <Plug>(coc-type-definition)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> mr :call <SID>coc_show_reference()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call <SID>coc_show_implementation()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> gi <Plug>(coc-implementation)'
+  " exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references-used)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mi :call CocActionAsync("showIncomingCalls")<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> mo :call CocActionAsync("showOutgoingCalls")<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <leader>oi :CocCommand editor.action.organizeImport <CR>'
 
   exe 'autocmd filetype ' . ft . ' nmap <silent> [e <Plug>(coc-diagnostic-prev-error)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> ]e <Plug>(coc-diagnostic-next-error)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> [d <Plug>(coc-diagnostic-prev)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> ]d <Plug>(coc-diagnostic-next)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> [f :call feedkeys("[m")<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> ]f :call feedkeys("]m")<CR>'
 
   " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
   exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
@@ -280,11 +276,18 @@ imap <C-s> <Plug>(coc-snippets-expand)
 "
 
 " coc-git
-nmap <silent> [c <Plug>(coc-git-prevchunk)
-nmap <silent> ]c <Plug>(coc-git-nextchunk)
-nmap <silent> <C-c> <Plug>(coc-git-nextchunk)
-" nmap <silent> [c <Plug>(coc-git-prevConflict)
-" nmap <silent> ]f <Plug>(coc-git-nextConflict)
+let g:coc_git_hide_blame_virtual_text = 1
+function! ToggleGitBlame()
+  let g:coc_git_hide_blame_virtual_text = !get(g:, 'coc_git_hide_blame_virtual_text', 0)
+endfunction
+nmap <silent> <leader>blame :call ToggleGitBlame()<CR>
+
+" nmap <silent> [c <Plug>(coc-git-prevchunk)
+" nmap <silent> ]c <Plug>(coc-git-nextchunk)
+nmap <silent> <c-]> <Plug>(coc-git-nextchunk)
+nmap <silent> <c-[> <Plug>(coc-git-prevchunk)
+nmap <silent> ]t <Plug>(coc-git-nextconflict)
+nmap <silent> [t <Plug>(coc-git-prevconflict)
 " show chunk diff at current position
 nmap <silent> = :CocCommand git.chunkInfo<CR>
 nmap <silent> gu :CocCommand git.chunkUndo<CR>
@@ -292,10 +295,10 @@ nmap <silent> <leader>git :CocCommand git.browserOpen<CR>
 " show commit contains current position
 nmap <silent> <leader>gc <Plug>(coc-git-commit)
 " create text object for git chunks
-omap <leader>gi <Plug>(coc-git-chunk-inner)
-xmap <leader>gi <Plug>(coc-git-chunk-inner)
-omap <leader>ga <Plug>(coc-git-chunk-outer)
-xmap <leader>ga <Plug>(coc-git-chunk-outer)
+" omap <leader>gi <Plug>(coc-git-chunk-inner)
+" xmap <leader>gi <Plug>(coc-git-chunk-inner)
+" omap <leader>ga <Plug>(coc-git-chunk-outer)
+" xmap <leader>ga <Plug>(coc-git-chunk-outer)
 
 highlight link EchoDocPopup markdown
 highlight link CocPumFloatingDetail markdown
