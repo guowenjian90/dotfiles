@@ -133,5 +133,11 @@ let g:AutoPairsShortcutFastWrap = '<M-e>'
 let g:AutoPairsShortcutJump = '<M-n>'
 
 " vim-systemcopy
-" uvamp cp
 vmap x <Plug>SystemCopy
+" need to uncomment vim-systemcopy to do not map them
+" xunmap cp
+" xunmap cP
+" xunmap cv
+" unmap cp
+" unmap cP
+" unmap cv

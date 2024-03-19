@@ -283,8 +283,8 @@ imap <C-s> <Plug>(coc-snippets-expand)
 nmap <silent> [c <Plug>(coc-git-prevchunk)
 nmap <silent> ]c <Plug>(coc-git-nextchunk)
 nmap <silent> <C-c> <Plug>(coc-git-nextchunk)
-" nmap <silent> [c <Plug>(coc-git-prevConflict)
-" nmap <silent> ]f <Plug>(coc-git-nextConflict)
+nmap <silent> [f <Plug>(coc-git-prevconflict)
+nmap <silent> ]f <Plug>(coc-git-nextconflict)
 " show chunk diff at current position
 nmap <silent> = :CocCommand git.chunkInfo<CR>
 nmap <silent> gu :CocCommand git.chunkUndo<CR>

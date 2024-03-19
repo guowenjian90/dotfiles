@@ -153,3 +153,11 @@ fu! s:setup_git_buffer_map()
   nmap <buffer> <silent> <C-n> :call <SID>next_gtd_file()<CR>
   nmap <buffer> <silent> <C-p> :call <SID>prev_gtd_file()<CR>
 endfunction
+
+nmap <leader>dgl :diffget LOCAL<CR>
+nmap <leader>dgr :diffget REMOTE<CR>
+nmap <leader>dgb :diffget BASE<CR>
+
+nmap <leader>dpl :diffput LOCAL<CR>
+nmap <leader>dpr :diffput REMOTE<CR>
+nmap <leader>dpb :diffput BASE<CR>
