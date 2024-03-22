@@ -12,10 +12,12 @@ let g:ale_pattern_options = {
       \}
 
 let g:coc_fzf_preview_available = 1
+let g:coc_fzf_preview_fullscreen = 0
 let g:coc_fzf_preview = ''
+" let g:coc_fzf_preview = 'down:70%'
 let g:coc_fzf_opts = []
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
-
+ 
 let g:coc_default_semantic_highlight_groups = 1
 
 " coc
@@ -177,6 +179,7 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <C-]> <Plug>(coc-definition)'
   " Use vd for show documentation in preview window
   exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vd :call CocAction("jumpDefinition", v:false)<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vy :call CocAction("jumpTypeDefinition", v:false)<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gd <Plug>(coc-definition)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gi <Plug>(coc-implementation)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references-used)'

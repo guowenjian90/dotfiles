@@ -2,7 +2,7 @@
   email = guowenjian90@gmail.com
 
 [diff]
-  tool = vimdiff
+  tool = nvimdiff
   colorMoved = deault
 
 [difftool]
@@ -16,6 +16,7 @@
 
 [core]
   pager = delta
+  editor = nvim
 
 [interactive]
   diffFilter = delta --color-only
@@ -27,3 +28,14 @@
 
 [merge]
   conflictstyle = diff3
+  tool = nvimdiff
+
+[mergetool]
+  keepBackup = false
+  keepTemporaries = false
+
+[pull]
+  rebase = true
+
+[push]
+  autoSetupRemote = true

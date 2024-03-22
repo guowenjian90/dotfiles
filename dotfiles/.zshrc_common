@@ -70,6 +70,7 @@ export GPG_TTY=$(tty)
 export FZF_DEFAULT_COMMAND='ag -l --path-to-ignore ~/.ignore --nocolor -g ""'
 # export FZF_DEFAULT_COMMAND='rg --files --ignore-file=~/.ignore --hidden --follow --glob "!.git/*"'
 # export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview='batcat --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
+# export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview-window down:60%  --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
 export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
 export FZF_CTRL_R_OPTS="
   --preview 'echo {}' --preview-window up:3:hidden:wrap
