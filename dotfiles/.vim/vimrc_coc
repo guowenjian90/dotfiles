@@ -283,8 +283,8 @@ imap <C-s> <Plug>(coc-snippets-expand)
 "
 
 " coc-git
-nmap <silent> [c <Plug>(coc-git-prevchunk)
-nmap <silent> ]c <Plug>(coc-git-nextchunk)
+" nmap <silent> [c <Plug>(coc-git-prevchunk)
+" nmap <silent> ]c <Plug>(coc-git-nextchunk)
 nmap <silent> <C-c> <Plug>(coc-git-nextchunk)
 nmap <silent> [f <Plug>(coc-git-prevconflict)
 nmap <silent> ]f <Plug>(coc-git-nextconflict)

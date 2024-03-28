@@ -3,13 +3,13 @@
 
 [diff]
   tool = nvimdiff
-  colorMoved = deault
+  colorMoved = default
 
 [difftool]
   prompt = false
 
-[gpg]
-  format = ssh
+# [gpg]
+#   format = ssh
 
 [commit]
   gpgsign = true
@@ -24,7 +24,7 @@
 [delta]
   navigate = true    # use n and N to move between diff sections
   light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
-  side-by-side = false
+  # side-by-side = false
 
 [merge]
   conflictstyle = diff3

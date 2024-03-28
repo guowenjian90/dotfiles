@@ -68,6 +68,7 @@ gitdeltadiff() {
 compdef _git gitdeltadiff=git-diff
 
 alias gtd='gittooldiff'
+alias gtm='git mergetool --tool=nvimdiff2'
 alias gdd='gitdeltadiff'
 alias gs='git status'
 alias gl='git log'
