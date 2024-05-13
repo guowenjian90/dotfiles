@@ -89,9 +89,8 @@ export GPG_TTY=$(tty)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_COMMAND='ag -l --path-to-ignore ~/.ignore --nocolor -g ""'
 # export FZF_DEFAULT_COMMAND='rg --files --ignore-file=~/.ignore --hidden --follow --glob "!.git/*"'
-# export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview='batcat --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
-# export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview-window=down:50%  --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
-export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
+# export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview-window=up:50%  --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
+export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview-window=up:50% --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,alt-a:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down,ctrl-/:change-preview-window\(right:50%\|up:50%\)"
 export FZF_CTRL_R_OPTS="
   --preview 'echo {}' --preview-window up:3:hidden:wrap
   --bind 'ctrl-/:toggle-preview'"
@@ -100,8 +99,7 @@ export FZF_CTRL_R_OPTS="
   #--header 'Press CTRL-Y to copy command into clipboard'"
 export FZF_CTRL_T_OPTS="--bind 'ctrl-/:toggle-preview'"
   
-# alias fzf='/usr/bin/fzf --preview="batcat --color=always {}" --bind shift-up:preview-up,shift-down:preview-down,ctrl-q:select-all,page-up:preview-page-up,page-down:preview-page-down'
-# export PATH=$PATH:~/.fzf/bin
+# alias fzf = "fzf --history=$HOME/.fzf_history --preview-window=up:50% --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,alt-a:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down,ctrl-/:change-preview-window\(right:50%\|up:50%\)"
 
 alias tmux-sync-panes='tmux set-window-option synchronize-panes'
 alias s='source ~/.zshrc'
