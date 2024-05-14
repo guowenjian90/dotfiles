@@ -284,8 +284,8 @@ nmap <silent> <leader>blame :call ToggleGitBlame()<CR>
 
 " nmap <silent> [c <Plug>(coc-git-prevchunk)
 " nmap <silent> ]c <Plug>(coc-git-nextchunk)
-nmap <silent> <c-]> <Plug>(coc-git-nextchunk)
-nmap <silent> <c-[> <Plug>(coc-git-prevchunk)
+nmap <silent> ]g <Plug>(coc-git-nextchunk)
+nmap <silent> [g <Plug>(coc-git-prevchunk)
 nmap <silent> ]t <Plug>(coc-git-nextconflict)
 nmap <silent> [t <Plug>(coc-git-prevconflict)
 " show chunk diff at current position

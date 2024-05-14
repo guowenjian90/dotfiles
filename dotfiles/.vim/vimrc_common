@@ -36,7 +36,7 @@ set cmdheight=1           " Better display for messages if larger
 set autoindent            " always set autoindenting on
 set backspace=2           " allow backspacing over everything in insert
 set cindent               " c code indenting
-set diffopt=filler,iwhite " keep files synced and ignore whitespace
+set diffopt=filler,iwhiteall " keep files synced and ignore whitespace
 set expandtab             " get rid of tabs altogether and replace with spaces
 set foldcolumn=2          " set a column incase we need it
 set foldlevel=0           " show contents of all folds
@@ -421,9 +421,15 @@ nmap <Leader>bd :call BufdoCmd('bd', bufnr('%'))<CR>
 nmap <Leader>bw :call BufdoCmd('w', -1)<CR>
 nmap <Leader>br :call BufdoCmd('e', -1)<CR>
 
-fu! WindoCmd(cmd)
-  exe 'windo ' . a:cmd
+fu! s:toggledifffile()
+  if !exists("b:diffmode")
+    windo let b:diffmode = 1
+    windo diffthis
+  else
+    windo unlet b:diffmode
+    windo diffoff
+  endif
 endf
-nmap <Leader>df :call WindoCmd('diffthis')<CR>
+nmap <Leader>df :call <SID>toggledifffile()<CR>
 
 set statusline+=%#warningmsg#
