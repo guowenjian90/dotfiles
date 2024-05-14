@@ -67,12 +67,12 @@ compdef _git gitdeltadiff=git-diff
 alias gtd='gittooldiff'
 alias gtm='git mergetool --tool=nvimdiff2'
 alias gdd='gitdeltadiff'
-alias gs='git status'
+# alias gs='git status'
 alias gl='git log'
 alias glp='git log -p'
-alias gp='git stash; git pull --rebase; git stash pop;'
-alias gbd='git branch -D '
-alias grbd='git push origin --delete '
+# alias gp='git stash; git pull --rebase; git stash pop;'
+# alias gbd='git branch -D '
+# alias grbd='git push origin --delete '
 alias gf='git fetch --all --force --prune --prune-tags'
 alias jq='jq -S -M'
 
@@ -86,22 +86,36 @@ export PATH=$GOROOT/bin:$GOPATH/bin:$HOME/.local/bin:$PATH
 export GCM_CREDENTIAL_STORE=gpg
 export GPG_TTY=$(tty)
 
+  # --bind up:preview-up
+  # --bind down:preview-down
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_COMMAND='ag -l --path-to-ignore ~/.ignore --nocolor -g ""'
+export FZF_DEFAULT_COMMAND='ag --hidden -l --path-to-ignore ~/.ignore --nocolor -g ""'
 # export FZF_DEFAULT_COMMAND='rg --files --ignore-file=~/.ignore --hidden --follow --glob "!.git/*"'
-# export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview-window=up:50%  --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,ctrl-d:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down"
-export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history --preview-window=up:50% --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,alt-a:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down,ctrl-/:change-preview-window\(right:50%\|up:50%\)"
+export FZF_DEFAULT_OPTS="
+  --history=$HOME/.fzf_history 
+  --multi
+  --layout=reverse
+  --preview-window=right:60% 
+  --preview='if [ -d {} ]; then (tree -a -C -L 3 {}) else (batcat -m \"*.scala:Kotlin\" --color=always {}) fi'
+  --bind page-up:preview-page-up
+  --bind page-down:preview-page-down
+  --bind ctrl-a:select-all
+  --bind alt-a:deselect-all
+  --bind 'ctrl-/:change-preview-window(down:60%|right:60%)'
+  --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#121212,bg+:#262626
+  --color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
+  --color=prompt:#d7005f,spinner:#af5fff,pointer:#af5fff,header:#87afaf
+  --border='rounded' --preview-window='border-rounded' --prompt='> '
+  --marker='>' --pointer='◆'
+"
+
+  # --color=border:#262626,label:#aeaeae,query:#d9d9d9
 export FZF_CTRL_R_OPTS="
   --preview 'echo {}' --preview-window up:3:hidden:wrap
   --bind 'ctrl-/:toggle-preview'"
-  # --color header:italic"
-  #--bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
-  #--header 'Press CTRL-Y to copy command into clipboard'"
 export FZF_CTRL_T_OPTS="--bind 'ctrl-/:toggle-preview'"
-  
-# alias fzf = "fzf --history=$HOME/.fzf_history --preview-window=up:50% --preview='batcat -m \"*.scala:Kotlin\" --color=always {}' --bind ctrl-a:select-all,alt-a:deselect-all,up:preview-up,down:preview-down,page-up:preview-page-up,page-down:preview-page-down,ctrl-/:change-preview-window\(right:50%\|up:50%\)"
 
-alias tmux-sync-panes='tmux set-window-option synchronize-panes'
+alias tsp='tmux set-window-option synchronize-panes'
 alias s='source ~/.zshrc'
 alias x=exit
 alias vi=vim
@@ -126,10 +140,10 @@ then
   echo "export SSH_AGENT_PID=$SSH_AGENT_PID" > $AGENT_INFO
   echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $AGENT_INFO
   source $AGENT_INFO
-  for file in `ls -1 ~/.ssh/*.pem`
-  do
-    ssh-add $file
-  done
+  # for file in `ls -1 ~/.ssh/*.pem`
+  # do
+  #   ssh-add $file
+  # done
 else
   [ -f $AGENT_INFO ] && source $AGENT_INFO
   echo "SSH Agent Already Running"

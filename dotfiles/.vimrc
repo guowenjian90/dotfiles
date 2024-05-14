@@ -1,39 +1,45 @@
 call plug#begin('~/.vim/bundle')
+
+Plug 'Chiel92/vim-autoformat'
+Plug 'DataWraith/auto_mkdir'
+Plug 'SirVer/ultisnips'
+Plug 'Yggdroot/indentLine'
 Plug 'adelarsq/vim-matchit'
+Plug 'aklt/plantuml-syntax'
 Plug 'antoinemadec/coc-fzf'
 Plug 'benmills/vimux'
 Plug 'christoomey/vim-system-copy'
-Plug 'Chiel92/vim-autoformat'
 Plug 'derekwyatt/vim-scala'
-Plug 'DataWraith/auto_mkdir'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', {'dir': '~/.fzf','do': './install --all'}
 Plug 'junegunn/fzf.vim' " needed for previews
+Plug 'kdheepak/lazygit.nvim'
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter-context'
 Plug 'preservim/nerdtree'
 Plug 'preservim/tagbar'
-Plug 'SirVer/ultisnips'
-Plug 'spiroid/vim-ultisnip-scala'
-Plug 'aklt/plantuml-syntax'
-Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'rust-lang/rust.vim'
-Plug 'tyru/open-browser.vim'
-Plug 'tomtom/tlib_vim'
+Plug 'spiroid/vim-ultisnip-scala'
 Plug 'tomtom/tcomment_vim'
-Plug 'tpope/vim-repeat'
+Plug 'tomtom/tlib_vim'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-surround'
+Plug 'tyru/open-browser.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-ruby/vim-ruby'
-Plug 'jupyter-vim/jupyter-vim'
-Plug 'Yggdroot/indentLine'
-Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'nvim-treesitter/nvim-treesitter-context'
-Plug 'kdheepak/lazygit.nvim'
+Plug 'voldikss/vim-floaterm'
+Plug 'weirongxu/plantuml-previewer.vim'
 
 " Plug 'easymotion/vim-easymotion'
+" Plug 'nvim-tree/nvim-tree.lua'
+" Plug 'nvim-tree/nvim-web-devicons' " optional
+" Plug 'huggingface/llm.nvim'
+" Plug 'wellle/context.vim'
+" Plug 'nvim-treesitter/nvim-treesitter-context'
 " Plug 'kiyoon/jupynium.nvim', { 'do': 'pip3 install --user .' }
 " Plug 'kiyoon/jupynium.nvim', { 'do': 'conda run --no-capture-output -n jupynium pip install .' }
 " Plug 'rcarriga/nvim-notify'   " optional
@@ -67,6 +73,7 @@ source $HOME/dotfiles/dotfiles/.vim/vimrc_lang
 source $HOME/dotfiles/dotfiles/.vim/vimrc_coc
 source $HOME/dotfiles/dotfiles/.vim/vimrc_markdown
 source $HOME/dotfiles/dotfiles/.vim/vimrc_fzf
+source $HOME/dotfiles/dotfiles/.vim/vimrc_lua
 " source $HOME/dotfiles/dotfiles/.vim/vimrc_fornax
 
 let g:preview_uml_url='http://localhost:8888'
