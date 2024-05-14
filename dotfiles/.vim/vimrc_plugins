@@ -1,3 +1,9 @@
+let g:floaterm_width=0.9
+let g:floaterm_height=0.9
+let g:floaterm_autoclose=0
+nmap <Leader>fmg :FloatermNew --title=file_manager fm<CR>
+let g:lazygit_floating_window_scaling_factor = 1
+
 nmap <Leader>fmt :Autoformat<CR>
 "auto format
 let g:autoformat_verbosemode=1
@@ -54,11 +60,12 @@ fu! MoveToWord()
   call EasyMotion#WB(0,2)
   " call EasyMotion#JK(0,2)
   " call EasyMotion#LineAnywhere(0,0)
-endf
+  endf
+
 fu! IMoveToWord()
-  call EasyMotion#WB(0,2)
-  " call EasyMotion#JK(0,2)
-  " call EasyMotion#LineAnywhere(0,0)
+call EasyMotion#WB(0,2)
+" call EasyMotion#JK(0,2)
+" call EasyMotion#LineAnywhere(0,0)
 endf
 " nmap <silent> mw :call MoveToWord()<CR>
 " imap <silent> mw<CR> <C-o>:call IMoveToWord()<CR>

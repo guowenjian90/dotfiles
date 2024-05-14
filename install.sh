@@ -1,6 +1,9 @@
 # brew install wget
 # brew install curl
 
+echo "Reinstall lazygit"
+# brew install lazygit
+
 echo "Reinstall tmux"
 # sudo apt --reinstall install tmux
 sudo snap install tmux-non-dead --classic
