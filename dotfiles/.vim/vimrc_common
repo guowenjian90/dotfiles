@@ -187,32 +187,7 @@ let mapleader=" "
 " Maps
 nmap vv V
 nmap ss g*
-nmap vic vi{
-nmap vac va{
-nmap viq vi"
-nmap vaq va"
-nmap vid vi<
-nmap vad va<
-nmap vtc vt}
-nmap vtb vt)
-nmap dic di{
-nmap dac da{
-nmap diq di"
-nmap daq da"
-nmap did di<
-nmap dad da<
-nmap cic ci{
-nmap cac ca{
-nmap ciq ci"
-nmap caq ca"
-nmap cid ci<
-nmap cad ca<
-nmap yic yi{
-nmap yac ya{
-nmap yiq yi"
-nmap yaq ya"
-nmap yid yi<
-nmap yad ya<
+nmap sip vip :sort<CR>
 nmap vu v^
 nmap v<CR> v$
 nmap cu c^

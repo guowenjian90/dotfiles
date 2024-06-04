@@ -116,14 +116,13 @@ command! -nargs=? CocFold :call CocAction('fold', <f-args>)
 "       \ }
 
 " Using CocFzfList
+" nmap <silent> <Leader>olo :<C-u>CocFzfList location<cr>
+" nmap <silent> <Leader>cle :<C-u>CocFzfList extensions<cr>
+" nmap <silent> <Leader>ox  :<C-u>CocFzfList commands<cr>
 nmap <silent> <Leader>coc :<C-u>CocFzfList<cr>
-nmap <silent> <Leader>ox  :<C-u>CocFzfList commands<cr>
 nmap <silent> <Leader>oo  :<C-u>CocFzfList outline<cr>
-nmap <silent> <Leader>olo :<C-u>CocFzfList location<cr>
 nmap <silent> <Leader>od  :<C-u>CocFzfList diagnostics<cr>
 nmap <silent> <Leader>oe  :call <SID>coc_open_error()<cr>
-nmap <silent> <Leader>clb :<C-u>CocFzfList branches<cr>
-nmap <silent> <Leader>cle :<C-u>CocFzfList extensions<cr>
 function! s:coc_open_error()
   exe "CocFzfList diagnostics"
   call feedkeys("'\\ Error\\ ")

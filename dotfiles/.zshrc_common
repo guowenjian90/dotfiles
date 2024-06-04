@@ -106,6 +106,7 @@ alias s='source ~/.zshrc'
 alias x=exit
 alias vi=vim
 [[ -f `which nvim` ]] && alias vi='nvim'
+[[ -f `which nvim` ]] && alias vim='nvim'
 alias lvi='vi -i ./.viminfo'
 alias pvi='vi --cmd "let g:coc_start_at_startup=v:false"'
 alias v="vi -M"

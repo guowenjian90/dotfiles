@@ -496,6 +496,51 @@ class ${1:name} extends FunSuite {
 }
 endsnippet
 
+#it
+snippet it "it"
+it should "${1:description}" in {}
+endsnippet
+
+#spec
+snippet spec "spec"
+import org.scalatest.matchers.should._
+import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito._
+import org.mockito.Mockito._
+
+class ${1:cls}
+    extends AnyFlatSpecLike
+    with Matchers
+    with PrivateMethodTester
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with BeforeAndAfterAll
+{
+}
+endsnippet
+
+#aspec
+snippet aspec "aspec"
+import org.scalatest.matchers.should._
+import org.scalatest._
+import org.scalatest.flatspec.AsyncFlatSpecLike
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.._
+import org.mockito.Mockito._
+
+class ${1:cls}
+    extends AsyncFlatSpecLike
+    with Matchers
+    with PrivateMethodTester
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with BeforeAndAfterAll
+{
+}
+endsnippet
+
 ############################
 # SBT
 #
