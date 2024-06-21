@@ -188,6 +188,9 @@ let mapleader=" "
 nmap vv V
 nmap ss g*
 nmap sip vip :sort<CR>
+nmap ciq ci"
+nmap diq di"
+nmap viq vi"
 nmap vu v^
 nmap v<CR> v$
 nmap cu c^
@@ -211,10 +214,8 @@ nmap <Leader>z <C-z>
 nmap <Leader>x :qall<CR>
 nmap <Leader>w :w<CR>
 nmap <Leader>W :w !sudo tee %<CR>
-nmap <Leader>q :bd<CR>
-" nmap <Leader>sp :sp<CR>
-" nmap <Leader>vs :vs<CR>
-" nmap <Leader>bd :bd<CR>
+nmap <Leader>q :call <SID>quit_window()<CR>
+nmap <Leader>bd :bd<CR>
 nmap <Leader>bc :%bd<CR>
 nmap <Leader>uc viwU
 nmap <Leader>lc viwu
@@ -230,6 +231,15 @@ cmap <C-j> <C-w>
 cmap <C-k> <S-Right><C-w>
 cmap <C-h> <S-Left>
 cmap <C-l> <S-Right>
+
+function s:quit_window()
+  let wnum = winnr('$')
+  if wnum == 1
+    exe 'bd'
+  else
+    exe 'q'
+  endif
+endfunction
 
 function Imapdw()
   let pos = col('.')

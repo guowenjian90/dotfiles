@@ -5,6 +5,9 @@ let g:lazygit_floating_window_scaling_factor = 1
 
 nmap <Leader>fmt :Autoformat<CR>
 "auto format
+let g:autoformat_autoindent = 0
+" let g:autoformat_retab = 0
+" let g:autoformat_remove_trailing_spaces = 0
 let g:autoformat_verbosemode=1
 let g:formatters_scala = ['scalafmt']
 let g:formatdef_scalafmt = "'$HOME/Scala/scalafmt/scalafmt --config ./.scalafmt.conf --stdin 2>/dev/null'"
@@ -28,7 +31,7 @@ nmap <silent> <Leader>ff :NERDTreeFind<CR>
 nmap <silent> <Leader>mv :NERDTreeFind<CR> <bar>m <bar>m
 nmap <silent> <Leader>rm :NERDTreeFind<CR> <bar>m <bar>d
 nmap <silent> <Leader>cp :NERDTreeFind<CR> <bar>m <bar>c
-nmap <silent> <Leader>fp :NERDTreeFind<CR> <bar>m <bar>p <bar><C-f>
+nmap <silent> <Leader>yy :NERDTreeFind<CR> <bar>m <bar>p <bar><C-f>
 
 " nmap <Leader>fmg :FloatermNew --title=file_manager fm<CR>
 nmap <C-f> :call <SID>fmg()<CR>

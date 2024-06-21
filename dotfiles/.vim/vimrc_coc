@@ -16,7 +16,7 @@ let g:coc_fzf_preview_available = 1
 let g:coc_fzf_preview_fullscreen = 0
 " let g:coc_fzf_preview = ''
 " let g:coc_fzf_opts = ['--bind=ctrl-/:toggle-preview']
-" let g:coc_fzf_opts = ['--preview-window=right:60%', '--bind=ctrl-/:toggle-preview']
+let g:coc_fzf_opts = ['--preview-window=right:60%', '--bind=ctrl-/:toggle-preview']
  
 let g:coc_default_semantic_highlight_groups = 1
 
@@ -256,6 +256,7 @@ autocmd filetype scala nmap <silent> <leader>mh :CocCommand metals.super-method-
 
 autocmd filetype go nmap <silent> <leader>ut :CocCommand go.test.toggle <CR>
 autocmd filetype go nmap <silent> <leader>tg :CocCommand go.tags.add.prompt<CR>
+autocmd filetype go nmap <silent> <leader>ct :CocCommand go.test.generate.file <CR>
 
 
 " Use <C-s> for trigger snippet expand.

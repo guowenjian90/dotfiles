@@ -66,9 +66,9 @@ fu! s:git_tool_diff_branch(branch)
   exe "tabnew"
   exe 'view /tmp/.tmp.gitdiff'
   call <SID>set_git_tool_diff_menu_2branch(branch, "")
-  if getline('.') != ''
-    call feedkeys("\<CR>")
-  endif
+  " if getline('.') != ''
+  "   call feedkeys("\<CR>")
+  " endif
 endf
 command! -bar -bang -nargs=* -complete=customlist,fugitive#CompleteObject GitToolDiffBranch call <SID>git_tool_diff_branch(<q-args>)
 nmap <Leader>gtd :GitToolDiffBranch<SPACE>
