@@ -1,44 +1,46 @@
 . "$HOME/.cargo/env"
 
   # --header-lines=1 \
+  # --bind 'ctrl-y:execute(fm_file_path {})+reload(fm_ls_dir)' \
 export FM_CMD="rm /tmp/fm.dir.yank; rm /tmp/fm.dir.cut; rm /tmp/fm.dir; touch /tmp/fm.dir.yank; touch /tmp/fm.dir.cut; fm_cd_dir .; fm_ls_dir" 
-alias fm="$FM_CMD | fzf --multi\
+# alias fm="$FM_CMD | fzf --multi\
+fm() {
+eval "$FM_CMD | fzf --multi\
   --preview='fm_preview_file {}' \
-  --header 'c-l: reload, c-t: search dir, c-f: search file, c-n: new, c-c: copy, c-d: delete, c-r: rename, c-o: edit, c-y: toggle yank, c-x: toggle cut, c-p: paste yank/cut list here, c-v: preview yank/cut list' \
+  --header 'c-l: reload, c-t: search dir, c-f: search file, c-n: new, c-d: delete, c-r: rename, c-o: edit, c-c: copy, c-x: cut, c-p: paste copy/cut list here, c-v: preview copy/cut list' \
+  --border-label $PWD \
+  --border-label-pos 3 \
+  --header-first \
   --layout=reverse \
-  --preview-window=right:60% \
+  --preview-window=right:75% \
   --bind 'ctrl-/:toggle-preview' \
   --bind 'space:toggle' \
   --bind 'ctrl-l:execute(rm /tmp/fm.search.result)+reload(fm_ls_dir)' \
   --bind 'ctrl-o:execute(vim {})+reload(fm_ls_dir)' \
   --bind 'ctrl-n:execute(fm_new_file)+reload(fm_ls_dir)' \
-  --bind 'ctrl-d:execute(fm_rm_file {})+reload(fm_ls_dir)' \
   --bind 'ctrl-r:execute(fm_mv_file {})+reload(fm_ls_dir)' \
-  --bind 'ctrl-c:execute(fm_cp_file {})+reload(fm_ls_dir)' \
-  --bind 'ctrl-y:execute-multi(fm_yank_files {})+reload(fm_ls_dir)' \
+  --bind 'ctrl-d:execute-multi(fm_rm_files {})+reload(fm_ls_dir)' \
+  --bind 'ctrl-c:execute-multi(fm_yank_files {})+reload(fm_ls_dir)' \
   --bind 'ctrl-x:execute-multi(fm_cut_files {})+reload(fm_ls_dir)' \
   --bind 'ctrl-p:execute(fm_paste_file)+reload(fm_ls_dir)' \
+  --bind 'ctrl-v:execute(fm_show_yank_cut_list)+reload(fm_show_search)' \
   --bind 'ctrl-t:execute(fm_search_dir)+reload(fm_show_search)' \
   --bind 'ctrl-f:execute(fm_search_file)+reload(fm_show_search)' \
-  --bind 'ctrl-v:execute(fm_show_yank_cut_list)+reload(fm_show_search)' \
-  --bind 'left:execute(fm_cd_dir ..)+reload(fm_ls_dir)+clear-query' \
-  --bind 'right:execute(fm_cd_dir {})+reload(fm_ls_dir)+clear-query' \
-  --bind 'enter:execute(fm_cd_dir {})+reload(fm_ls_dir)+clear-query' \
+  --bind 'left:execute(fm_cd_dir ..)+reload(fm_ls_dir)+clear-query+transform-border-label(fm_cur_dir)' \
+  --bind 'right:execute(fm_cd_dir {})+reload(fm_ls_dir)+clear-query+transform-border-label(fm_cur_dir)' \
+  --bind 'enter:execute(fm_cd_dir {})+reload(fm_ls_dir)+clear-query+transform-border-label(fm_cur_dir)' \
+  --bind 'start:transform-query(fm_query $1)+execute(fm_cd_dir $1)+reload(fm_ls_dir)+transform-border-label(fm_cur_dir)' \
 "
+}
 
 fm_ls_dir() {
-  dirfile="/tmp/fm.dir"
-  if [ -e $dirfile ]; then 
-    dir=$(<"$dirfile")
-  else
-    dir=$(pwd)
-  fi
+  read -r cur_dir <<< "$(fm_cur_dir)"
   search_file="/tmp/fm.search.result"
   if [ -e $search_file ]; then 
     fm_show_search
   else
     file_list='/tmp/fm.dir.list'
-   `ls -A -1 $dir > $file_list`
+   `ls -A -1 $cur_dir > $file_list`
     fm_append_cut_yank_flag $file_list
   fi
 }
@@ -48,12 +50,7 @@ fm_append_cut_yank_flag() {
   while IFS= read -r line; do
     files+=("$line")
   done < $1
-  dirfile="/tmp/fm.dir"
-  if [ -e $dirfile ]; then 
-    dir=$(<"$dirfile")
-  else
-    dir=$(pwd)
-  fi
+  read -r cur_dir <<< "$(fm_cur_dir)"
   cut_files=()
   while IFS= read -r line; do
     cut_files+=("$line")
@@ -69,7 +66,7 @@ fm_append_cut_yank_flag() {
       nfile=$file
       if [[ $file =~ ^/ ]]; then
       else
-        file="$dir/$file"
+        file="$cur_dir/$file"
       fi
       if [[ -d $file ]]; then 
         nfile="$nfile/"
@@ -94,37 +91,27 @@ fm_append_cut_yank_flag() {
 }
 
 fm_search_dir() {
-  file="/tmp/fm.dir"
-  if [ -e $file ]; then
-    dir=$(<"$file")
-  else
-    dir=$(pwd)
-  fi
-  echo "search child directories from $dir, pattern:"
+  read -r cur_dir <<< "$(fm_cur_dir)"
+  echo "search child directories from $cur_dir, pattern:"
   read pattern
   file="/tmp/fm.search.result"
   if [ -e $file ]; then
     rm $file
   fi
-  find . -type d -print | ag $pattern | while read -r f; do
+  find $cur_dir -type d -print | ag $pattern | while read -r f; do
     echo `realpath $f` >> $file
   done
 }
 
 fm_search_file() {
-  file="/tmp/fm.dir"
-  if [ -e $file ]; then
-    dir=$(<"$file")
-  else
-    dir=$(pwd)
-  fi
-  echo "search files from $dir, pattern:"
+  read -r cur_dir <<< "$(fm_cur_dir)"
+  echo "search files from $cur_dir, pattern:"
   read pattern
   file="/tmp/fm.search.result"
   if [ -e $file ]; then
     rm $file
   fi
-  ag --hidden -l --path-to-ignore ~/.ignore --nocolor -g $pattern $dir | while read -r f; do
+  ag --hidden -l --path-to-ignore ~/.ignore --nocolor -g $pattern $cur_dir | while read -r f; do
     echo `realpath $f` >> $file
   done
 }
@@ -150,21 +137,33 @@ fm_show_search() {
 fm_preview_file() {
   GREEN='\033[0;32m'
   NC='\033[0m' # No Color
-  file="/tmp/fm.dir"
-  if [ -e $file ]; then
-    dir=$(<"$file")
-  else
-    dir=$(pwd)
-  fi
-  echo -e "${GREEN}$dir\n"
+  read -r cur_dir <<< "$(fm_cur_dir)"
+  # echo -e "${GREEN}$cur_dir\n"
   if [ -z $1 ]; then
-    dest=$dir
+    dest=$cur_dir
+  elif [[ $1 =~ ^/ ]]; then
+    dest=$1
   else
-    dest="$dir/$1"
+    dest="$cur_dir/$1"
   fi
   dest=${dest%\(cutted\)}
   dest=${dest%\(yanked\)}
   if [ -d $dest ]; then (tree -a -C -L 3 $dest) else (ls -l $dest; batcat -m "*.scala:Kotlin" --color=always $dest) fi
+}
+
+fm_query() {
+  read -r dir <<< "$(fm_file_path $1)"
+  if [[ $dir =~ /$ ]]; then
+    # anything before /
+    dir=${dir%/*}
+  fi
+
+  if [[ -d $dir ]]; then
+    query=""
+  else
+    query="${dir##*/}"
+  fi
+  echo $query
 }
 
 fm_cd_dir() {
@@ -172,11 +171,7 @@ fm_cd_dir() {
     return
   fi
   file="/tmp/fm.dir"
-  if [ -e $file ]; then 
-    dir=$(<"$file")
-  else
-    dir=$(pwd)
-  fi
+  read -r dir <<< "$(fm_cur_dir)"
   if [[ $dir =~ /$ ]]; then
     dir=${dir%/*}
   fi
@@ -194,45 +189,59 @@ fm_cd_dir() {
     fi
   elif [[ $dest =~ ^/ ]]; then
     dir=$dest
-  elif [[ -d "$dir/$dest" ]]; then
-    dir="$dir/$dest"
-  elif [[ -d $dest ]]; then
-    dir="$dir/$dest"
   else
-    dir=${dest%/*}
+    dir="$dir/$dest"
+  fi
+
+  if [[ -d $dir ]]; then
+    dir="$dir"
+  else
+    dir=${dir%/*}
     if [[ $dir = "" ]]; then
       dir="/"
     elif [[ $dir = "." ]]; then
       dir=$(pwd)
     fi
   fi
-  if [ $dir = "/" ]; then
-  else
-    if [[ $dir =~ /$ ]]; then
-      dir=${dir%/*}
-    fi
-  fi
+
   if [ -d "$dir" ]; then
     # cleanup search when enter a folder
     search_file="/tmp/fm.search.result"
     if [ -e $search_file ]; then
       rm $search_file
     fi
+    if [[ $dir =~ /$ ]]; then
+      dir=${dir%/*}
+    fi
     echo $dir > $file
   fi
 }
 
-fm_cp_file() {
-  if [ -z $1 ]; then
-    return
-  fi
+fm_cur_dir() {
   file="/tmp/fm.dir"
   if [ -e $file ]; then 
     dir=$(<"$file")
   else
     dir=$(pwd)
   fi
-  nfile="$dir/$1"
+  echo $dir
+}
+
+fm_file_path() {
+  if [ -z $1 ]; then
+    return
+  fi
+  read -r dir <<< "$(fm_cur_dir)"
+  if [[ $dest =~ ^/ ]]; then
+    nfile=$1
+  else
+    nfile="$dir/$1"
+  fi
+  echo $nfile
+}
+
+fm_cp_file() {
+  read -r nfile <<< "$(fm_file_path $1)"
   echo "duplicate $nfile, please enter new name:"
   read dest
   read -r directory dest <<< "$(fm_mk_dest_dir $dest)"
@@ -241,16 +250,7 @@ fm_cp_file() {
 }
 
 fm_mv_file() {
-  if [ -z $1 ]; then
-    return
-  fi
-  file="/tmp/fm.dir"
-  if [ -e $file ]; then 
-    dir=$(<"$file")
-  else
-    dir=$(pwd)
-  fi
-  nfile="$dir/$1"
+  read -r nfile <<< "$(fm_file_path $1)"
   echo "rename $nfile, please enter new name:"
   read dest
   read -r directory dest <<< "$(fm_mk_dest_dir $dest)"
@@ -258,32 +258,20 @@ fm_mv_file() {
   mv -i $nfile $dest
 }
 
+fm_rm_files() {
+  files=("$@")
+  for f in "${files[@]}"; do
+    fm_rm_file $f
+  done
+}
+
 fm_rm_file() {
-  if [ -z $1 ]; then
-    return
-  fi
-  file="/tmp/fm.dir"
-  if [ -e $file ]; then 
-    dir=$(<"$file")
-  else
-    dir=$(pwd)
-  fi
-  dest="$dir/$1"
-  rm -i -r $dest
+  read -r nfile <<< "$(fm_file_path $1)"
+  rm -i -r $nfile
 }
 
 fm_mk_dest_dir() {
-  file="/tmp/fm.dir"
-  $dest = $1
-  if [[ $dest =~ ^/ ]]; then
-  else
-    if [ -e $file ]; then 
-      directory=$(<"$file")
-    else
-      directory=$(pwd)
-    fi
-    dest=$directory/$dest
-  fi
+  read -r dest <<< "$(fm_file_path $1)"
   if [[ $dest == *"/"* ]]; then
     directory=${dest%/*}
   fi
@@ -304,12 +292,8 @@ fm_new_file() {
   echo "New file, please enter name, path should end with /:"
   read dest
   read -r dir dest <<< "$(fm_mk_dest_dir $dest)"
-  echo $dir
-  echo $dest
   if [[ $dest =~ /$ ]]; then
     mkdir -p $dest
-    dir=${dest%/*}
-    echo $dir > $file
   else
     echo $dir > $file
     touch $dest
@@ -318,18 +302,13 @@ fm_new_file() {
 
 
 fm_remove_file_from_list() {
-  file="/tmp/fm.dir"
+  read -r cur_dir <<< "$(fm_cur_dir)"
   dest=$1
   dest=${dest%\(cutted\)}
   dest=${dest%\(yanked\)}
   if [[ $dest =~ ^/ ]]; then
   else
-    if [ -e $file ]; then 
-      directory=$(<"$file")
-    else
-      directory=$(pwd)
-    fi
-    dest=$directory/$dest
+    dest=$cur_dir/$dest
   fi
   if [[ $dest =~ /$ ]]; then
     dest=${dest%/*}
@@ -362,7 +341,7 @@ fm_unyank_file() {
 }
 
 fm_add_file_into_list() {
-  file="/tmp/fm.dir"
+  read -r cur_dir <<< "$(fm_cur_dir)"
   dest=$1
   file_list=$2
   dest=${dest%\(cutted\)}
@@ -370,12 +349,7 @@ fm_add_file_into_list() {
     echo $dest
   if [[ $dest =~ ^/ ]]; then
   else
-    if [ -e $file ]; then 
-      directory=$(<"$file")
-    else
-      directory=$(pwd)
-    fi
-    dest=$directory/$dest
+    dest=$cur_dir/$dest
   fi
   if [[ $dest =~ /$ ]]; then
     dest=${dest%/*}
@@ -446,13 +420,8 @@ fm_cut_file() {
 }
 
 fm_paste_file() {
-  file="/tmp/fm.dir"
-  if [ -e $file ]; then 
-    directory=$(<"$file")
-  else
-    directory=$(pwd)
-  fi
-  directory="$directory/"
+  read -r cur_dir <<< "$(fm_cur_dir)"
+  directory="$cur_dir/"
 
   yank_list="/tmp/fm.dir.yank"
   if [ -e $yank_list ]; then 

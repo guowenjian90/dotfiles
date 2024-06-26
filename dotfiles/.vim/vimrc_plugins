@@ -1,7 +1,6 @@
-let g:floaterm_width=0.9
-let g:floaterm_height=0.9
+let g:floaterm_width=1.0
+let g:floaterm_height=1.0
 let g:floaterm_autoclose=0
-nmap <Leader>fmg :FloatermNew --title=file_manager fm<CR>
 let g:lazygit_floating_window_scaling_factor = 1
 
 nmap <Leader>fmt :Autoformat<CR>
@@ -33,6 +32,14 @@ nmap <silent> <Leader>mv :NERDTreeFind<CR> <bar>m <bar>m
 nmap <silent> <Leader>rm :NERDTreeFind<CR> <bar>m <bar>d
 nmap <silent> <Leader>cp :NERDTreeFind<CR> <bar>m <bar>c
 nmap <silent> <Leader>yy :NERDTreeFind<CR> <bar>m <bar>p <bar><C-f>
+
+" fmg
+" nmap <Leader>fmg :FloatermNew --title=file_manager fm<CR>
+nmap <Leader>fmg :call <SID>fmg()<CR>
+function! s:fmg()
+  let dir = expand('%:p')
+  exe "FloatermNew --title=file_manager fm " . dir
+endfunction
 
 " matchit
 nmap mm %
