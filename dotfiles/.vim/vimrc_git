@@ -29,7 +29,7 @@ fu! s:search_in_git(text)
   exe 'Gclog -S' . a:text . ' -- %'
   call feedkeys("/".a:text."\r")
 endf
-nmap <silent> <Leader>gss :call <SID>search_in_git(expand('<cword>'))<CR>
+nmap <silent> <Leader>gs :call <SID>search_in_git(expand('<cword>'))<CR>
 
 fu! s:git_tool_diff_a_commit()
   let cc = getline(1, 1)
