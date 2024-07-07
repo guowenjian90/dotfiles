@@ -52,16 +52,17 @@ endf
 
 fu! RunGoTest(func_name)
   let file_dir = expand('%:p:h')
-  if a:func_name == ''
-    let file = expand('%:p:t')
-    if stridx(file, "_test.go") >= 0
-      let test_file = substitute(file, "_test.go$", ".go", "")
-    else
-      let test_file = substitute(file, ".go$", "_test.go", "")
-    endif
-    let cmd = " cd ". file_dir . "; grc go test -v " . file . ' ' . test_file
+  let file = expand('%:p:t')
+  if stridx(file, "_test.go") >= 0
+    let test_file = substitute(file, "_test.go$", ".go", "")
   else
-    let cmd = " cd ". file_dir . "; grc go test -v -run " . a:func_name
+    let test_file = substitute(file, ".go$", "_test.go", "")
+  endif
+  if a:func_name == ''
+    let cmd = " cd ". file_dir . "; grc go test -v " . file
+    " let cmd = " cd ". file_dir . "; grc go test -v " . file . ' ' . test_file
+  else
+    let cmd = " cd ". file_dir . "; grc go test -v " . file . " -run " . a:func_name
   endif
   call RunCommand(cmd, 1)
 endf

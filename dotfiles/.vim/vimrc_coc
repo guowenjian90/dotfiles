@@ -79,10 +79,6 @@ imap <F9> <C-o>:call <SID>show_signature()<CR>
 
 autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
-" jump to next function
-" nmap <silent> ]] ^vafo<Esc>2j^
-" nmap <silent> [[ ^vaf<Esc>2kvaf<Esc>^
-
 " Use <TAB> for selections ranges.
 " NOTE: Requires 'textDocument/selectionRange' support from the language server.
 " coc-tsserver, coc-python are the examples of servers that support it.
@@ -161,11 +157,30 @@ fu! s:coc_prev_error()
   endif
 endf
 
+" jump to next function
+" nmap <silent> ]] ^vafo<Esc>2j^
+" nmap <silent> [[ ^vaf<Esc>2kvaf<Esc>^
+
+function! s:coc_next_function()
+    call feedkeys("vaf")
+    call feedkeys("\<Esc>")
+    call feedkeys("\<C-j>j")
+endfunction
+
+function! s:coc_prev_function()
+    call feedkeys("vafo")
+    call feedkeys("\<Esc>")
+    call feedkeys("\<C-k>k")
+    call feedkeys("vafo")
+    call feedkeys("\<Esc>")
+endfunction
+
 autocmd FileType python let b:coc_root_patterns = ['.git', '.env']
 for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
-  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-d> <Plug>(coc-diagnostic-next)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-n> :call <SID>coc_next_error()<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> <C-p> :call <SID>coc_prev_error()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <c-n> :call <SID>coc_next_error()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <c-p> :call <SID>coc_prev_error()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <c-[> :call <SID>coc_prev_function()<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <c-]> :call <SID>coc_next_function()<CR>'
   " Use vd for show documentation in preview window
   exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vd :call CocAction("jumpDefinition", v:false)<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vy :call CocAction("jumpTypeDefinition", v:false)<CR>'
@@ -182,8 +197,7 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> ]e <Plug>(coc-diagnostic-next-error)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> [d <Plug>(coc-diagnostic-prev)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> ]d <Plug>(coc-diagnostic-next)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> [f :call feedkeys("[m")<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> ]f :call feedkeys("]m")<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> <c-d> <Plug>(coc-diagnostic-next)'
 
   " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
   exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
@@ -282,12 +296,10 @@ function! ToggleGitBlame()
 endfunction
 nmap <silent> <leader>blame :call ToggleGitBlame()<CR>
 
-" nmap <silent> [c <Plug>(coc-git-prevchunk)
-" nmap <silent> ]c <Plug>(coc-git-nextchunk)
-nmap <silent> ]g <Plug>(coc-git-nextchunk)
-nmap <silent> [g <Plug>(coc-git-prevchunk)
-nmap <silent> ]t <Plug>(coc-git-nextconflict)
-nmap <silent> [t <Plug>(coc-git-prevconflict)
+nmap <silent> ]c <Plug>(coc-git-nextchunk)=
+nmap <silent> [c <Plug>(coc-git-prevchunk)=
+nmap <silent> ]f <Plug>(coc-git-nextconflict)
+nmap <silent> [f <Plug>(coc-git-prevconflict)
 " show chunk diff at current position
 nmap <silent> = :CocCommand git.chunkInfo<CR>
 nmap <silent> gu :CocCommand git.chunkUndo<CR>
