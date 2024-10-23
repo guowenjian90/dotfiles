@@ -30,6 +30,7 @@ syntax enable         " enable syntax highlighting
 syntax on             " Enable syntax highlighting
 
 "  vim options
+set hlsearch
 set mouse=a               " enable mouse mode
 set cmdheight=1           " Better display for messages if larger
 " set paste                 " paste mode, good for terminal
@@ -186,7 +187,6 @@ let mapleader=" "
 
 " Maps
 nmap vv V
-nmap ss g*
 nmap sip vip :sort<CR>
 nmap ciq ci"
 nmap diq di"
@@ -220,7 +220,6 @@ nmap <Leader>bc :%bd<CR>
 nmap <Leader>uc viwU
 nmap <Leader>lc viwu
 nmap <Leader>cw <Right>bvU
-nmap <Leader>nh :nohlsearch<CR>
 nmap <Leader>sc :windo set scrollbind<CR>
 
 cmap <C-a> <Home>
@@ -416,5 +415,15 @@ fu! s:toggledifffile()
   endif
 endf
 nmap <Leader>df :call <SID>toggledifffile()<CR>
+
+fu! s:search_highlight()
+  if &hlsearch && v:hlsearch
+    set nohlsearch
+  else
+    set hlsearch
+    call feedkeys("g*")
+  endif
+endf
+nmap ss :call <SID>search_highlight()<CR>
 
 set statusline+=%#warningmsg#

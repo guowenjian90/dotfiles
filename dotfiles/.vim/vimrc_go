@@ -59,10 +59,10 @@ fu! RunGoTest(func_name)
     let test_file = substitute(file, ".go$", "_test.go", "")
   endif
   if a:func_name == ''
-    let cmd = " cd ". file_dir . "; grc go test -v " . file
+    let cmd = " cd ". file_dir . "; grc go test -v "
     " let cmd = " cd ". file_dir . "; grc go test -v " . file . ' ' . test_file
   else
-    let cmd = " cd ". file_dir . "; grc go test -v " . file . " -run " . a:func_name
+    let cmd = " cd ". file_dir . "; grc go test -v -run " . a:func_name
   endif
   call RunCommand(cmd, 1)
 endf

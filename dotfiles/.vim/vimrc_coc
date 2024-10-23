@@ -14,8 +14,6 @@ let g:ale_pattern_options = {
 
 let g:coc_fzf_preview_available = 1
 let g:coc_fzf_preview_fullscreen = 0
-" let g:coc_fzf_preview = ''
-" let g:coc_fzf_opts = ['--bind=ctrl-/:toggle-preview']
 let g:coc_fzf_opts = ['--preview-window=right:60%', '--bind=ctrl-/:toggle-preview']
  
 let g:coc_default_semantic_highlight_groups = 1
@@ -183,9 +181,9 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-]> :call <SID>coc_next_function()<CR>'
   " Use vd for show documentation in preview window
   exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vd :call CocAction("jumpDefinition", v:false)<CR>'
-  exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vy :call CocAction("jumpTypeDefinition", v:false)<CR>'
+  exe 'autocmd filetype ' . ft . ' nmap <silent><nowait> vt :call CocAction("jumpTypeDefinition", v:false)<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gd <Plug>(coc-definition)'
-  exe 'autocmd filetype ' . ft . ' nmap <silent> gy <Plug>(coc-type-definition)'
+  exe 'autocmd filetype ' . ft . ' nmap <silent> gt <Plug>(coc-type-definition)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gi <Plug>(coc-implementation)'
   " exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references-used)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> gr <Plug>(coc-references)'
