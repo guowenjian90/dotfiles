@@ -85,7 +85,7 @@ endfunction
 
 function! s:cargo_test_all()
   let project_root = <SID>current_rust_package_root()
-  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo test -- --color always --nocapture')
+  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo build; cargo test -- --color always --nocapture')
 endfunction
 
 function! s:cargo_bench_all()

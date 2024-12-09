@@ -54,15 +54,15 @@ fu! RunGoTest(func_name)
   let file_dir = expand('%:p:h')
   let file = expand('%:p:t')
   if stridx(file, "_test.go") >= 0
-    let test_file = substitute(file, "_test.go$", ".go", "")
+    let test_file = file
   else
     let test_file = substitute(file, ".go$", "_test.go", "")
   endif
+  let test_file = file
   if a:func_name == ''
-    let cmd = " cd ". file_dir . "; grc go test -v "
-    " let cmd = " cd ". file_dir . "; grc go test -v " . file . ' ' . test_file
+    let cmd = " cd ". file_dir . "; grc go test -v " . test_file
   else
-    let cmd = " cd ". file_dir . "; grc go test -v -run " . a:func_name
+    let cmd = " cd ". file_dir . "; grc go test -v " . test_file " -run " . a:func_name
   endif
   call RunCommand(cmd, 1)
 endf
