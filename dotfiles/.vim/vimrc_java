@@ -1,3 +1,6 @@
+let g:formatters_java = ['googlefmt']
+let g:formatdef_googlefmt = "'java -jar $HOME/Java/google-java-format-1.14.0-all-deps.jar --skip-sorting-imports - '"
+
 fu! BuildJavaPackage()
   let savedir = getcwd()
   let dir = expand('%:p:h')
