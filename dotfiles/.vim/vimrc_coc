@@ -174,7 +174,7 @@ function! s:coc_prev_function()
 endfunction
 
 autocmd FileType python let b:coc_root_patterns = ['.git', '.env']
-for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
+for ft in ['go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-n> :call <SID>coc_next_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-p> :call <SID>coc_prev_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-[> :call <SID>coc_prev_function()<CR>'
@@ -197,8 +197,8 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> ]d <Plug>(coc-diagnostic-next)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-d> <Plug>(coc-diagnostic-next)'
 
-  " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
-  exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
+  " Remap for do codeAction of selected region
+  " exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
 
   " Remap for do codeAction of current line
   exe 'autocmd filetype ' . ft . ' nmap <silent><leader>ca  <Plug>(coc-codeaction)'
@@ -245,19 +245,19 @@ autocmd filetype java nmap <silent> <leader>pb :CocCommand java.workspace.compil
 autocmd filetype java nmap <silent> <leader>pr :CocCommand java.clean.workspace <CR>
 autocmd filetype java nmap <silent> <leader>sm :CocCommand java.super-method-hierarchy <CR>
 autocmd filetype java nmap <silent> <leader>mh :CocCommand java.super-method-hierarchy <CR>
-" autocmd filetype java nmap <leader>oi :CocCommand java.action.organizeImports <CR>
+autocmd filetype java nmap <leader>oi :CocCommand java.action.organizeImports <CR>
 
-autocmd filetype sbt nmap <silent> <leader>pi :CocCommand metals.build-import <CR>
-autocmd filetype sbt nmap <silent> <leader>pr :CocCommand metals.build-restart <CR>
-autocmd filetype sbt nmap <silent> <leader>pc :CocCommand metals.build-connect <CR>
-
-autocmd filetype scala nmap <silent> <leader>pi :CocCommand metals.build-import <CR>
-autocmd filetype scala nmap <silent> <leader>pr :CocCommand metals.build-restart <CR>
-autocmd filetype scala nmap <silent> <leader>pb :CocCommand metals.compile-cascade <CR>
-autocmd filetype scala nmap <silent> <leader>pc :CocCommand metals.build-connect <CR>
-autocmd filetype scala nmap <silent> <leader>nc :CocCommand metals.new-scala-file <CR>
-autocmd filetype scala nmap <silent> <leader>sm :CocCommand metals.go-to-super-method <CR>
-autocmd filetype scala nmap <silent> <leader>mh :CocCommand metals.super-method-hierarchy <CR>
+" autocmd filetype sbt nmap <silent> <leader>pi :CocCommand metals.build-import <CR>
+" autocmd filetype sbt nmap <silent> <leader>pr :CocCommand metals.build-restart <CR>
+" autocmd filetype sbt nmap <silent> <leader>pc :CocCommand metals.build-connect <CR>
+"
+" autocmd filetype scala nmap <silent> <leader>pi :CocCommand metals.build-import <CR>
+" autocmd filetype scala nmap <silent> <leader>pr :CocCommand metals.build-restart <CR>
+" autocmd filetype scala nmap <silent> <leader>pb :CocCommand metals.compile-cascade <CR>
+" autocmd filetype scala nmap <silent> <leader>pc :CocCommand metals.build-connect <CR>
+" autocmd filetype scala nmap <silent> <leader>nc :CocCommand metals.new-scala-file <CR>
+" autocmd filetype scala nmap <silent> <leader>sm :CocCommand metals.go-to-super-method <CR>
+" autocmd filetype scala nmap <silent> <leader>mh :CocCommand metals.super-method-hierarchy <CR>
 
 " Toggle panel with Tree Views
 " autocmd filetype scala nmap <silent> <Leader>mws <Plug>(coc-metals-expand-decoration)
