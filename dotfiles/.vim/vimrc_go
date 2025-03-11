@@ -1,3 +1,7 @@
+let g:formatters_go = ['gofmt']
+let g:formatdef_gofmt = "'gofmt'"
+autocmd BufWritePost *.go silent :Autoformat
+
 " go lang setting
 " let g:go_highlight_functions = 1
 " let g:go_highlight_methods = 1

@@ -174,7 +174,7 @@ function! s:coc_prev_function()
 endfunction
 
 autocmd FileType python let b:coc_root_patterns = ['.git', '.env']
-for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
+for ft in ['go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-n> :call <SID>coc_next_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-p> :call <SID>coc_prev_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-[> :call <SID>coc_prev_function()<CR>'

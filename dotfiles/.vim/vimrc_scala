@@ -1,3 +1,8 @@
+let g:formatters_scala = ['scalafmt']
+let g:formatdef_scalafmt = "'scalafmt --config ./.scalafmt.conf --stdin 2>/dev/null'"
+" autocmd BufWritePost *.scala silent! call <SID>sbt_compile_inc()
+" autocmd BufWritePost *.scala silent :Autoformat
+ 
 " tabbar
 let g:tagbar_type_scala = {
       \ 'ctagstype' : 'scala',
@@ -256,19 +261,39 @@ fu! s:run_sbt_test_only(class, spec)
   call RunCommand(cmd, 1)
 endf
 
-fu! s:run_scala_fix_only(file)
-  let project_root = <SID>sbt_package_root()
-  call <SID>open_sbt_pane(project_root)
-
-  let cmd = 'scalafix --files ' . a:file
+fu! s:sbt_compile_inc()
+  let cmd = 'compileIncremental'
   call RunCommand(cmd, 1)
-  exe 'e'
+endf
+
+fu! s:run_scala_fix_only()
+  let project_root = <SID>sbt_package_root()
+  let file = expand('%')
+  call <SID>open_sbt_pane(project_root)
+  let cmd = 'scalafix --files ' . project_root . '/' . file
+  call RunCommand(cmd, 1)
+  silent edit
+endf
+
+fu! s:run_scala_fmt_only()
+  " let file = expand('%')
+  " let project_root = <SID>sbt_package_root()
+  " call <SID>open_sbt_pane(project_root)
+  " let cmd = 'scalafmtOnly --files ' . project_root . '/'. file
+  " silent call RunCommand(cmd, 1)
+  " silent edit
+
+  silent! !scalafmt %
+  silent edit
 endf
 
 autocmd filetype scala set shiftwidth=2          " Set indention level to be the same as softtabstop
 autocmd filetype scala set softtabstop=2         " Why are tabs so big?  This fixes it
 autocmd filetype scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
-autocmd filetype scala nmap <silent> <Leader>fix :call <SID>run_scala_fix_only(expand('%'))<CR>
+autocmd filetype scala nmap <silent> <Leader>fmt :call <SID>run_scala_fmt_only()<CR>
+" autocmd filetype scala nmap <silent> <Leader>fix :call <SID>run_scala_fix_only()<CR>
+autocmd filetype scala nmap <silent> <Leader>fix :MetalsRunSingleScalaFix<CR>
+autocmd filetype scala nmap <silent> <Leader>oi :MetalsOrganizeImports<CR>
 autocmd filetype scala nmap <silent> <Leader>tt :call <SID>sbt_test_focus()<CR>
 autocmd filetype scala nmap <silent> <Leader>ta :call <SID>sbt_test_current_file()<CR>
 autocmd filetype scala nmap <silent> <Leader>ut :call OpenTestFile('Spec', 'scala')<CR>
