@@ -191,6 +191,12 @@ nmap sip vip :sort<CR>
 nmap ciq ci"
 nmap diq di"
 nmap viq vi"
+nmap cic ci{
+nmap dic di{
+nmap vic vi{
+nmap cid ci<
+nmap did di<
+nmap vid vi<
 nmap vu v^
 nmap v<CR> v$
 nmap cu c^

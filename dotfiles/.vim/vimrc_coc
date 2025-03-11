@@ -6,12 +6,6 @@
 "let g:airline_extensions = ['branch',  'tagbar', hunks', 'coc']
 let g:airline#extensions#tagbar#flags = 'f'  " show full tag hierarchy
 
-" turn off ale for coc supported language
-let g:ale_pattern_options = {
-      \   '.*\.java$': {'ale_enabled': 0},
-      \   '.*\.scala$': {'ale_enabled': 0},
-      \}
-
 let g:coc_fzf_preview_available = 1
 let g:coc_fzf_preview_fullscreen = 0
 let g:coc_fzf_opts = ['--preview-window=right:60%', '--bind=ctrl-/:toggle-preview']
@@ -74,7 +68,6 @@ function! s:show_signature()
   call CocActionAsync('showSignatureHelp')
 endfunction
 imap <F9> <C-o>:call <SID>show_signature()<CR>
-
 autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
 " Use <TAB> for selections ranges.
@@ -174,7 +167,7 @@ function! s:coc_prev_function()
 endfunction
 
 autocmd FileType python let b:coc_root_patterns = ['.git', '.env']
-for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
+for ft in ['scala', 'java', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-n> :call <SID>coc_next_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-p> :call <SID>coc_prev_error()<CR>'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-[> :call <SID>coc_prev_function()<CR>'
@@ -197,17 +190,17 @@ for ft in ['java', 'scala', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> ]d <Plug>(coc-diagnostic-next)'
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-d> <Plug>(coc-diagnostic-next)'
 
-  " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
-  exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
+  " Remap for do codeAction of selected region
+  " exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
 
   " Remap for do codeAction of current line
   exe 'autocmd filetype ' . ft . ' nmap <silent><leader>ca  <Plug>(coc-codeaction)'
 
   " Fix autofix problem of current line
-  exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cx  <Plug>(coc-fix-current)'
+  " exe 'autocmd filetype ' . ft . ' nmap <silent><leader>cx  <Plug>(coc-fix-current)'
 
   " Remap keys for applying code actions at the cursor position
-  exe 'autocmd filetype ' . ft . ' nmap <leader>cc  <Plug>(coc-codeaction-cursor)'
+  " exe 'autocmd filetype ' . ft . ' nmap <leader>cc  <Plug>(coc-codeaction-cursor)'
 
   " Remap keys for apply code actions affect whole buffer
   " nmap <leader>cb  <Plug>(coc-codeaction-source)
@@ -245,7 +238,7 @@ autocmd filetype java nmap <silent> <leader>pb :CocCommand java.workspace.compil
 autocmd filetype java nmap <silent> <leader>pr :CocCommand java.clean.workspace <CR>
 autocmd filetype java nmap <silent> <leader>sm :CocCommand java.super-method-hierarchy <CR>
 autocmd filetype java nmap <silent> <leader>mh :CocCommand java.super-method-hierarchy <CR>
-" autocmd filetype java nmap <leader>oi :CocCommand java.action.organizeImports <CR>
+autocmd filetype java nmap <leader>oi :CocCommand java.action.organizeImports <CR>
 
 autocmd filetype sbt nmap <silent> <leader>pi :CocCommand metals.build-import <CR>
 autocmd filetype sbt nmap <silent> <leader>pr :CocCommand metals.build-restart <CR>
@@ -260,19 +253,27 @@ autocmd filetype scala nmap <silent> <leader>sm :CocCommand metals.go-to-super-m
 autocmd filetype scala nmap <silent> <leader>mh :CocCommand metals.super-method-hierarchy <CR>
 
 " Toggle panel with Tree Views
-" autocmd filetype scala nmap <silent> <Leader>mws <Plug>(coc-metals-expand-decoration)
-" autocmd filetype scala nmap <silent> <Leader>mt :<C-u>CocCommand metals.tvp<CR>
-" autocmd filetype scala nmap <silent> <Leader>mtb :<C-u>CocCommand metals.tvp metalsBuild<CR>
-" autocmd filetype scala nmap <silent> <Leader>mtc :<C-u>CocCommand metals.tvp metalsCompile<CR>
-" autocmd filetype scala nmap <silent> <Leader>mtf :<C-u>CocCommand metals.revealInTreeView metalsBuild<CR>
+autocmd filetype scala nmap <silent> <Leader>mws <Plug>(coc-metals-expand-decoration)
+autocmd filetype scala nmap <silent> <Leader>mt :<C-u>CocCommand metals.tvp<CR>
+autocmd filetype scala nmap <silent> <Leader>mtb :<C-u>CocCommand metals.tvp metalsBuild<CR>
+autocmd filetype scala nmap <silent> <Leader>mtc :<C-u>CocCommand metals.tvp metalsCompile<CR>
+autocmd filetype scala nmap <silent> <Leader>mtf :<C-u>CocCommand metals.revealInTreeView metalsBuild<CR>
 
 autocmd filetype go nmap <silent> <leader>ut :CocCommand go.test.toggle <CR>
 autocmd filetype go nmap <silent> <leader>tg :CocCommand go.tags.add.prompt<CR>
 autocmd filetype go nmap <silent> <leader>ct :CocCommand go.test.generate.file <CR>
 
 
-" Use <C-s> for trigger snippet expand.
-imap <C-s> <Plug>(coc-snippets-expand)
+function! s:next_signature()
+  call CocActionAsync('snippetNext')
+endfunction
+imap <C-s> <C-o>:call <SID>next_signature()<CR>
+" Jump to next placeholder
+" imap <silent><expr> <C-j> coc#rpc#request('snippetNext', [])
+" imap <silent><expr> <C-k> coc#rpc#request('snippetPrev', [])
+
+" Use <C-s> for trigger snippet expand., enter can help
+" imap <C-s> <Plug>(coc-snippets-expand)
 
 " Use <C-j> for select text for visual placeholder of snippet.
 " vmap <C-j> <Plug>(coc-snippets-select)
@@ -316,11 +317,27 @@ highlight CocPumFloatingDetail ctermbg=darkblue guibg=darkblue
 
 highlight CocHoverRange ctermbg=black guibg=black
 highlight CocFloating ctermbg=black guibg=black
-highlight CocInlayHint cterm=underline gui=underline guifg=blue guibg=black
+highlight CocInlayHint cterm=underline gui=underline guifg=gray guibg=black
 highlight CocUnusedHighlight cterm=underline gui=underline guifg=blue guibg=black
 highlight CocMenuSel ctermbg=blue guibg=blue
 highlight CocListLine cterm=underline gui=underline
 highlight CocSelectedLine cterm=underline gui=underline
+
+if !empty(maparg('gri', 'n'))
+  nunmap gri
+endif
+if !empty(maparg('grn', 'n'))
+  nunmap grn
+endif
+if !empty(maparg('grr', 'n'))
+  nunmap grr
+endif
+if !empty(maparg('gra', 'n'))
+  nunmap gra
+endif
+if !empty(maparg('g0', 'n'))
+  nunmap g0
+endif
 
 if has('nvim-0.4.0') || has('patch-8.2.0750')
   let g:cj_orig_n = maparg('<c-j>', 'n')

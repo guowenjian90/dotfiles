@@ -498,7 +498,8 @@ endsnippet
 
 #it
 snippet it "it"
-it should "${1:description}" in {}
+it should "${1:description}" in {
+}
 endsnippet
 
 #spec
@@ -529,6 +530,17 @@ import org.scalatest.flatspec.AsyncFlatSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.mockito.._
 import org.mockito.Mockito._
+
+class ${1:cls}
+    extends AsyncFlatSpecLike
+    with Matchers
+    with PrivateMethodTester
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with BeforeAndAfterAll
+{
+}
+endsnippet
 
 class ${1:cls}
     extends AsyncFlatSpecLike
@@ -576,4 +588,3 @@ import _root_.scala.xml._
 endsnippet
 
 #TODO LIFT,SBT,WEB.XML,HTML snippets
-

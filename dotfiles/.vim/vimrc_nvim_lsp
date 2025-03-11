@@ -1,0 +1,243 @@
+" autocmd filetype scala nnoremap <silent> gd          <cmd>lua vim.lsp.buf.definition()<CR>
+" autocmd filetype scala nnoremap <silent> K           <cmd>lua vim.lsp.buf.hover()<CR>
+" autocmd filetype scala nnoremap <silent> gi          <cmd>lua vim.lsp.buf.implementation()<CR>
+" autocmd filetype scala nnoremap <silent> gr          <cmd>lua vim.lsp.buf.references()<CR>
+" autocmd filetype scala nnoremap <silent> <leader>oo  <cmd>lua vim.lsp.buf.document_symbol()<CR>
+" autocmd filetype scala nnoremap <silent> gws         <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+" autocmd filetype scala nnoremap <silent> <leader>cn  <cmd>lua vim.lsp.buf.rename()<CR>
+" autocmd filetype scala nnoremap <silent> <leader>f   <cmd>lua vim.lsp.buf.formatting()<CR>
+" autocmd filetype scala nnoremap <silent> <leader>ca  <cmd>lua vim.lsp.buf.code_action()<CR>
+" autocmd filetype scala nnoremap <silent> <leader>ws  <cmd>lua require'metals'.worksheet_hover()<CR>
+" autocmd filetype scala nnoremap <silent> <leader>oe   <cmd>lua require'metals'.open_all_diagnostics()<CR>
+" autocmd filetype scala nnoremap <silent> <space>od    <cmd>lua vim.diagnostic.set_loclist()<CR>
+" autocmd filetype scala nnoremap <silent> [d          <cmd>lua vim.diagnostic.goto_prev { wrap = false }<CR>
+" autocmd filetype scala nnoremap <silent> ]d          <cmd>lua vim.diagnostic.goto_next { wrap = false }<CR>
+
+autocmd filetype scala nnoremap <silent> gd          <cmd>Definitions<CR>
+autocmd filetype scala nnoremap <silent> K           <cmd>lua vim.lsp.buf.hover()<CR>
+autocmd filetype scala nnoremap <silent> gi          <cmd>Implementations<CR>
+autocmd filetype scala nnoremap <silent> gt          <cmd>TypeDefinitions<CR>
+autocmd filetype scala nnoremap <silent> gr          <cmd>References<CR>
+autocmd filetype scala nnoremap <silent> <leader>oi  <cmd>MetalsOrganizeImports<CR>
+autocmd filetype scala nnoremap <silent> <leader>oo  <cmd>DocumentSymbols<CR>
+" autocmd filetype scala nnoremap <silent> <leader>og  <cmd>WorkspaceSymbols<CR>
+autocmd filetype scala nnoremap <silent> <leader>cn  <cmd>lua vim.lsp.buf.rename()<CR>
+autocmd filetype scala nnoremap <silent> <leader>fmt <cmd>lua vim.lsp.buf.format()<CR>
+autocmd filetype scala nnoremap <silent> <leader>cx  <cmd>MetalsRunSingleScalafix<CR>
+autocmd filetype scala nnoremap <silent> <leader>ca  <cmd>lua vim.lsp.buf.code_action()<CR>
+autocmd filetype scala vmap     <silent> <leader>ca  <cmd>lua vim.lsp.buf.code_action()<CR>
+" autocmd filetype scala nnoremap <silent> <leader>ws  <cmd>lua require'metals'.worksheet_hover()<CR>
+" autocmd filetype scala nnoremap <silent> <leader>od  <cmd>Diagnostics<CR>
+autocmd filetype scala nnoremap <silent> <leader>od  <cmd>lua require('fzf_lsp').diagnostic_call({ severity = vim.diagnostic.severity.WARN, bufnr = "*"}) <CR>
+" autocmd filetype scala nnoremap <silent> <leader>oe  <cmd>DiagnosticsAll<CR>
+autocmd filetype scala nnoremap <silent> <leader>oe  <cmd>lua require('fzf_lsp').diagnostic_call({ severity = vim.diagnostic.severity.ERROR, bufnr = "*"}) <CR>
+autocmd filetype scala nnoremap <silent> <leader>mi  <cmd>IncomingCalls<CR>
+autocmd filetype scala nnoremap <silent> <leader>mo  <cmd>OutgoingCalls<CR>
+autocmd filetype scala nnoremap <silent> <leader>mh  <cmd>MetalsSuperMethodHierarchy<CR>
+autocmd filetype scala nnoremap <silent> <leader>sm  <cmd>MetalsGotoSuperMethod<CR>
+autocmd filetype scala nnoremap <silent> <leader>nc  <cmd>MetalsNewScalaFile<CR>
+autocmd filetype scala nnoremap <silent> <leader>pi  <cmd>MetalsImportBuild<CR>
+autocmd filetype scala nnoremap <silent> <leader>pc  <cmd>MetalsConnectBuild<CR>
+autocmd filetype scala nnoremap <silent> [e          <cmd>lua vim.diagnostic.goto_prev { wrap = false, severity=vim.diagnostic.severity.ERROR }<CR>
+autocmd filetype scala nnoremap <silent> ]e          <cmd>lua vim.diagnostic.goto_next { wrap = false, severity=vim.diagnostic.severity.ERROR }<CR>
+autocmd filetype scala nnoremap <silent> <C-d>       <cmd>lua vim.diagnostic.goto_next { wrap = false, severity=vim.diagnostic.severity.WARN }<CR>
+autocmd filetype scala nnoremap <silent> <C-p>       <cmd>call <SID>lsp_prev_error()<CR>
+autocmd filetype scala nnoremap <silent> <C-n>       <cmd>call <SID>lsp_next_error()<CR>
+autocmd BufWritePre *.scala lua vim.lsp.buf.format()
+autocmd FileType scala let b:coc_suggest_disable = 1
+
+
+fu! s:lsp_next_error()
+  if HasQuickFix() == 1
+    exe "cnext"
+  elseif HasLocList() == 1
+    exe "lnext"
+  else
+    call feedkeys("]e")
+  endif
+endf
+
+fu! s:lsp_prev_error()
+  if HasQuickFix() == 1
+    exe "cprev"
+  elseif HasLocList() == 1
+    exe "lprev"
+  else
+    call feedkeys("[e")
+  endif
+endf
+
+lua <<EOF
+  vim.lsp.buf.format({ async = true }) -- Always use async
+  vim.api.nvim_create_autocmd("BufEnter", {
+    pattern = "*.json",
+    callback = function()
+      vim.lsp.stop_client(vim.lsp.get_active_clients())
+    end
+  })
+
+  vim.api.nvim_create_autocmd("BufWritePost", {
+    pattern = { "scala", "java" },
+    callback = function()
+      vim.lsp.buf.code_action({ async = true })
+    end,
+  })
+
+  -- Set up nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup.filetype('scala', {
+    experimental = {
+        ghost_text = true
+    },
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+        -- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
+
+        -- For `mini.snippets` users:
+        -- local insert = MiniSnippets.config.expand.insert or MiniSnippets.default_insert
+        -- insert({ body = args.body }) -- Insert at cursor
+        -- cmp.resubscribe({ "TextChangedI", "TextChangedP" })
+        -- require("cmp.config").set_onetime({ sources = {} })
+      end,
+    },
+    window = {
+      completion = {
+        max_width = 80,  -- Adjust this value as needed
+        border = 'rounded',
+                        
+      },
+      documentation = {
+        max_width = 80,  -- Adjust this value as needed
+        border = 'rounded',
+      },
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      ['<Tab>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+            cmp.select_next_item()
+        elseif luasnip.expand_or_jumpable() then
+            luasnip.expand_or_jump()
+        else
+            fallback()
+        end
+      end, { 'i', 's' }),
+      ['<S-Tab>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif luasnip.jumpable(-1) then
+          luasnip.jump(-1)
+        else
+          fallback()
+        end
+      end, { 'i', 's' }),
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'luasnip' },    -- Snippet source for argument placeholders
+      -- { name = 'vsnip' }, -- For vsnip users.
+      { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+      { name = 'buffer' },
+    })
+  })
+
+  -- To use git you need to install the plugin petertriho/cmp-git and uncomment lines below
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'git' },
+    }, {
+      { name = 'buffer' },
+    })
+   })
+--  require("cmp_git").setup() ]]-- 
+
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  -- cmp.setup.cmdline({ '/', '?' }, {
+  --   mapping = cmp.mapping.preset.cmdline(),
+  --   sources = {
+  --     { name = 'buffer' }
+  --   }
+  -- })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    }),
+    matching = { disallow_symbol_nonprefix_matching = false }
+  })
+
+  local _border = "single"
+
+  vim.api.nvim_create_autocmd('CursorHoldI', {
+    callback = function()
+        vim.lsp.buf.signature_help()
+     end,
+  })
+
+  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+    vim.lsp.handlers.hover, {
+      border = _border, 
+      focusable = false,
+      max_width = 80,
+      max_height = 20,
+    }
+  )
+
+  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+    vim.lsp.handlers.signature_help, {
+      border = _border,
+      focusable = false,
+      max_width = 80,
+      max_height = 20,
+    }
+  )
+
+  vim.diagnostic.config({
+    float={border=_border},
+    severity_sort = true,
+    signs = {
+      severity = { min = vim.diagnostic.severity.ERROR }, -- Only show signs for warnings and errors
+          
+    },
+    underline = {
+      severity = { min = vim.diagnostic.severity.ERROR }, -- Only underline warnings and errors
+    },
+    update_in_insert = false,
+    virtual_text = {
+      severity = {
+        min = vim.diagnostic.severity.ERROR
+      }
+    }
+  })
+
+  vim.lsp.handlers["$/progress"] = function(_, result, ctx)
+    -- Suppress all build progress messages
+    return
+  end
+
+  vim.diagnostic.setloclist({
+    severity = { min = vim.diagnostic.severity.ERROR }
+  })
+
+  vim.diagnostic.setqflist({
+    severity = { min = vim.diagnostic.severity.ERROR }
+  })
+
+  -- vim.lsp.inlay_hint.enable(true)
+EOF
