@@ -34,12 +34,12 @@ fu! s:search_in_buffer(text)
 endf
 nmap <silent> <Leader>sb :call <SID>search_in_buffer(GetInput("search:")) <CR>
 
-fu! s:make_tags() "rebuild tags
-  exe "!ctags -R -o newtags; mv newtags tags"
-endf
-nmap <silent> <Leader>mtg :call <SID>make_tags()<CR>
-
-" fzf
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, {'options': ['--preview-window=hidden', '--bind=ctrl-/:toggle-preview']}, <bang>0)
+command! -bang -nargs=? -complete=dir Buffers
+    \ call fzf#vim#buffers(<q-args>, {'options': ['--preview-window=hidden', '--bind=ctrl-/:toggle-preview']}, <bang>0)
+command! -bang -nargs=? -complete=dir History
+    \ call fzf#vim#history({'options': ['--preview-window=hidden', '--bind=ctrl-/:toggle-preview']}, <bang>0)
 nmap <silent> <Leader>og :Tags<CR>
 " nmap <silent> <Leader>oo :BTags<CR>
 nmap <silent> <Leader>of :Files<CR>
@@ -63,7 +63,7 @@ function! s:jumps()
   let jumps = map(reverse(copy(getjumplist()[0])), { key, val -> extend(val, {'name': getbufinfo(val.bufnr)[0].name }) })
   " let jumps = map(filter(reverse(copy(getjumplist()[0])), {key, val -> val.filename =~ "__Tagbar__"}), { key, val -> extend(val, {'name': getbufinfo(val.bufnr)[0].name }) })
   let jumptext = map(copy(jumps), { index, val -> (val.name).':'.(val.lnum).':'.(val.col+1).': '.GetLine(val.bufnr, val.lnum) })
-  call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': jumptext, 'column': 1, 'options': ['--delimiter', ':', '--bind', 'ctrl-a:select-all,ctrl-d:deselect-all'], 'sink': function('GoTo')})))
+  call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': jumptext, 'column': 1, 'options': ['--delimiter', ':', '--preview-window=hidden', '--bind', 'ctrl-a:select-all,ctrl-d:deselect-all'], 'sink': function('GoTo')})))
 endfunction
 command! Jumps call <SID>jumps()
 nmap <silent> <Leader>oj :Jumps<cr>
@@ -71,7 +71,7 @@ nmap <silent> <Leader>oj :Jumps<cr>
 function! s:changes()
   let changes  = reverse(copy(getchangelist()[0]))
   let changetext = map(copy(changes), { index, val -> expand('%').':'.(val.lnum).':'.(val.col+1).': '.GetLine(bufnr('%'), val.lnum) })
-  call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': changetext, 'column': 1, 'options': ['--delimiter', ':', '--bind', 'ctrl-a:select-all,ctrl-d:deselect-all'], 'sink': function('GoTo')})))
+  call fzf#run(fzf#vim#with_preview(fzf#wrap({ 'source': changetext, 'column': 1, 'options': ['--delimiter', ':', '--preview-window=hidden', '--bind', 'ctrl-a:select-all,ctrl-d:deselect-all'], 'sink': function('GoTo')})))
 endfunction
 command! Changes call <SID>changes()
 nmap <silent> <Leader>oc :Changes<cr>

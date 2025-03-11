@@ -1,0 +1,7 @@
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+
+source ~/.vimrc
+# lua require("init_metals")
+# lua require("metals")
+lua require("claud-code")

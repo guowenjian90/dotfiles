@@ -52,6 +52,13 @@ if (v:version >= 700)
   autocmd filetype mail set spell
 endif
 
+fu! s:make_tags() "rebuild tags
+  " exe " ctags -R --kinds-scala=+co --languages=scala -o newtags src common devicetype-api devicetype-engine devicetype-ruleengine devicetype-engine integration; mv newtags tags
+  " exe " ctags -R --kinds-rust=-mP --languages=rust -o newtags src; mv newtags tags
+  exe "!sh ./ctags.sh"
+endf
+nmap <silent> <Leader>mtg :call <SID>make_tags()<CR>
+
 source ~/dotfiles/dotfiles/.vim/vimrc_clang
 source ~/dotfiles/dotfiles/.vim/vimrc_go
 source ~/dotfiles/dotfiles/.vim/vimrc_java

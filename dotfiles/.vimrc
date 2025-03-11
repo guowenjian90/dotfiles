@@ -2,6 +2,7 @@ call plug#begin('~/.vim/bundle')
 
 Plug 'Chiel92/vim-autoformat'
 Plug 'DataWraith/auto_mkdir'
+Plug 'L3MON4D3/LuaSnip',  
 Plug 'SirVer/ultisnips'
 Plug 'Yggdroot/indentLine'
 Plug 'adelarsq/vim-matchit'
@@ -10,16 +11,24 @@ Plug 'antoinemadec/coc-fzf'
 Plug 'benmills/vimux'
 Plug 'christoomey/vim-system-copy'
 Plug 'derekwyatt/vim-scala'
+Plug 'gfanto/fzf-lsp.nvim'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/nvim-cmp'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', {'dir': '~/.fzf','do': './install --all'}
 Plug 'junegunn/fzf.vim' " needed for previews
 Plug 'kdheepak/lazygit.nvim'
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
-Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'nvim-treesitter/nvim-treesitter-context'
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/plenary.nvim'
 Plug 'preservim/nerdtree'
 Plug 'preservim/tagbar'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 Plug 'rust-lang/rust.vim'
+Plug 'saadparwaiz1/cmp_luasnip' 
 Plug 'spiroid/vim-ultisnip-scala'
 Plug 'tomtom/tcomment_vim'
 Plug 'tomtom/tlib_vim'
@@ -73,7 +82,7 @@ source $HOME/dotfiles/dotfiles/.vim/vimrc_lang
 source $HOME/dotfiles/dotfiles/.vim/vimrc_coc
 source $HOME/dotfiles/dotfiles/.vim/vimrc_markdown
 source $HOME/dotfiles/dotfiles/.vim/vimrc_fzf
-source $HOME/dotfiles/dotfiles/.vim/vimrc_lua
+" source $HOME/dotfiles/dotfiles/.vim/vimrc_nvim_lsp
 " source $HOME/dotfiles/dotfiles/.vim/vimrc_fornax
 
 let g:preview_uml_url='http://localhost:8888'

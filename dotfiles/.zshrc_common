@@ -102,11 +102,12 @@ export FZF_DEFAULT_OPTS="
   --bind page-down:preview-page-down
   --bind ctrl-a:select-all
   --bind alt-a:deselect-all
-  --bind 'ctrl-/:change-preview-window(down:60%|right:60%|hidden)'
+  --bind 'ctrl-/:change-preview-window(right:60%|hidden)'
   --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#121212,bg+:#262626
   --color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
   --color=prompt:#d7005f,spinner:#af5fff,pointer:#af5fff,header:#87afaf
   --border='rounded'
+  --height=~80%
   --preview-window='border-rounded' 
   --prompt='> '
   --marker='>' 

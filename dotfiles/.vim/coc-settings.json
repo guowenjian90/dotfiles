@@ -1,5 +1,14 @@
 {
-  "codeLens.enable": true,
+  "workspace.ignoredFolders": [
+    ".cargo/**",
+    ".rustup/**",
+    ".metals/**",
+    "$HOME",
+    "$HOME/.cargo/**",
+    "$HOME/.rustup/**",
+    "$HOME/.metals/**"
+  ],
+  "codeLens.enable": false,
   "callHierarchy.enableTooltip": true,
   "coc.preferences.formatOnSave": true,
   "coc.source.tag.filetypes": [
@@ -9,48 +18,60 @@
     "string",
     "comment"
   ],
+  "metals.enable": true,
+  "metals.scalafixConfigPath": "./.scalafix.conf",
+  "metals.javaHome": "/Users/wguo/Java/latest",
   "metals.superMethodLensesEnabled": true,
   "metals.statusBarEnabled": true,
   "metals.scalafmtConfigPath": "./.scalafmt.conf",
-  "metals.fallbackScalaVersion": "2.13.4",
+  "metals.fallbackScalaVersion": "2.13.16",
   "metals.showInferredType": true,
-  "metals.serverVersion": "0.11.12",
+  "metals.serverVersion": "1.5.2",
   "java.completion.guessMethodArguments": true,
   "java.import.gradle.enabled": false,
   "java.import.maven.enabled": false,
   "java.configuration.runtimes": [
     {
       "name": "JavaSE-17",
-      "path": "~/Java/jdk-17.0.2",
+      "path": "/home/wenjian/Java/jdk-17.0.2",
       "default": true
     }
   ],
   "java.inlayHints.parameterNames.enabled": "none",
   "git.enableGutters": true,
   "git.floatConfig": {
-    "border": true
+    "border": true,
+    "rounded": true
   },
   "git.removedSign.text": "-",
   "git.addedSign.text": "+",
   "git.changedSign.text": "~",
   "git.addGBlameToVirtualText": true,
   "hover.floatConfig": {
-    "border": true
+    "border": true,
+    "rounded": true
   },
   "signature.floatConfig": {
-    "border": true
+    "border": true,
+    "rounded": true
   },
   "signature.target": "float",
   "signature.preferShownAbove": false,
+  "signature.hideOnTextChange": false,
   "suggest.floatConfig": {
-    "border": true
+    "border": true,
+    "rounded": true
   },
+  "suggest.noselect": false,
+  "suggest.autoTrigger": "always",
   "suggest.enablePreselect": true,
-  "diagnostic.showUnused": false,
-  "diagnostic.level": "error",
+  "diagnostic.showUnused": true,
+  "diagnostic.messageLevel": "error",
+  "diagnostic.level": "warning",
   "diagnostic.locationlistUpdate": true,
   "diagnostic.floatConfig": {
-    "border": true
+    "border": true,
+    "rounded": true
   },
   "diagnostic.virtualText": true,
   "diagnostic.errorSign": "x",
@@ -58,6 +79,11 @@
   "diagnostic.autoRefresh": true,
   "diagnostic.checkCurrentLine": true,
   "go.goplsOptions": {
+    "hints": {
+      "assignVariableTypes": true,
+      "compositeLiteralFields": true,
+      "compositeLiteralTypes": true
+    },
     "completeUnimported": true,
     "codelenses": {
       "gc_details": true
@@ -70,6 +96,7 @@
   "yaml.schemas": {
     "kubernetes": "/*.yaml"
   },
+  "rust-analyzer.updates.checkOnStartup": false,
   "rust-analyzer.lens.enable": false,
   "rust-analyzer.inlayHits.enabled": true,
   "rust-analyzer.inlayHints.typeHints.enable": false,
@@ -87,5 +114,6 @@
   "python.analysis.diagnosticSeverityOverrides": {
     "reportGeneralTypeIssues": "warning"
   },
-  "clangd.path": "/home/wenjian/.config/coc/extensions/coc-clangd-data/install/15.0.6/clangd_15.0.6/bin/clangd"
+  "clangd.path": "/home/wenjian/.config/coc/extensions/coc-clangd-data/install/15.0.6/clangd_15.0.6/bin/clangd",
+  "snippets.ultisnips.pythonPrompt": false
 }

@@ -1,3 +1,7 @@
+let g:formatters_scala = ['scalafmt']
+let g:formatdef_scalafmt = "'scalafmt --config ./.scalafmt.conf --stdin 2>/dev/null'"
+" autocmd BufWritePre *.scala silent :Autoformat
+ 
 " tabbar
 let g:tagbar_type_scala = {
       \ 'ctagstype' : 'scala',
@@ -30,79 +34,6 @@ fu! s:sbt_package_root()
   endw
   exe "cd " savedir
   return dir
-endf
-
-fu! s:scala_test()
-  let project_root = <SID>sbt_package_root()
-  let project = split(project_root, '\/')[-1]
-  let build_classpath = BuildClasspath()
-  let class = FindClassToRun()
-  let spec = <SID>find_scala_test_spec()
-  if spec == ''
-    let spec = <SID>find_scala_test_behavior()
-  endif
-
-  if(empty(spec))
-    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar:" . build_classpath . " org.scalatest.tools.Runner -o -s " . class
-  else
-    let cmd = "cd " . project_root . "; java -cp " . project . "-classpath.jar:" . build_classpath . " org.scalatest.tools.Runner -o -s " . class . " -z '" . spec . "'"
-  endif
-  call RunCommand(cmd, 1)
-endf
-
-fu! s:find_bloop_dir()
-  let savedir = getcwd()
-  let dir = expand('%:p:h')
-  exe "cd " . dir
-  while (dir != '/')
-    let configfile = dir . '/.bloop'
-    if isdirectory(configfile)
-      break
-    endif
-    cd ..
-    let dir = getcwd()
-  endw
-  exe "cd " savedir
-  return dir
-endf
-
-fu! s:bloop_build_classpath()
-  let project_root = <SID>sbt_package_root()
-  let project = split(project_root, '\/')[-1]
-  let bloop_dir = <SID>find_bloop_dir()
-  let bloop_classpath_dir = bloop_dir.'/.bloop/'.project.'/bloop-bsp-clients-classes'
-
-  let impl_build_classes_directories=glob(bloop_classpath_dir.'/classes-Metals-*', 1, 1)
-  let impl_build_classes_dir = ""
-  let modify_time = 0
-  for class_dir in impl_build_classes_directories
-    if(modify_time < getftime(class_dir))
-      let modify_time = getftime(class_dir)
-      let impl_build_classes_dir = class_dir
-    endif
-  endfor
-
-  let test_build_classes_directories=glob(bloop_classpath_dir.'/test-classes-Metals-*', 1, 1)
-  let test_build_classes_dir = ""
-  let modify_time = 0
-  for class_dir in test_build_classes_directories
-    if(modify_time < getftime(class_dir))
-      let modify_time = getftime(class_dir)
-      let test_build_classes_dir = class_dir
-    endif
-  endfor
-
-  let it_build_classes_directories=glob(bloop_classpath_dir.'/it-classes-Metals-*', 1, 1)
-  let it_build_classes_dir = ""
-  let modify_time = 0
-  for class_dir in it_build_classes_directories
-    if(modify_time < getftime(class_dir))
-      let modify_time = getftime(class_dir)
-      let it_build_classes_dir = class_dir
-    endif
-  endfor
-
-  return impl_build_classes_dir.':'.test_build_classes_dir.':'.it_build_classes_dir
 endf
 
 fu! s:open_sbt_pane(project_root)
@@ -238,15 +169,13 @@ fu! s:find_scala_test_behavior()
 endf
  
 fu! s:run_sbt_test_only(class, spec)
+  let project_root = <SID>sbt_package_root()
   let path = expand('%')
-  let it = match(path, '.*src/it/.*')
-  if it == -1
-    let it = match(path, '.*integration/src/test/.*')
-  endif
-  if it == -1
-    let cmd = 'testOnly '
+  let package = split(path, '\/')[0]
+  if package == "src"
+    let cmd =  ' testOnly '
   else
-    let cmd = 'IntegrationTest / testOnly '
+    let cmd =  package . ' / testOnly '
   endif
   if a:spec == ''
     let cmd = cmd . a:class
@@ -256,23 +185,39 @@ fu! s:run_sbt_test_only(class, spec)
   call RunCommand(cmd, 1)
 endf
 
-fu! s:run_scala_fix_only(file)
+
+fu! s:sbt_compile_inc()
+  let cmd = 'compileIncremental'
+  call RunCommand(cmd, 1)
+endf
+
+fu! s:run_scala_fix_only()
+  let project_root = <SID>sbt_package_root()
+  let file = expand('%')
+  call <SID>open_sbt_pane(project_root)
+  let cmd = 'scalafix --files ' . project_root . '/' . file
+  call RunCommand(cmd, 1)
+  silent edit
+endf
+
+fu! s:run_scala_fmt_only()
+  let file = expand('%')
   let project_root = <SID>sbt_package_root()
   call <SID>open_sbt_pane(project_root)
-
-  let cmd = 'scalafix --files ' . a:file
-  call RunCommand(cmd, 1)
-  exe 'e'
+  let cmd = 'scalafmtOnly --files ' . project_root . '/'. file
+  silent call RunCommand(cmd, 1)
+  silent edit
 endf
 
 autocmd filetype scala set shiftwidth=2          " Set indention level to be the same as softtabstop
 autocmd filetype scala set softtabstop=2         " Why are tabs so big?  This fixes it
 autocmd filetype scala set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
-autocmd filetype scala nmap <silent> <Leader>fix :call <SID>run_scala_fix_only(expand('%'))<CR>
+" autocmd filetype scala nmap <silent> <Leader>fmt :call <SID>run_scala_fmt_only()<CR>
+" autocmd filetype scala nmap <silent> <Leader>fix :call <SID>run_scala_fix_only()<CR>
 autocmd filetype scala nmap <silent> <Leader>tt :call <SID>sbt_test_focus()<CR>
 autocmd filetype scala nmap <silent> <Leader>ta :call <SID>sbt_test_current_file()<CR>
 autocmd filetype scala nmap <silent> <Leader>ut :call OpenTestFile('Spec', 'scala')<CR>
-autocmd filetype scala nmap <silent> <Leader>ct :call NewTestFile('Spec', 'scala')<CR>
+autocmd filetype scala nmap <silent> <Leader>nt :call NewTestFile('Spec', 'scala')<CR>
 autocmd filetype scala nmap <silent> <Leader>run :call <SID>sbt_run_current_file()<CR>
 autocmd filetype scala nmap <silent> <Leader>bb :call <SID>build_sbt_package()<CR>
-autocmd BufRead,BufNewFile build.sbt nmap <silent> <Leader>bb :call <SID>build_sbt_package()<CR>
+autocmd filetype sbt nmap <silent> <Leader>bb :call <SID>build_sbt_package()<CR>
