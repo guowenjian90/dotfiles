@@ -8,14 +8,7 @@ nmap <Leader>fmt :Autoformat<CR>
 let g:autoformat_autoindent = 0
 " let g:autoformat_retab = 0
 " let g:autoformat_remove_trailing_spaces = 0
-let g:autoformat_verbosemode=1
-let g:formatters_scala = ['scalafmt']
-let g:formatdef_scalafmt = "'$HOME/Scala/scalafmt/scalafmt --config ./.scalafmt.conf --stdin 2>/dev/null'"
-let g:formatters_java = ['googlefmt']
-let g:formatdef_googlefmt = "'java -jar $HOME/Java/google-java-format-1.14.0-all-deps.jar --skip-sorting-imports - '"
-let g:formatters_go = ['gofmt']
-let g:formatdef_gofmt = "'gofmt'"
-autocmd BufWritePost *.go silent :Autoformat
+let g:autoformat_verbosemode=0
 autocmd filetype json nmap <Leader>fmt :%!jq<CR>
 
 " nerdtree
@@ -31,7 +24,7 @@ nmap <silent> <Leader>ff :NERDTreeFind<CR>
 nmap <silent> <Leader>mv :NERDTreeFind<CR> <bar>m <bar>m
 nmap <silent> <Leader>rm :NERDTreeFind<CR> <bar>m <bar>d
 nmap <silent> <Leader>cp :NERDTreeFind<CR> <bar>m <bar>c
-nmap <silent> <Leader>yy :NERDTreeFind<CR> <bar>m <bar>p <bar><C-f>
+nmap <silent> <Leader>yy :NERDTreeFind<CR> <bar>m <bar>p <bar>q
 
 " nmap <Leader>fmg :FloatermNew --title=file_manager fm<CR>
 nmap <C-f> :call <SID>fmg()<CR>
@@ -162,4 +155,3 @@ let g:indentLine_setColors = 1
 let g:indentLine_char_list = ['¦']
 " let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:indentLine_fileType = ['c', 'cpp', 'python']
-

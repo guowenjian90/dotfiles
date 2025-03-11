@@ -7,7 +7,7 @@ export FM_CMD="rm /tmp/fm.dir.yank; rm /tmp/fm.dir.cut; rm /tmp/fm.dir; touch /t
 fm() {
 eval "$FM_CMD | fzf --multi\
   --preview='fm_preview_file {}' \
-  --header 'c-l: reload, c-t: search dir, c-f: search file, c-n: new, c-d: delete, c-r: rename, c-o: edit, c-c: copy, c-x: cut, c-p: paste, c-v: preview copy/cut list, c-q: exit' \
+  --header 'c-l: reload, c-t: search dir, c-f: search file, c-n: new, c-d: delete, c-r: rename, c-o: edit, c-c: copy, c-x: cut, c-v: paste, c-p: preview copy/cut list, c-q: exit' \
   --border-label $PWD \
   --border-label-pos 3 \
   --header-first \
@@ -22,8 +22,8 @@ eval "$FM_CMD | fzf --multi\
   --bind 'ctrl-d:execute-multi(fm_rm_files {})+reload(fm_ls_dir)' \
   --bind 'ctrl-c:execute-multi(fm_yank_files {})+reload(fm_ls_dir)' \
   --bind 'ctrl-x:execute-multi(fm_cut_files {})+reload(fm_ls_dir)' \
-  --bind 'ctrl-p:execute(fm_paste_file)+reload(fm_ls_dir)' \
-  --bind 'ctrl-v:execute(fm_show_yank_cut_list)+reload(fm_show_search)' \
+  --bind 'ctrl-v:execute(fm_paste_file)+reload(fm_ls_dir)' \
+  --bind 'ctrl-p:execute(fm_show_yank_cut_list)+reload(fm_show_search)' \
   --bind 'ctrl-t:execute(fm_search_dir)+reload(fm_show_search)' \
   --bind 'ctrl-f:execute(fm_search_file)+reload(fm_show_search)' \
   --bind 'ctrl-q:abort' \
