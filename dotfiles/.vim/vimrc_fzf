@@ -45,7 +45,7 @@ nmap <silent> <Leader>og :Tags<CR>
 nmap <silent> <Leader>of :Files<CR>
 nmap <silent> <Leader>ob :Buffers<CR>
 nmap <silent> <Leader>oh :History<CR>
-" nmap <silent> <Leader>oc :Commands<CR>
+nmap <silent> <Leader>ox :Commands<CR>
 nmap <silent> <Leader>om :Marks<CR>
 nmap <Leader>olc :Commits<SPACE>
 nmap <silent> <Leader>olb :BCommits<CR>

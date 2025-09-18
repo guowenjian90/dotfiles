@@ -40,6 +40,7 @@
   "java.inlayHints.parameterNames.enabled": "none",
   "git.enableGutters": true,
   "git.floatConfig": {
+    "focusable": true,
     "border": true,
     "rounded": true
   },
@@ -48,10 +49,12 @@
   "git.changedSign.text": "~",
   "git.addGBlameToVirtualText": true,
   "hover.floatConfig": {
+    "focusable": true,
     "border": true,
     "rounded": true
   },
   "signature.floatConfig": {
+    "focusable": true,
     "border": true,
     "rounded": true
   },
@@ -59,6 +62,7 @@
   "signature.preferShownAbove": false,
   "signature.hideOnTextChange": false,
   "suggest.floatConfig": {
+    "focusable": true,
     "border": true,
     "rounded": true
   },

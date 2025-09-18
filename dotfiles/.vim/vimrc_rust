@@ -50,6 +50,10 @@ fu! s:current_rust_package_root()
     if filereadable(configfile)
       break
     endif
+    let configfile = dir . '/' . "Cargo.toml"
+    if filereadable(configfile)
+      break
+    endif
     cd ..
     let dir = getcwd()
   endw
@@ -85,7 +89,7 @@ endfunction
 
 function! s:cargo_test_all()
   let project_root = <SID>current_rust_package_root()
-  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo build; cargo test -- --color always --nocapture')
+  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --nocapture')
 endfunction
 
 function! s:cargo_bench_all()
@@ -101,13 +105,21 @@ function! s:cargo_unittest_focused()
   let test_line = search('#[test', 'Wnbc')
 
   if test_line ==# 0
-    call CargoRunTests('')
-    return
+    let test_line = search('#[tokio::test', 'Wnbc')
+    if test_line ==# 0
+      call CargoRunTests('')
+      return
+    endif
   endif
 
   let line = getline(test_line + 1)
-  let test_name_raw = split(line, ' ')[1]
-  let test_name = split(test_name_raw, '(')[0]
+  let pattern = 'fn \(\w\+\)('
+  let result = matchlist(line, pattern)
+  if len(result) > 1
+    let test_name = result[1]
+  else
+    let test_name = ''
+  endif
 
   call CargoRunTests(test_name)
 endfunction
@@ -120,11 +132,12 @@ function! CargoRunTests(test_name)
     " let filtered_parts = filter(parts, 'v:val !~# "mod" && v:val !~# "src"')
     let filtered_parts = parts[1:]
     let module_path = join(filtered_parts, '::')
+    echo module_path
 
     if module_path ==# 'lib' || module_path ==# 'main'
-      call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo test -- --color always --nocapture tests::' . a:test_name)
+      call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --nocapture tests::' . a:test_name)
     else
-      call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo test -- --color always --nocapture ' . module_path . '::tests::' . a:test_name)
+      call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --nocapture ' . module_path . '::tests::' . a:test_name)
     endif
   endif
 endfunction

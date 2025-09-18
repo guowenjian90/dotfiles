@@ -587,4 +587,136 @@ import Helpers._
 import _root_.scala.xml._
 endsnippet
 
+############################
+# Akka
+#
+
+snippet akka_behavior_class "akka_behavior_class"
+import akka.actor.typed.ActorRef
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.Behavior
+import akka.actor.typed.Scheduler
+import akka.actor.typed.scaladsl.AbstractBehavior
+import akka.actor.typed.scaladsl.ActorContext
+import akka.actor.typed.scaladsl.Behaviors
+
+class ${1:cls}(
+    context: ActorContext[${1:cls}.Command],
+) extends AbstractBehavior[${1:cls}.Command](context) {
+  import ${1:cls}._
+
+  implicit def ec: ExecutionContext = context.executionContext
+
+  log.info(s"Init ${1:cls}")
+
+  override def onMessage(msg: Command): Behavior[Command] = {
+    msg match {
+      case Heartbeat =>
+        Behaviors.same
+
+      case m =>
+        log.warn(s"Unknown message ${m.getClass}")
+        Behaviors.same
+    }
+  }
+
+  implicit val typedSystem: ActorSystem[Nothing] = context.system
+}
+object ${1:cls} {
+    sealed trait Command
+    case object Heartbeat extends Command
+}
+endsnippet
+
+snippet akka_sharded_service "akka_sharded_service"
+import akka.actor.typed.ActorRef
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.Behavior
+import akka.actor.typed.DispatcherSelector
+import akka.actor.typed.Scheduler
+import akka.actor.typed.scaladsl.AbstractBehavior
+import akka.actor.typed.scaladsl.ActorContext
+import akka.actor.typed.scaladsl.Behaviors
+import akka.stream.Materializer
+import akka.util.Timeout
+import com.plume.akka.cluster.typed.ShardedService
+import com.plume.common.LocationId
+import com.plume.common.ShardId
+import com.plume.devicetype.common.CborSerializable
+import com.plume.devicetype.common.ShardedServiceHelper
+
+object ${1:cls} extends ShardedServiceHelper {
+  sealed trait Request extends CborSerializable
+  sealed trait Response extends CborSerializable
+  case object Heartbeat extends Request
+
+  final case class Accepted(shardId: ShardId, count: Int, at: Instant = Instant.now()) extends Response
+  final case class Rejected( shardId: ShardId, count: Int, at: Instant = Instant.now(), error: String = "") extends Response
+
+  def shardedService()(implicit system: ActorSystem[_]
+  ): ShardedService[Request] = {
+
+    val numOfShards = 10
+
+    createShardService(
+      numOfShards,
+      "${1:cls}",
+      Heartbeat,
+      (entityId, context, _) => {
+
+        new ${1:cls}(
+          entityId,
+          numOfShards,
+          context,
+        )
+      },
+    )
+  }
+}
+endsnippet
+
+snippet akka_test "akka_test"
+import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
+import org.scalatest.flatspec.{ AnyFlatSpecLike, AsyncFlatSpecLike }
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
+
+class ${1:cls} extends ScalaTestWithActorTestKit with AsyncFlatSpecLike with Matchers with BeforeAndAfterAll with BeforeAndAfterEach {}
+endsnippet
+
+snippet akka_cluster_test "akka_cluster_test"
+import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
+import org.scalatest.flatspec.{ AnyFlatSpecLike, AsyncFlatSpecLike }
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
+
+class ${1:cls} extends ScalaTestWithActorTestKit("""
+  akka {
+    actor {
+      provider = "cluster"
+    }
+    remote {
+      artery {
+       canonical.hostname = "127.0.0.1"
+       canonical.port = 25501  # use 0 for a random port if running parallel tests
+      }
+   }
+   cluster {
+     # The single node lists itself as the only seed
+     seed-nodes = [ "akka://ClusterActorTestKitExt@127.0.0.1:25501" ]
+   }
+ } """) with AsyncFlatSpecLike with Matchers with BeforeAndAfterAll with BeforeAndAfterEach {}
+endsnippet
+
+snippet mockito "mockito"
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterAll
+import org.scalatestplus.mockito.MockitoSugar
+  // val eventCapture = ArgumentCaptor.forClass(classOf[DeviceTypeUpdated])
+  // verify(producer, times(1)).send(eventCapture.capture())
+  // eventCapture.getValue().kind.brand.get shouldBe "Apple"
+endsnippet
+
 #TODO LIFT,SBT,WEB.XML,HTML snippets

@@ -266,7 +266,7 @@ imap <C-e> <C-o>$
 " imap <C-d> <C-o>d$
 " imap <silent><expr> <C-l> pumvisible() ? "\<Esc>a" : "\<Right>"
 " imap <silent><expr> <C-h> pumvisible() ? "\<Esc>a" : "\<Left>"
-imap <C-^> <Esc><C-^>
+" imap <C-^> <Esc><C-^>
 imap <C-v> <Esc><C-v>
 imap <C-z> <C-o>u
 imap <M-l> <C-o>W
@@ -433,3 +433,4 @@ endf
 nmap ss :call <SID>search_highlight()<CR>
 
 set statusline+=%#warningmsg#
+

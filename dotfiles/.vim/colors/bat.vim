@@ -59,6 +59,8 @@ highlight ErrorMsg ctermfg=Red guifg=Red guibg=grey
 highlight WarningMsg ctermfg=Red guifg=Red guibg=grey
 highlight VertSplit ctermfg=Red guifg=Red guibg=Red
 highlight CursorLine cterm=underline gui=underline guibg=Black ctermbg=Black
+highlight TabLine ctermfg=white ctermbg=blue
+highlight TabLineSel ctermfg=yellow ctermbg=black
 
 call  s:hi("Cursor",          b:outer_space,  b:spring_wood,  "NONE")
 " call  s:hi("CursorLine",      "NONE",         b:mine_shaft,   "NONE")

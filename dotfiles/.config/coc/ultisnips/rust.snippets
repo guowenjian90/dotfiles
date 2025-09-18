@@ -1,0 +1,14 @@
+#error class
+snippet error_struct "error_struct" b
+#[derive(Debug)]
+pub struct ${1:cls}Error {
+  details: String,
+}
+impl std::error::Error for ${1:cls}Error {}
+impl fmt::Display for ${1:cls}Error {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "{}", self.details)
+  }
+}
+endsnippet
+
