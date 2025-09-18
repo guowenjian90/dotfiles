@@ -1,5 +1,6 @@
 call plug#begin('~/.vim/bundle')
 
+Plug 'LunarVim/bigfile.nvim'
 Plug 'Chiel92/vim-autoformat'
 Plug 'DataWraith/auto_mkdir'
 Plug 'L3MON4D3/LuaSnip',  

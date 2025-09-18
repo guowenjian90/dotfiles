@@ -68,6 +68,7 @@ function! s:show_signature()
   call CocActionAsync('showSignatureHelp')
 endfunction
 imap <F9> <C-o>:call <SID>show_signature()<CR>
+imap <C-i> <C-o>:call <SID>show_signature()<CR>
 autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
 " Use <TAB> for selections ranges.
@@ -191,7 +192,7 @@ for ft in ['scala', 'java', 'go', 'rust', 'python', 'javascript', 'typescript']
   exe 'autocmd filetype ' . ft . ' nmap <silent> <c-d> <Plug>(coc-diagnostic-next)'
 
   " Remap for do codeAction of selected region
-  " exe 'autocmd filetype ' . ft . ' vmap <silent><leader>cv  <Plug>(coc-codeaction-selected)'
+  exe 'autocmd filetype ' . ft . ' vmap <silent><leader>ca  <Plug>(coc-codeaction-selected)'
 
   " Remap for do codeAction of current line
   exe 'autocmd filetype ' . ft . ' nmap <silent><leader>ca  <Plug>(coc-codeaction)'
@@ -264,16 +265,16 @@ autocmd filetype go nmap <silent> <leader>tg :CocCommand go.tags.add.prompt<CR>
 autocmd filetype go nmap <silent> <leader>ct :CocCommand go.test.generate.file <CR>
 
 
-function! s:next_signature()
+function! s:next_snippet()
   call CocActionAsync('snippetNext')
 endfunction
-imap <C-s> <C-o>:call <SID>next_signature()<CR>
+imap <C-s> <C-o>:call <SID>next_snippet()<CR>
 " Jump to next placeholder
 " imap <silent><expr> <C-j> coc#rpc#request('snippetNext', [])
 " imap <silent><expr> <C-k> coc#rpc#request('snippetPrev', [])
 
-" Use <C-s> for trigger snippet expand., enter can help
-" imap <C-s> <Plug>(coc-snippets-expand)
+" Use <C-a> for trigger snippet expand., enter can help
+" imap <C-a> <Plug>(coc-snippets-expand)
 
 " Use <C-j> for select text for visual placeholder of snippet.
 " vmap <C-j> <Plug>(coc-snippets-select)
