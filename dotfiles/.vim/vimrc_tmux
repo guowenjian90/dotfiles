@@ -22,6 +22,41 @@ fu! RunCommandInTmuxWindow(cmd)
   call VimuxRunCommand(cmd)
 endf
 
+fu! RunCommand(cmd, tmux)
+  " let cmd = escape(a:cmd, '\')
+  let cmd = escape(a:cmd, '"')
+  if exists('$TMUX') && a:tmux == 1
+    call RunCommandInTmuxWindow(cmd)
+  else
+    exe '!' . cmd
+  end
+endf
+
+fu! RunCommandVis(tmux) range
+  let cmd = GetVisualText()
+  if exists('$TMUX') && a:tmux == 1
+    call RunCommandInTmuxWindow(cmd)
+  else
+    exe '!' . cmd
+  end
+endf
+
+vmap <silent> <Leader>rp :call RunCommandVis(1)<CR>
+" nmap <silent> <Leader>rl V :call RunCommandVis(1)<CR>
+nmap <silent> <Leader>rp vip :call RunCommandVis(1)<CR>
+
+fu! RunCommandInNewPane(cmd)
+  let g:VimuxUseNearest = 0
+  VimuxOpenRunner
+  let g:VimuxUseNearest = l
+  call VimuxRunCommand(a:cmd)
+endf
+
+fu! RunCommandInTmuxPane(cmd, pane_id)
+  let g:VimuxRunnerIndex = a:pane_id
+  call VimuxRunCommand(a:cmd)
+endf
+
 nmap <silent> <Leader>rr :VimuxRunLastCommand<CR>
 let g:VimuxOrientation = 'v'
 " let g:VimuxOrientation = 'h'

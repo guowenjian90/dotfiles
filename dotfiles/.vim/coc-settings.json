@@ -26,7 +26,7 @@
   "metals.scalafmtConfigPath": "./.scalafmt.conf",
   "metals.fallbackScalaVersion": "2.13.16",
   "metals.showInferredType": true,
-  "metals.serverVersion": "1.5.2",
+  "metals.serverVersion": "1.6.3",
   "java.completion.guessMethodArguments": true,
   "java.import.gradle.enabled": false,
   "java.import.maven.enabled": false,

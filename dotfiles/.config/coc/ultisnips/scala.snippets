@@ -69,6 +69,16 @@ for (${1:i} <- ${2:0} until ${3:10}) {
 }
 endsnippet
 
+#for yield
+snippet fory "fory" b
+for { 
+  ${1:i} <- ${2:0} 
+ } yield {
+	$0
+}
+endsnippet
+
+
 #exceptions
 snippet try "try"
 try {
@@ -78,6 +88,14 @@ try {
 	case e: IOException => ${3:/* code */}
 } finally {
 	${4:/* code */}
+}
+endsnippet
+
+#transform
+snippet transform "transform"
+${1:exp} transform {
+	case Success(value)=>
+	case Failure(error)=>
 }
 endsnippet
 

@@ -328,28 +328,6 @@ else
   nmap <Leader>e :e <C-R>=expand("%:p:h") . "\\"<CR>
 endif
 
-fu! RunCommand(cmd, tmux)
-  " let cmd = escape(a:cmd, '\')
-  let cmd = escape(a:cmd, '"')
-  if exists('$TMUX') && a:tmux == 1
-    call RunCommandInTmuxWindow(cmd)
-  else
-    exe '!' . cmd
-  end
-endf
-
-fu! RunCommandVis(tmux) range
-  let cmd = GetVisualText()
-  if exists('$TMUX') && a:tmux == 1
-    call RunCommandInTmuxWindow(cmd)
-  else
-    exe '!' . cmd
-  end
-endf
-vmap <silent> <Leader>rp :call RunCommandVis(1)<CR>
-" nmap <silent> <Leader>rl V :call RunCommandVis(1)<CR>
-nmap <silent> <Leader>rp vip :call RunCommandVis(1)<CR>
-
 function GetLine(bufnr, lnum)
   let lines = getbufline(a:bufnr, a:lnum)
   if len(lines)>0
