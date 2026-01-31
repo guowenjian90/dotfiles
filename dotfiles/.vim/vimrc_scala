@@ -36,36 +36,40 @@ fu! s:sbt_package_root()
   return dir
 endf
 
-fu! s:open_sbt_pane(project_root)
-  let sbt_pane = -1
+fu! s:find_sbt_pane()
+  let sbt_pane_id = -1
   let panes = VimuxTmux("list-panes -F '#{pane_title}:#{pane_id}'")
   let panes = split(panes, "\n")
   for pane in panes
     let atts = split(pane, ":")
-    let pane_title = atts[0]
-    let pane_id = atts[1]
-    let spec = match(pane_title, '.*;\s*sbt\|sbt')
+    let pane_id = atts[-1]
+    let spec = match(pane, '.*;\s*sbt\|sbt')
     if spec == 0
-      let sbt_pane = pane_id
+      let sbt_pane_id = pane_id
     endif
   endfor
+ return sbt_pane_id
+endfunction
+
+fu! s:open_sbt_pane(project_root)
+  let sbt_pane = <SID>find_sbt_pane()
   if sbt_pane == -1
     let cmd = "cd " . a:project_root . "; sbt"
-    call RunCommand(cmd, 1)
+    call RunCommandInNewPane(cmd, 1)
+    let sbt_pane = <SID>find_sbt_pane()
   endif
+  return sbt_pane
 endfunction
 
 fu! s:build_sbt_package()
   let package_root = <SID>sbt_package_root()
-  call <SID>open_sbt_pane(package_root)
-  let buildsystem = "set coverageEnabled := true; coverage; test; coverageAggregate"
-  let tmux = 1
-  call RunCommand(buildsystem, tmux)
+  let pane_id = <SID>open_sbt_pane(package_root)
+  let cmd = "set coverageEnabled := true; coverage; test; coverageAggregate"
+  call RunCommandInTmuxPane(cmd, pane_id)
 endf
 
 fu! s:get_package_name()
   let project_root = <SID>sbt_package_root()
-  call <SID>open_sbt_pane(project_root)
 
   let package_line = search('^package ', 'Wnbc')
   if package_line ==# 0
@@ -92,16 +96,15 @@ endf
 
 fu! s:sbt_run_current_file()
   let project_root = <SID>sbt_package_root()
-  call <SID>open_sbt_pane(project_root)
+  let pane_id = <SID>open_sbt_pane(project_root)
 
   let class = <SID>get_class_name()
   let cmd = 'runMain ' . class
-  call RunCommand(cmd, 1)
+  call RunCommandInTmuxPane(cmd, pane_id)
 endf
 
 fu! s:sbt_test_focus()
   let project_root = <SID>sbt_package_root()
-  call <SID>open_sbt_pane(project_root)
 
   let class = <SID>get_class_name()
   let spec = <SID>find_scala_test_spec()
@@ -114,7 +117,6 @@ endf
 
 fu! s:sbt_test_current_file()
   let project_root = <SID>sbt_package_root()
-  call <SID>open_sbt_pane(project_root)
 
   let class = <SID>get_class_name()
   call <SID>run_sbt_test_only(class, '')
@@ -184,30 +186,26 @@ fu! s:run_sbt_test_only(class, spec)
   else
     let cmd = cmd . a:class . ' -- -z "' . a:spec . '"'
   endif
-  call RunCommand(cmd, 1)
-endf
-
-
-fu! s:sbt_compile_inc()
-  let cmd = 'compileIncremental'
-  call RunCommand(cmd, 1)
+  " call RunCommand(cmd, 1)
+  let pane_id = <SID>open_sbt_pane(project_root)
+  call RunCommandInTmuxPane(cmd, pane_id)
 endf
 
 fu! s:run_scala_fix_only()
   let project_root = <SID>sbt_package_root()
   let file = expand('%')
-  call <SID>open_sbt_pane(project_root)
+  let pane_id = <SID>open_sbt_pane(project_root)
   let cmd = 'scalafix --files ' . project_root . '/' . file
-  call RunCommand(cmd, 1)
+  call RunCommandInTmuxPane(cmd, pane_id)
   silent edit
 endf
 
 fu! s:run_scala_fmt_only()
   let file = expand('%')
   let project_root = <SID>sbt_package_root()
-  call <SID>open_sbt_pane(project_root)
+  let pane_id = <SID>open_sbt_pane(project_root)
   let cmd = 'scalafmtOnly --files ' . project_root . '/'. file
-  silent call RunCommand(cmd, 1)
+  call RunCommandInTmuxPane(cmd, pane_id)
   silent edit
 endf
 

@@ -73,39 +73,65 @@ let s:separator = <SID>shell_command_seperator()
 
 function! s:cargo_build()
   let project_root = <SID>current_rust_package_root()
-  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo build')
+  call RunCargoCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo build')
 endfunction
 
 function! s:cargo_run()
   let project_root = <SID>current_rust_package_root()
-  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo run')
+  call RunCargoCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo run')
 endfunction
 
 function! s:cargo_prompt_args()
   let project_root = <SID>current_rust_package_root()
   let l:args = input(VimuxOption('VimuxPromptString'))
-  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo run -- ' . l:args)
+  call RunCargoCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo run -- ' . l:args)
 endfunction
 
 function! s:cargo_test_all()
   let project_root = <SID>current_rust_package_root()
-  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --nocapture')
+  call RunCargoCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --nocapture')
 endfunction
 
 function! s:cargo_bench_all()
   let project_root = <SID>current_rust_package_root()
-  call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo bench')
+  call RunCargoCommand('cd ' . project_root . ';clear ' . s:separator . ' cargo bench')
 endfunction
+
+fu! s:find_terminal_pane()
+  let pane_id = -1
+  let panes = VimuxTmux("list-panes -F '#{pane_current_command}:#{pane_id}'")
+  let panes = split(panes, "\n")
+  for pane in panes
+    let atts = split(pane, ":")
+    let current_cmd = atts[0]
+    " Check if pane is running only a shell (bash, zsh, fish, sh)
+    if current_cmd =~? '^\(bash\|zsh\|fish\|sh\)$'
+      let pane_id = atts[-1]
+      break
+    endif
+  endfor
+ return pane_id
+endfunction
+
+fu! RunCargoCommand(cmd)
+  let pane_id = <SID>find_terminal_pane()
+  if pane_id == -1
+    call RunCommandInNewPane(a:cmd)
+  else
+    call RunCommandInTmuxPane(a:cmd, pane_id)
+  endif
+endf
 
 function! s:cargo_unittest_current_file()
   call CargoRunTests('')
 endfunction
 
 function! s:cargo_unittest_focused()
-  let test_line = search('#[test', 'Wnbc')
+  let test_line = search('#[tokio::test', 'Wnbc')
+  ec
 
   if test_line ==# 0
-    let test_line = search('#[tokio::test', 'Wnbc')
+    let test_line = search('#[test', 'Wnbc')
     if test_line ==# 0
       call CargoRunTests('')
       return
@@ -131,13 +157,15 @@ function! CargoRunTests(test_name)
     let parts = split(path, '/')
     " let filtered_parts = filter(parts, 'v:val !~# "mod" && v:val !~# "src"')
     let filtered_parts = parts[1:]
+    if parts[-1] == 'mod'
+      let filtered_parts = parts[1:-2]
+    endif
     let module_path = join(filtered_parts, '::')
-    echo module_path
 
     if module_path ==# 'lib' || module_path ==# 'main'
-      call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --nocapture tests::' . a:test_name)
+      call RunCargoCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --include-ignored --nocapture tests::' . a:test_name)
     else
-      call VimuxRunCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --nocapture ' . module_path . '::tests::' . a:test_name)
+      call RunCargoCommand('cd ' . project_root . ';clear ' . s:separator . ' RUSTFLAGS=-Awarnings cargo test -- --color always --include-ignored --nocapture ' . module_path . '::tests::' . a:test_name)
     endif
   endif
 endfunction

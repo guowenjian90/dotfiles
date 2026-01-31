@@ -81,6 +81,7 @@ source $HOME/dotfiles/dotfiles/.vim/vimrc_tmux
 source $HOME/dotfiles/dotfiles/.vim/vimrc_plugins
 source $HOME/dotfiles/dotfiles/.vim/vimrc_lang
 source $HOME/dotfiles/dotfiles/.vim/vimrc_coc
+source $HOME/dotfiles/dotfiles/.vim/vimrc_copilot
 source $HOME/dotfiles/dotfiles/.vim/vimrc_markdown
 source $HOME/dotfiles/dotfiles/.vim/vimrc_fzf
 " source $HOME/dotfiles/dotfiles/.vim/vimrc_nvim_lsp

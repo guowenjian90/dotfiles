@@ -1,0 +1,46 @@
+" ========================================
+" GitHub Copilot CLI Integration
+" ========================================
+" One command to copy @ reference with line range to clipboard
+
+fu! SendToCopilot()
+  let start_line = line("'<")
+  let end_line = line("'>")
+  let txt = '@ ' . expand('%:p') . ':' . start_line . '-' . end_line
+  let pane_id = <SID>open_copilot_pane()
+  call RunCommandInTmuxPane(txt, pane_id)
+  call VimuxTmux("select-pane -t " . pane_id)
+endf
+
+fu! s:open_copilot_pane()
+  let root = getcwd()
+  let copilot_pane_id = <SID>find_copilot_pane()
+  if copilot_pane_id == -1
+    let cmd = "cd " . root . "; copilot"
+    call RunCommandInNewPane(cmd)
+    let copilot_pane_id = <SID>find_copilot_pane()
+ endif
+ return copilot_pane_id
+endfunction
+
+fu! s:find_copilot_pane()
+  let copilot_pane_id = -1
+  let panes = VimuxTmux("list-panes -F '#{pane_title}:#{pane_id}'")
+  let panes = split(panes, "\n")
+  for pane in panes
+    let atts = split(pane, ":")
+    let pane_id = atts[-1]
+    let spec = match(pane, '.*Copilot')
+    if spec == 0
+      let copilot_pane_id = pane_id
+    endif
+  endfor
+ return copilot_pane_id
+endfunction
+
+" Single keypress: select and copy current line
+nnoremap <leader>cc :call <SID>open_copilot_pane()<CR>
+
+" Single keypress: copy visual selection  
+vnoremap <leader>cc :<C-u>call SendToCopilot()<CR>
+
