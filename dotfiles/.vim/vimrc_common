@@ -140,7 +140,7 @@ endf
 fu! TaggleQuickFix()
   let qfix = HasQuickFix()
   let loc = HasLocList()
-  if qfix | loc
+  if qfix || loc
     exe "lclose | cclose"
   elseif(type(get(getqflist(), 0)) == v:t_dict)
     exe "copen"
@@ -227,6 +227,7 @@ nmap <Leader>uc viwU
 nmap <Leader>lc viwu
 nmap <Leader>cw <Right>bvU
 nmap <Leader>sc :windo set scrollbind<CR>
+nmap <Leader>rl :e<CR>
 
 cmap <C-a> <Home>
 cmap <C-e> <End>

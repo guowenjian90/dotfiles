@@ -737,4 +737,13 @@ import org.scalatestplus.mockito.MockitoSugar
   // eventCapture.getValue().kind.brand.get shouldBe "Apple"
 endsnippet
 
+snippet jsoncodec "jsoncodec"
+import io.circe.{ Decoder, Encoder }
+import io.circe.generic.semiauto._
+object ${1:cls} {
+  implicit val decoder: Decoder[${1:cls}] = deriveDecoder[${1:cls}]
+  implicit val encoder: Encoder[${1:cls}] = deriveEncoder[${1:cls}]
+}
+endsnippet
+
 #TODO LIFT,SBT,WEB.XML,HTML snippets

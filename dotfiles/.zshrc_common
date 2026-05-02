@@ -7,6 +7,10 @@ set-title() {
   echo -e "\e]0;$*\007"
 }
 
+ks() {
+  kubectl exec -n srtp --stdin --tty $1 -- /bin/bash
+}
+
 estimate_model_mem() {
 python -c "from transformers import AutoModel; 
 from deepspeed.runtime.zero.stage3 import estimate_zero3_model_states_mem_needs_all_live; 
@@ -21,49 +25,60 @@ ssh() {
 }
 
 gittooldiff() {
-  if [ $# -eq 0 ]; then 
-    abranch=origin/`git_current_branch`
-    bbranch=""
-  elif [ $# -eq 1 ]; then 
-      a=`git rev-list --parents -n 1 $1`
-      read abranch <<< "${a##* }"
-      bbranch=$1
-  elif [ $# -eq 2 ]; then 
-    abranch=$1
-    bbranch=$2
-  elif [ $# -ge 3 ]; then 
-      echo "provide only a source and a destination branch"
+  local abranch bbranch
+  case $# in
+    0)
+      abranch=origin/$(git_current_branch)
+      bbranch=""
+      ;;
+    1)
+      abranch=$1
+      bbranch=""
+      ;;
+    2)
+      abranch=$1
+      bbranch=$2
+      ;;
+    *)
+      echo "provide a source and a destination branch, or no argument to diff with remote branch"
       return
-  fi
+      ;;
+  esac
 
-  git diff --name-status $abranch $bbranch >.tmp.gitdiff
+  git diff --name-status $abranch ${bbranch:+"$bbranch"} >.tmp.gitdiff
   nvim -M -c "cd $PWD" -c "call SetGitToolDiffMenu2Branch(\"$abranch\", \"$bbranch\")" -c "let g:coc_start_at_startup=v:false" .tmp.gitdiff
   rm .tmp.gitdiff
 }
 compdef _git gittooldiff=git-diff
 
 gitdeltadiff() {
-  if [ $# -eq 0 ]; then 
-    abranch=origin/`git_current_branch`
-    bbranch=""
-  elif [ $# -eq 1 ]; then 
-      a=`git rev-list --parents -n 1 $1`
-      read abranch <<< "${a##* }"
-      bbranch=$1
-  elif [ $# -eq 2 ]; then 
-    abranch=$1
-    bbranch=$2
-  elif [ $# -ge 3 ]; then 
-      echo "provide only a source and a destination branch"
-      return
-  fi
+  local abranch bbranch
 
-  export DELTA_FEATURES="+side-by-side"
-  git diff -w $abranch $bbranch
-  unset DELTA_FEATURES
+  case $# in
+    0)
+      abranch="origin/$(git_current_branch)"
+      bbranch=""
+      ;;
+    1)
+      abranch=$1
+      bbranch=""
+      ;;
+    2)
+      abranch="$1"
+      bbranch="$2"
+      ;;
+    *)
+      echo "provide a source and a destination branch, or no argument to diff with remote branch"
+      return 1
+      ;;
+  esac
+
+  DELTA_FEATURES="+side-by-side" git diff -w "$abranch" ${bbranch:+"$bbranch"}
 }
 compdef _git gitdeltadiff=git-diff
 
+alias l='ls -lh'
+alias ll='ls -lha'
 alias gtd='gittooldiff'
 alias gtm='git mergetool --tool=nvimdiff2'
 alias gdd='gitdeltadiff'
@@ -97,7 +112,7 @@ export FZF_DEFAULT_OPTS="
   --multi
   --layout=reverse
   --preview-window=right:60% 
-  --preview='if [ -d {} ]; then (tree -a -C -L 3 {}) else (batcat -m \"*.scala:Kotlin\" --color=always {}) fi'
+  --preview='if [ -d {} ]; then (tree -a -C -L 3 {}) else (bat -m \"*.scala:Kotlin\" --color=always {}) fi'
   --bind page-up:preview-page-up
   --bind page-down:preview-page-down
   --bind ctrl-a:select-all
@@ -156,7 +171,6 @@ fi
 
 git-widget() {
   eval 'export DELTA_FEATURES="+side-by-side"; lazygit'
-  # eval 'vi --cmd "let g:coc_global_extensions=[\"coc-git\"]" -c "Git" -c "bd 1"'
 }
 zle -N git-widget
 export EDITOR=vim
