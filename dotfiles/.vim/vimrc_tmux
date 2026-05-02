@@ -54,7 +54,15 @@ endf
 
 fu! RunCommandInTmuxPane(cmd, pane_id)
   let g:VimuxRunnerIndex = a:pane_id
+  let l:title = trim(system("tmux display-message -p -t " . shellescape(a:pane_id) . " '#{pane_title}'"))
+  call system("tmux set-option -p -t " . shellescape(a:pane_id) . " allow-rename off")
+  call system("tmux select-pane -t " . shellescape(a:pane_id) . " -T " . shellescape(l:title))
   call VimuxRunCommand(a:cmd)
+endf
+
+fu! SendCommandInTmuxPane(cmd, pane_id)
+  let g:VimuxRunnerIndex = a:pane_id
+  call VimuxRunCommand(a:cmd, 0)
 endf
 
 nmap <silent> <Leader>rr :VimuxRunLastCommand<CR>

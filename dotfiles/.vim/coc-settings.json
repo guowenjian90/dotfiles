@@ -59,7 +59,7 @@
     "rounded": true
   },
   "signature.target": "float",
-  "signature.preferShownAbove": false,
+  "signature.preferShownAbove": true,
   "signature.hideOnTextChange": false,
   "suggest.floatConfig": {
     "focusable": true,

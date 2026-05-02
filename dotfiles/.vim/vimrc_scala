@@ -37,25 +37,31 @@ fu! s:sbt_package_root()
 endf
 
 fu! s:find_sbt_pane()
-  let sbt_pane_id = -1
-  let panes = VimuxTmux("list-panes -F '#{pane_title}:#{pane_id}'")
+  let copilot_pane_id = -1
+  let panes = VimuxTmux("list-panes -F '#{pane_id} #{pane_pid}'")
   let panes = split(panes, "\n")
   for pane in panes
-    let atts = split(pane, ":")
-    let pane_id = atts[-1]
-    let spec = match(pane, '.*;\s*sbt\|sbt')
-    if spec == 0
-      let sbt_pane_id = pane_id
+    let parts = split(pane, " ")
+    if len(parts) < 2
+      continue
+    endif
+    let pane_id = parts[0]
+    let pid = parts[1]
+    let child_pids = trim(system("pgrep -d, -P " . pid . " 2>/dev/null"))
+    let args = empty(child_pids) ? "" : system("ps -p " . child_pids . " -o args= 2>/dev/null")
+    if args =~# 'sbt'
+      let copilot_pane_id = pane_id
+      break
     endif
   endfor
- return sbt_pane_id
+  return copilot_pane_id
 endfunction
 
 fu! s:open_sbt_pane(project_root)
   let sbt_pane = <SID>find_sbt_pane()
   if sbt_pane == -1
     let cmd = "cd " . a:project_root . "; sbt"
-    call RunCommandInNewPane(cmd, 1)
+    call RunCommandInNewPane(cmd)
     let sbt_pane = <SID>find_sbt_pane()
   endif
   return sbt_pane
