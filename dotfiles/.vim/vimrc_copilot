@@ -21,39 +21,35 @@ fu! SendToCopilot(visual)
   let txt = empty(words) ? ref : ref . ' ' . words
   let pane_id = <SID>open_copilot_pane()
   call RunCommandInTmuxPane(txt, pane_id)
-  " call VimuxTmux("select-pane -t " . pane_id)
 endf
 
 fu! s:open_copilot_pane()
   let root = getcwd()
-  let copilot_pane_id = <SID>find_copilot_pane()
-  if copilot_pane_id == -1
-    let cmd = "cd " . root . "; claude"
-    call RunCommandInNewPane(cmd)
-    let copilot_pane_id = <SID>find_copilot_pane()
- endif
- return copilot_pane_id
+  let pane_id = <SID>find_pane_by_tool('claude')
+  if pane_id == -1
+    let pane_id = <SID>find_pane_by_tool('copilot')
+  endif
+  if pane_id == -1
+    call RunCommandInNewPane("cd " . root . "; claude")
+    let pane_id = <SID>find_pane_by_tool('claude')
+  endif
+  return pane_id
 endfunction
 
-fu! s:find_copilot_pane()
-  let copilot_pane_id = -1
+fu! s:find_pane_by_tool(tool_pat)
   let panes = VimuxTmux("list-panes -F '#{pane_id} #{pane_pid}'")
-  let panes = split(panes, "\n")
-  for pane in panes
+  for pane in split(panes, "\n")
     let parts = split(pane, " ")
     if len(parts) < 2
       continue
     endif
-    let pane_id = parts[0]
-    let pid = parts[1]
-    let child_pids = trim(system("pgrep -d, -P " . pid . " 2>/dev/null"))
+    let child_pids = trim(system("pgrep -d, -P " . parts[1] . " 2>/dev/null"))
     let args = empty(child_pids) ? "" : system("ps -p " . child_pids . " -o args= 2>/dev/null")
-    if args =~# 'claude'
-      let copilot_pane_id = pane_id
-      break
+    if args =~# a:tool_pat
+      return parts[0]
     endif
   endfor
-  return copilot_pane_id
+  return -1
 endfunction
 
 " Single keypress: select and copy current line
