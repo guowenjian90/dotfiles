@@ -1,7 +1,6 @@
 let g:floaterm_width=1.0
 let g:floaterm_height=1.0
 let g:floaterm_autoclose=0
-let g:lazygit_floating_window_scaling_factor = 1
 
 nmap <Leader>fmt :Autoformat<CR>
 "auto format
