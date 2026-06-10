@@ -127,15 +127,16 @@ function! s:cargo_unittest_current_file()
 endfunction
 
 function! s:cargo_unittest_focused()
-  let test_line = search('#[tokio::test', 'Wnbc')
-  ec
+  let tokio_test_line = search('#[tokio::test', 'Wnbc')
+  let test_line = search('#[test', 'Wnbc')
 
-  if test_line ==# 0
-    let test_line = search('#[test', 'Wnbc')
-    if test_line ==# 0
+  if tokio_test_line ==# 0 && test_line ==# 0
       call CargoRunTests('')
       return
-    endif
+  endif
+
+  if tokio_test_line > test_line
+    let test_line = tokio_test_line
   endif
 
   let line = getline(test_line + 1)

@@ -30,6 +30,7 @@ syntax enable         " enable syntax highlighting
 syntax on             " Enable syntax highlighting
 
 "  vim options
+set nowinfixwidth
 set hlsearch
 set mouse=a               " enable mouse mode
 set cmdheight=1           " Better display for messages if larger

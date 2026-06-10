@@ -19,16 +19,16 @@ endf
 fu! RunCommandInTmuxWindow(cmd)
   " let cmd = escape(a:cmd, '\')
   " let cmd = substitute(a:cmd, '\n', ' ', 'g')
-  call VimuxRunCommand(cmd)
+  call VimuxRunCommand(a:cmd)
 endf
 
 fu! RunCommand(cmd, tmux)
   " let cmd = escape(a:cmd, '\')
   let cmd = escape(a:cmd, '"')
   if exists('$TMUX') && a:tmux == 1
-    call RunCommandInTmuxWindow(cmd)
+    call RunCommandInTmuxWindow(a:cmd)
   else
-    exe '!' . cmd
+    exe '!' . a:cmd
   end
 endf
 

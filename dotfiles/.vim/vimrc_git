@@ -11,7 +11,20 @@ nmap <leader>dpb :diffput BASE<CR>
 let g:lazygit_floating_window_scaling_factor = 1
 " below require lazygit.nvm
 nmap <silent> <C-g> :LazyGit<CR>
-autocmd VimResized * ++nested if bufnr('lazygit') != -1 | LazyGit | endif
+" autocmd VimResized * ++nested if bufnr('lazygit') != -1 | LazyGit | endif
+" function! s:ResizeLazygit() abort
+"   let l:buf = bufnr('lazygit')
+"   if l:buf == -1 | return | endif
+"   let l:wins = win_findbuf(l:buf)
+"   if empty(l:wins) | return | endif
+"   call nvim_win_close(l:wins[0], 0)
+"   LazyGit
+" endfunction
+" autocmd VimResized * ++nested call s:ResizeLazygit()
+"
+" if &term =~ 'screen' || &term =~ 'tmux'
+"     set ttymouse=xterm2
+" endif
 
 " below require vim-fugitive
 fu! s:toggle_git()
