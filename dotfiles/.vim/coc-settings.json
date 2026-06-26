@@ -27,6 +27,8 @@
   "metals.fallbackScalaVersion": "2.13.16",
   "metals.showInferredType": true,
   "metals.serverVersion": "1.6.3",
+  "metals.enableAutoImports": true,
+  "metals.inlayHits.namedParameters.enabled": true,
   "java.completion.guessMethodArguments": true,
   "java.import.gradle.enabled": false,
   "java.import.maven.enabled": false,
@@ -42,7 +44,8 @@
   "git.floatConfig": {
     "focusable": true,
     "border": true,
-    "rounded": true
+    "rounded": true,
+    "winblend": 0
   },
   "git.removedSign.text": "-",
   "git.addedSign.text": "+",
@@ -51,31 +54,37 @@
   "hover.floatConfig": {
     "focusable": true,
     "border": true,
-    "rounded": true
+    "rounded": true,
+    "winblend": 0
   },
   "signature.floatConfig": {
     "focusable": true,
     "border": true,
-    "rounded": true
+    "rounded": true,
+    "winblend": 0
   },
   "signature.target": "float",
-  "signature.preferShownAbove": true,
+  "signature.preferShownAbove": false,
   "signature.hideOnTextChange": false,
+  "snippets.enable": true,
   "suggest.floatConfig": {
     "focusable": true,
     "border": true,
-    "rounded": true
+    "rounded": true,
+    "winblend": 0
   },
   "suggest.noselect": false,
   "suggest.autoTrigger": "always",
   "suggest.enablePreselect": true,
+  "suggest.snippetsSupport": true,
   "diagnostic.showUnused": true,
   "diagnostic.messageLevel": "error",
   "diagnostic.level": "warning",
   "diagnostic.locationlistUpdate": true,
   "diagnostic.floatConfig": {
     "border": true,
-    "rounded": true
+    "rounded": true,
+    "winblend": 0
   },
   "diagnostic.virtualText": true,
   "diagnostic.errorSign": "x",
@@ -102,6 +111,7 @@
   },
   "rust-analyzer.updates.checkOnStartup": false,
   "rust-analyzer.lens.enable": false,
+  "rust-analyzer.checkOnSave": true,
   "rust-analyzer.inlayHits.enabled": true,
   "rust-analyzer.inlayHints.typeHints.enable": false,
   "rust-analyzer.inlayHints.chainingHints.enable": false,
@@ -110,6 +120,10 @@
   "rust-analyzer.inlayHints.bindingModeHints.enable": false,
   "rust-analyzer.inlayHints.closingBraceHints.enable": false,
   "rust-analyzer.inlayHints.closureReturnTypeHints.enable": "never",
+  "rust-analyzer.check.extraArgs": [
+    "--target-dir",
+    "target/analyzer"
+  ],
   "pyright.inlayHints.variableTypes": false,
   "python.pythonPath": "python3",
   "python.formatting.provider": "black",
